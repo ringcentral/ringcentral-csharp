@@ -5,7 +5,7 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1f2fe943-08c3-407b-a281-b7b4b023647d}</ProjectGuid>
+    <ProjectGuid>{1F2FE943-08C3-407B-A281-B7B4B023647D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ringcentral</RootNamespace>
@@ -37,8 +37,14 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="http\Headers.cs" />
+    <Compile Include="http\HttpException.cs" />
+    <Compile Include="http\Request.cs" />
+    <Compile Include="http\Response.cs" />
+    <Compile Include="platform\Auth.cs" />
+    <Compile Include="platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="subscription\Subscription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -48,5 +54,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
 </Project>
