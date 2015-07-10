@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ringcentral.http
 {
@@ -102,5 +103,36 @@ namespace ringcentral.http
         {
             Body = body;
         }
+
+        public void Send()
+        {
+          
+        }
+
+        private String GetEncodedBody()
+        {
+            if (IsJson())
+            {
+                return JsonConvert.SerializeObject(Body);
+            }
+            //TODO: Determine if Body is the right data type and then properly encode.  Portable .net 4 doesn't have access to HTTPUtility or WebUtility it seems.
+            if (IsUrlEncoded())
+            {
+                return Uri.EscapeDataString(Body.ToString()).Replace('+', ' ');
+            }
+
+            return "";
+        }
+
+        private String GetUrlWithQuery()
+        {
+            var url = Url;
+            //TODO: Determine if Query is the right datatype and then properly encode
+            var query = Uri.EscapeUriString(Query.ToString());
+
+            return query;
+
+        }
+
     }
 }
