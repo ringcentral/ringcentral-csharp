@@ -7,13 +7,13 @@ namespace ringcentral.http
 {
     class Headers
     {
-        private const string HeaderSeperator = ":";
-        private const string ContentType = "content-type";
-        private const string Authorization = "authorization";
-        private const string Accept = "accept";
-        private const string UrlEncodedContentType = "application/x-www-form-urlencoded";
-        private const string JsonContentType = "application/json";
-        private const string MultipartContentType = "multipart/mixed";
+        const string HeaderSeperator = ":";
+        public const string ContentType = "content-type";
+        const string Authorization = "authorization";
+        public const string Accept = "accept";
+        const string UrlEncodedContentType = "application/x-www-form-urlencoded";
+        public const string JsonContentType = "application/json";
+        const string MultipartContentType = "multipart/mixed";
 
         private readonly Dictionary<String, String> _headers;
 
