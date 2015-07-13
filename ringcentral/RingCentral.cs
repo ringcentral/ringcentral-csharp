@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
@@ -15,6 +17,7 @@ namespace ringcentral
         private String AppSecret { get; set; }
         private String ApiEndpoint { get; set; }
         private String AccessToken { get; set; }
+        private String RefreshToken { get; set; }
 
         public RingCentral(String appKey, String appSecret, String apiEndPoint)
         {
@@ -24,7 +27,7 @@ namespace ringcentral
         }
 
 
-        public String Authenticate(string userName, String password, String extension, String grantType)
+        public String Authenticate(string userName, String password, String extension)
         {
 
             using (var client = new HttpClient())
@@ -33,29 +36,75 @@ namespace ringcentral
 
                 var formBodyContent = new Dictionary<String, String>
                                       {
-                                          { "token", AccessToken }, 
                                           { "username", userName }, 
                                           { "password", Uri.EscapeUriString(password) }, 
                                           { "extension", extension }, 
-                                          { "grant_type", grantType }
+                                          { "grant_type", "password" }
                                       };
+    
+                var result = BasicPostRequest("/restapi/oauth/token", formBodyContent);
+                
+                JToken token = JObject.Parse(result);
+                AccessToken = (String)token.SelectToken("access_token");
+                RefreshToken = (String)token.SelectToken("refresh_token");
 
+                Debug.WriteLine("refreshToken: " + RefreshToken);
 
-               return PostRequest("/restapi/oauth/token", formBodyContent);
+                return result;
 
             }
         }
 
-        public String Revoke()
+        public String Refresh(String request)
+        {
+
+            var formBodyContent = new Dictionary<String, String> { { "grant_type", "refresh_token" }, { "refresh_token", RefreshToken } };
+
+            var result = BasicPostRequest(request, formBodyContent);
+
+            JToken token = JObject.Parse(result);
+
+            AccessToken = (String)token.SelectToken("access_token");
+            RefreshToken = (String)token.SelectToken("refresh_token");
+
+            return result;
+
+        }
+
+        public String Revoke(String request)
         {
 
             var formBodyContent = new Dictionary<String, String> {{"token", AccessToken}};
 
-            return PostRequest("/restapi/oauth/revoke", formBodyContent);
+            return BasicPostRequest(request, formBodyContent);
 
         }
 
         public String PostRequest(String request, Dictionary<String, String> formContent )
+        {
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+
+                var formBodyList = formContent.ToList();
+
+                var content = new FormUrlEncodedContent(formBodyList);
+
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+
+                var result = client.PostAsync(request, content).Result;
+
+                return result.Content.ReadAsStringAsync().Result;
+            }
+        }
+
+        public String BasicPostRequest(String request, Dictionary<String, String> formContent)
         {
             using (var client = new HttpClient())
             {
@@ -68,8 +117,6 @@ namespace ringcentral
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
                 var formBodyList = formContent.ToList();
-
-                formBodyList.Add(new KeyValuePair<string, string>("token", AccessToken));
 
                 var content = new FormUrlEncodedContent(formBodyList);
 
@@ -95,6 +142,49 @@ namespace ringcentral
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
 
             }
+        }
+
+        public String DeleteRequest(String request)
+        {
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AccessToken);
+
+                var accountResult = client.DeleteAsync(request);
+
+                return accountResult.Result.Content.ReadAsStringAsync().Result;
+
+            }
+        }
+
+        public String PutRequest(String request, Dictionary<String, String> formContent)
+        {
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AccessToken);
+
+                var formBodyList = formContent.ToList();
+
+                var content = new FormUrlEncodedContent(formBodyList);
+
+                var accountResult = client.PutAsync(request,content);
+
+                return accountResult.Result.Content.ReadAsStringAsync().Result;
+            }
+        }
+
+        //TODO: need to implement, returns based on token expiration time
+        public Boolean IsAuthorized()
+        {
+            return true;
         }
     }
 }
