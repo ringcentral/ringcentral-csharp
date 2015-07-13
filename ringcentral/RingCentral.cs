@@ -88,17 +88,28 @@ namespace ringcentral
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
 
                 var formBodyList = formContent.ToList();
 
                 var content = new FormUrlEncodedContent(formBodyList);
 
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-
                 var result = client.PostAsync(request, content).Result;
+
+                return result.Content.ReadAsStringAsync().Result;
+            }
+        }
+
+        public String PostJsonRequest(String request, String json)
+        {
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+
+                var result = client.PostAsync(request, new StringContent(json, Encoding.UTF8, "application/json")).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
             }
@@ -114,7 +125,7 @@ namespace ringcentral
                 var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
 
                 client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
                 var formBodyList = formContent.ToList();
 
@@ -135,7 +146,7 @@ namespace ringcentral
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AccessToken);
+                    new AuthenticationHeaderValue("Bearer", AccessToken);
 
                 var accountResult = client.GetAsync(request);
 
@@ -152,7 +163,7 @@ namespace ringcentral
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AccessToken);
+                    new AuthenticationHeaderValue("Bearer", AccessToken);
 
                 var accountResult = client.DeleteAsync(request);
 
@@ -165,11 +176,10 @@ namespace ringcentral
         {
             using (var client = new HttpClient())
             {
-
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AccessToken);
+                    new AuthenticationHeaderValue("Bearer", AccessToken);
 
                 var formBodyList = formContent.ToList();
 
