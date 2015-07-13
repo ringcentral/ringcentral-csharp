@@ -31,38 +31,31 @@ namespace RingCentralConsole
             var result = ringCentral.Authenticate(userName, password, extension);
             Debug.WriteLine("Auth result is: " + result);
 
-            //result = ringCentral.GetRequest("/restapi/v1.0/account/~");
-            //Debug.WriteLine("Account information result is: " + result);
+            result = ringCentral.GetRequest("/restapi/v1.0/account/~");
+            Debug.WriteLine("Account information result is: " + result);
 
-            //result = ringCentral.Refresh("/restapi/oauth/token");
-            //Debug.WriteLine("Refresh account result: " + result);
+            result = ringCentral.Refresh("/restapi/oauth/token");
+            Debug.WriteLine("Refresh account result: " + result);
 
-            //result = ringCentral.GetRequest("/restapi/v1.0/account/~");
-            //Debug.WriteLine("Account information result after refresh is: " + result);
+            result = ringCentral.GetRequest("/restapi/v1.0/account/~");
+            Debug.WriteLine("Account information result after refresh is: " + result);
 
-            //result = ringCentral.DeleteRequest("/restapi/v1.0/account/~/extension/~/message-store/1152149004");
-            //Debug.WriteLine("Delete Message request result: " + result);
+            result = ringCentral.DeleteRequest("/restapi/v1.0/account/~/extension/~/message-store/1152149004");
+            Debug.WriteLine("Delete Message request result: " + result);
 
-            var fromPhoneNumber = userName;
             var smsText = "This is a test from the Debug Console for RingCentral";
-
-
-            var sms = new SMS();
             var toPhone = "1***REMOVED***";
 
-            var toNumbers = new List<String>();
-            sms.To = toNumbers;
-            sms.From = fromPhoneNumber;
-            sms.Text = smsText;
+            var smsHelper = new SMSHelper(toPhone,userName,smsText);
+            var jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            var jsonString = JsonConvert.SerializeObject(sms);
-            result = ringCentral.PostRequest("/restapi/v1.0/account/~/extension/~/sms", null);
+            result = ringCentral.PostJsonRequest("/restapi/v1.0/account/~/extension/~/sms", jsonObject);
             Debug.WriteLine("SMS Result: " + result);
 
-            //Debug.WriteLine(ringCentral.Revoke("/restapi/oauth/revoke"));
+            Debug.WriteLine(ringCentral.Revoke("/restapi/oauth/revoke"));
 
-            //result = ringCentral.GetRequest("/restapi/v1.0/account/~");
-            //Debug.WriteLine("This should fail due to account revoke" + result);
+            result = ringCentral.GetRequest("/restapi/v1.0/account/~");
+            Debug.WriteLine("This should fail due to account revoke" + result);
         }
     }
 }
