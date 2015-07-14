@@ -75,8 +75,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RingCentralTest.cs" />
+    <Compile Include="AccountAndExtensionInformationTests.cs" />
+    <Compile Include="AuthenticationTests.cs" />
+    <Compile Include="MessagingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RingCentral\RingCentral.csproj">
