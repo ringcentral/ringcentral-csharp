@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ringcentral.subscription
+namespace RingCentral.subscription
 {
     class Subscription
     {
