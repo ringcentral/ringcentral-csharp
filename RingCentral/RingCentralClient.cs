@@ -46,8 +46,6 @@ namespace RingCentral
                 AccessToken = (String)token.SelectToken("access_token");
                 RefreshToken = (String)token.SelectToken("refresh_token");
 
-                Debug.WriteLine("refreshToken: " + RefreshToken);
-
                 return result;
 
             }
