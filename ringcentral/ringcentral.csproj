@@ -38,6 +38,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="helper\PagerHelper.cs" />
+    <Compile Include="helper\SmsHelper.cs" />
     <Compile Include="http\Headers.cs" />
     <Compile Include="http\HttpException.cs" />
     <Compile Include="http\Request.cs" />

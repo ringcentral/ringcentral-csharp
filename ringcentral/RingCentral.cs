@@ -42,7 +42,7 @@ namespace ringcentral
                                           { "grant_type", "password" }
                                       };
     
-                var result = BasicPostRequest("/restapi/oauth/token", formBodyContent);
+                var result = AuthPostRequest("/restapi/oauth/token", formBodyContent);
                 
                 JToken token = JObject.Parse(result);
                 AccessToken = (String)token.SelectToken("access_token");
@@ -60,7 +60,7 @@ namespace ringcentral
 
             var formBodyContent = new Dictionary<String, String> { { "grant_type", "refresh_token" }, { "refresh_token", RefreshToken } };
 
-            var result = BasicPostRequest(request, formBodyContent);
+            var result = AuthPostRequest(request, formBodyContent);
 
             JToken token = JObject.Parse(result);
 
@@ -76,7 +76,7 @@ namespace ringcentral
 
             var formBodyContent = new Dictionary<String, String> {{"token", AccessToken}};
 
-            return BasicPostRequest(request, formBodyContent);
+            return AuthPostRequest(request, formBodyContent);
 
         }
 
@@ -84,7 +84,6 @@ namespace ringcentral
         {
             using (var client = new HttpClient())
             {
-
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
@@ -99,7 +98,7 @@ namespace ringcentral
             }
         }
 
-        public String PostJsonRequest(String request, String json)
+        public String PostRequest(String request, String jsonData)
         {
             using (var client = new HttpClient())
             {
@@ -109,13 +108,13 @@ namespace ringcentral
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
 
-                var result = client.PostAsync(request, new StringContent(json, Encoding.UTF8, "application/json")).Result;
+                var result = client.PostAsync(request, new StringContent(jsonData, Encoding.UTF8, "application/json")).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
             }
         }
 
-        public String BasicPostRequest(String request, Dictionary<String, String> formContent)
+        public String AuthPostRequest(String request, Dictionary<String, String> formContent)
         {
             using (var client = new HttpClient())
             {
@@ -188,6 +187,22 @@ namespace ringcentral
                 var accountResult = client.PutAsync(request,content);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
+            }
+        }
+
+        public String PutRequest(String request, String jsonData)
+        {
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+
+                var result = client.PutAsync(request, new StringContent(jsonData, Encoding.UTF8, "application/json")).Result;
+
+                return result.Content.ReadAsStringAsync().Result;
             }
         }
 

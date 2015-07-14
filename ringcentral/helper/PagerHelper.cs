@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RingCentralConsole
+namespace ringcentral.helper
 {
-    
-
     public class PagerHelper
     {
         public List<To> to { get; set; }
@@ -18,7 +16,7 @@ namespace RingCentralConsole
 
             to = new List<To>();
 
-            foreach (var newNumber in toExtensionNumbers.Select(phoneNumber => new To {extensionNumber = phoneNumber}))
+            foreach (var newNumber in toExtensionNumbers.Select(phoneNumber => new To { extensionNumber = phoneNumber }))
             {
                 to.Add(newNumber);
             }
