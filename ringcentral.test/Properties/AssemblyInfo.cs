@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ringcentral.test")]
+[assembly: AssemblyTitle("RingCentral.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ringcentral.test")]
+[assembly: AssemblyProduct("RingCentral.Test")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("50e1c8c0-4508-4486-bc73-9a4a2b006af1")]
+[assembly: Guid("e7d14264-8dfb-405e-a87f-c038d736e5c7")]
 
 // Version information for an assembly consists of the following four values:
 //

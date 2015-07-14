@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ringcentral.http
 {
-    class Headers
+    public class Headers
     {
         const string HeaderSeperator = ":";
         public const string ContentType = "content-type";
