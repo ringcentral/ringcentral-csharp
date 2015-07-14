@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ringcentral.platform
+namespace RingCentral.Platform
 {
     class Platform
     {
