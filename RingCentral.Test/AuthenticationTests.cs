@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
@@ -56,6 +57,17 @@ namespace RingCentral.Test
 
             Assert.AreNotEqual(accessTokenBeforeRefresh, accessTokenAfterRefresh);
             Assert.AreNotEqual(refreshTokenBeforeFresh, refreshTokenAfterFresh);
+        }
+
+        [Test]
+        public void TestVersion()
+        {
+            var result = RingCentralClient.GetRequest(VersionEndPoint);
+
+            JToken token = JObject.Parse(result);
+            var version = (String)token.SelectToken("apiVersions")[0].SelectToken("uriString");
+
+            Assert.AreEqual(version, "v1.0");
         }
     }
 }

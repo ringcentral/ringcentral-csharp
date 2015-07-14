@@ -22,6 +22,7 @@ namespace RingCentral.Test
         protected const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/~";
         protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
+        protected const string VersionEndPoint = "/restapi";
 
         public RingCentralClient RingCentralClient;
 
