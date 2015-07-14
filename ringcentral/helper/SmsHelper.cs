@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-/*Class doesn't follow naming conventions since it will be serialized into JSON to help with SMS messaging*/
-namespace RingCentralConsole
+namespace ringcentral.helper
 {
-
-    
-
     public class SMSHelper
     {
         public List<To> to { get; set; }
@@ -19,12 +15,12 @@ namespace RingCentralConsole
         {
 
             to = new List<To>();
-            
-            var toSms = new To {phoneNumber = toPhoneNumber};
-            
+
+            var toSms = new To { phoneNumber = toPhoneNumber };
+
             to.Add(toSms);
 
-            var fromSms = new From {phoneNumber = fromPhoneNumber};
+            var fromSms = new From { phoneNumber = fromPhoneNumber };
 
             from = fromSms;
 
@@ -42,6 +38,4 @@ namespace RingCentralConsole
         }
 
     }
-
-
 }

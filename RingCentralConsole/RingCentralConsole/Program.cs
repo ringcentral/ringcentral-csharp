@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using ringcentral;
+using ringcentral.helper;
 
 namespace RingCentralConsole
 {
@@ -49,8 +50,8 @@ namespace RingCentralConsole
             var smsHelper = new SMSHelper(toPhone,userName,smsText);
             var jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            result = ringCentral.PostJsonRequest("/restapi/v1.0/account/~/extension/~/sms", jsonObject);
-            Debug.WriteLine("SMS Result: " + result);
+            //result = ringCentral.PostRequest("/restapi/v1.0/account/~/extension/~/sms", jsonObject);
+            //Debug.WriteLine("SMS Result: " + result);
 
             Debug.WriteLine(ringCentral.Revoke("/restapi/oauth/revoke"));
 
