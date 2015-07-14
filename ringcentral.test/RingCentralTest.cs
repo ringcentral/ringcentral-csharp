@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using ringcentral;
 
-namespace ringcentral.test
+namespace RingCentral.Test
 {
     using NUnit.Framework;
 
     [TestFixture]
-    class RingCentralTest
+    public class RingCentralTest
     {
 
         const string AppKey = "***REMOVED***";
@@ -24,12 +24,14 @@ namespace ringcentral.test
         [Test]
         public void TestAuthentication()
         {
-            var ringCentral = new RingCentral(AppKey, AppSecret, ApiEndPoint);
-            var result = ringCentral.Authenticate(UserName, Password, Extension);
+            var ringCentralClient = new RingCentralClient(AppKey, AppSecret, ApiEndPoint);
+            var result = ringCentralClient.Authenticate(UserName, Password, Extension);
+            
+            Assert.NotNull(result);
 
             JToken token = JObject.Parse(result);
             var accessToken = (String)token.SelectToken("access_token");
-            var refreshToken = (String)token.SelectToken("refresh_token");
+            var refreshToken = (String) token.SelectToken("refresh_token");
 
             Assert.NotNull(accessToken);
             Assert.NotNull(refreshToken);

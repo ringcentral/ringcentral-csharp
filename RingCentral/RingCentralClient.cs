@@ -7,19 +7,17 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-
-namespace ringcentral
+namespace RingCentral
 {
-    public class RingCentral
+    public class RingCentralClient
     {
-
         private String AppKey { get; set; }
         private String AppSecret { get; set; }
         private String ApiEndpoint { get; set; }
         private String AccessToken { get; set; }
         private String RefreshToken { get; set; }
 
-        public RingCentral(String appKey, String appSecret, String apiEndPoint)
+        public RingCentralClient(String appKey, String appSecret, String apiEndPoint)
         {
             AppKey = appKey;
             AppSecret = appSecret;
@@ -41,9 +39,9 @@ namespace ringcentral
                                           { "extension", extension }, 
                                           { "grant_type", "password" }
                                       };
-    
+
                 var result = AuthPostRequest("/restapi/oauth/token", formBodyContent);
-                
+
                 JToken token = JObject.Parse(result);
                 AccessToken = (String)token.SelectToken("access_token");
                 RefreshToken = (String)token.SelectToken("refresh_token");
@@ -74,13 +72,13 @@ namespace ringcentral
         public String Revoke(String request)
         {
 
-            var formBodyContent = new Dictionary<String, String> {{"token", AccessToken}};
+            var formBodyContent = new Dictionary<String, String> { { "token", AccessToken } };
 
             return AuthPostRequest(request, formBodyContent);
 
         }
 
-        public String PostRequest(String request, Dictionary<String, String> formContent )
+        public String PostRequest(String request, Dictionary<String, String> formContent)
         {
             using (var client = new HttpClient())
             {
@@ -184,7 +182,7 @@ namespace ringcentral
 
                 var content = new FormUrlEncodedContent(formBodyList);
 
-                var accountResult = client.PutAsync(request,content);
+                var accountResult = client.PutAsync(request, content);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
             }

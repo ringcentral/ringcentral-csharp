@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F2FE943-08C3-407B-A281-B7B4B023647D}</ProjectGuid>
+    <ProjectGuid>{67CBCAAF-36E8-424B-8D49-28F43AE7793F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ringcentral</RootNamespace>
-    <AssemblyName>ringcentral</AssemblyName>
+    <RootNamespace>RingCentral</RootNamespace>
+    <AssemblyName>RingCentral</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,20 +35,21 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="helper\PagerHelper.cs" />
-    <Compile Include="helper\SmsHelper.cs" />
-    <Compile Include="http\Headers.cs" />
-    <Compile Include="http\HttpException.cs" />
-    <Compile Include="http\Request.cs" />
-    <Compile Include="http\Response.cs" />
-    <Compile Include="platform\Auth.cs" />
-    <Compile Include="platform\Platform.cs" />
+    <Compile Include="Helper\PagerHelper.cs" />
+    <Compile Include="Helper\SmsHelper.cs" />
+    <Compile Include="Http\Headers.cs" />
+    <Compile Include="Http\HttpException.cs" />
+    <Compile Include="Http\Request.cs" />
+    <Compile Include="Http\Response.cs" />
+    <Compile Include="Platform\Auth.cs" />
+    <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RingCentral.cs" />
-    <Compile Include="subscription\Subscription.cs" />
+    <Compile Include="RingCentralClient.cs" />
+    <Compile Include="Subscription\Subscription.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -80,6 +81,7 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
