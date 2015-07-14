@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using ringcentral.helper;
+using RingCentral.Helper;
 
 namespace RingCentral.Test
 {
@@ -18,7 +18,7 @@ namespace RingCentral.Test
             const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
             const string toPhone = "***REMOVED***"; //cellphone number of Paul
 
-            var smsHelper = new SMSHelper(toPhone, UserName, smsText);
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
             var jsonObject = JsonConvert.SerializeObject(smsHelper);
 
             var result = RingCentralClient.PostRequest(SmsEndPoint, jsonObject);

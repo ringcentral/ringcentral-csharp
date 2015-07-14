@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RingCentral.http
+namespace RingCentral.Http
 {
     public class Headers
     {

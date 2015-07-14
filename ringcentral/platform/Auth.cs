@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RingCentral.platform
+namespace RingCentral.Platform
 {
     class Auth
     {

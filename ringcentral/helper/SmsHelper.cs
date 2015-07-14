@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RingCentral.helper
+namespace RingCentral.Helper
 {
-    public class SMSHelper
+    public class SmsHelper
     {
         public List<To> to { get; set; }
         public From from { get; set; }
         public string text { get; set; }
 
-        public SMSHelper(string toPhoneNumber, string fromPhoneNumber, string smsText)
+        public SmsHelper(string toPhoneNumber, string fromPhoneNumber, string smsText)
         {
 
             to = new List<To>();
