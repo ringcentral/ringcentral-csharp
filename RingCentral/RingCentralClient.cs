@@ -132,11 +132,29 @@ namespace RingCentral
             }
         }
 
-
+        
         public String GetRequest(String request)
         {
             using (var client = new HttpClient())
             {
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", AccessToken);
+
+                var accountResult = client.GetAsync(request);
+
+                return accountResult.Result.Content.ReadAsStringAsync().Result;
+
+            }
+        }
+
+        //TODO: some get requests have query parameters in the request, need to add to client.GetAsync if present
+        public String GetRequest(String request,Dictionary<String,String> queryData )
+        {
+            using (var client = new HttpClient())
+            {
+                //var uriBuilder = new UriBuilder();
 
                 client.BaseAddress = new Uri(ApiEndpoint);
 

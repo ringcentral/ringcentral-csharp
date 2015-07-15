@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace RingCentral.Test
 {
     [TestFixture]
-    class CallLogTests : TestConfiguration
+    public class CallLogTests : TestConfiguration
     {
         private const string CallLogEndPoint = "/restapi/v1.0/account/~";
 
