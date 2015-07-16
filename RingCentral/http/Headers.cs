@@ -15,29 +15,29 @@ namespace RingCentral.Http
         public const string JsonContentType = "application/json";
         const string MultipartContentType = "multipart/mixed";
 
-        private readonly Dictionary<String, String> _headers;
+        private readonly Dictionary<string, string> _headers;
 
         public Headers()
         {
-            _headers = new Dictionary<String, String>();
+            _headers = new Dictionary<string, string>();
         }
         
-        public Boolean HasHeader(String name)
+        public bool HasHeader(string name)
         {
             return _headers.ContainsKey(name);
         }
 
-        public String GetHeader(String name)
+        public string GetHeader(string name)
         {
             return _headers.ContainsKey(name) ? _headers[name] : null;
         }
 
-        public void SetHeader(String name, String value)
+        public void SetHeader(string name, string value)
         {
             _headers.Add(name, value);
         }
 
-        public void SetHeaders(Dictionary<String, String> headers)
+        public void SetHeaders(Dictionary<string, string> headers)
         {
             foreach (var k in headers.Keys)
             {
@@ -45,42 +45,42 @@ namespace RingCentral.Http
             }
         }
 
-        public Dictionary<String, String> GetHeaders()
+        public Dictionary<string, string> GetHeaders()
         {
             return _headers;
         }
 
-        public String[] GetHeadersArray()
+        public string[] GetHeadersArray()
         {
             return _headers.Keys.Select(k => k.ToLower() + HeaderSeperator + _headers[k]).ToArray();
         }
 
-        public String GetContentType()
+        public string GetContentType()
         {
             return GetHeader(ContentType);
         }
 
-        public void SetContentType(String contentType)
+        public void SetContentType(string contentType)
         {
             SetHeader(ContentType, contentType);
         }
 
-        public Boolean IsContentType(String contentType)
+        public bool IsContentType(string contentType)
         {
             return GetContentType().Equals(contentType);
         }
 
-        public Boolean IsJson()
+        public bool IsJson()
         {
             return IsContentType(JsonContentType);
         }
 
-        public Boolean IsMultiPart()
+        public bool IsMultiPart()
         {
             return IsContentType(MultipartContentType);
         }
 
-        public Boolean IsUrlEncoded()
+        public bool IsUrlEncoded()
         {
             return IsContentType(UrlEncodedContentType);
         }

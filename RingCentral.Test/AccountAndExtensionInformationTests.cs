@@ -24,7 +24,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(AccountInformationEndPoint);
 
             JToken token = JObject.Parse(result);
-            var mainNumber = (String) token.SelectToken("mainNumber");
+            var mainNumber = (string) token.SelectToken("mainNumber");
 
             Assert.AreEqual(mainNumber, "***REMOVED***");
         }

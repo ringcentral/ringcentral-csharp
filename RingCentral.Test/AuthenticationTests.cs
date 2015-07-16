@@ -17,8 +17,8 @@ namespace RingCentral.Test
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult);
-            var accessToken = (String) token.SelectToken("access_token");
-            var refreshToken = (String) token.SelectToken("refresh_token");
+            var accessToken = (string) token.SelectToken("access_token");
+            var refreshToken = (string) token.SelectToken("refresh_token");
 
             Assert.NotNull(accessToken);
             Assert.NotNull(refreshToken);
@@ -31,8 +31,8 @@ namespace RingCentral.Test
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult);
-            var accessTokenBeforeRefresh = (String) token.SelectToken("access_token");
-            var refreshTokenBeforeFresh = (String) token.SelectToken("refresh_token");
+            var accessTokenBeforeRefresh = (string) token.SelectToken("access_token");
+            var refreshTokenBeforeFresh = (string) token.SelectToken("refresh_token");
 
             Assert.NotNull(accessTokenBeforeRefresh);
             Assert.NotNull(refreshTokenBeforeFresh);
@@ -42,8 +42,8 @@ namespace RingCentral.Test
             Assert.NotNull(refreshResult);
 
             token = JObject.Parse(refreshResult);
-            var accessTokenAfterRefresh = (String) token.SelectToken("access_token");
-            var refreshTokenAfterFresh = (String) token.SelectToken("refresh_token");
+            var accessTokenAfterRefresh = (string) token.SelectToken("access_token");
+            var refreshTokenAfterFresh = (string) token.SelectToken("refresh_token");
 
             Assert.NotNull(accessTokenAfterRefresh);
             Assert.NotNull(refreshTokenAfterFresh);
@@ -58,7 +58,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(VersionEndPoint);
 
             JToken token = JObject.Parse(result);
-            var version = (String) token.SelectToken("apiVersions")[0].SelectToken("uriString");
+            var version = (string) token.SelectToken("apiVersions")[0].SelectToken("uristring");
 
             Assert.AreEqual(version, "v1.0");
         }

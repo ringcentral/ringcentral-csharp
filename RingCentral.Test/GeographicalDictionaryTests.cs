@@ -21,7 +21,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var countryName = (String) token.SelectToken("records")[0].SelectToken("name");
+            var countryName = (string) token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(countryName, "Afghanistan");
         }
@@ -35,7 +35,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var countryName = (String) token.SelectToken("name");
+            var countryName = (string) token.SelectToken("name");
 
             Assert.AreEqual(countryName, "United States");
         }
@@ -47,7 +47,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var languageName = (String) token.SelectToken("records")[0].SelectToken("name");
+            var languageName = (string) token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(languageName, "English (United States)");
         }
@@ -61,7 +61,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var timeZoneName = (String) token.SelectToken("name");
+            var timeZoneName = (string) token.SelectToken("name");
 
             Assert.AreEqual(timeZoneName, "English (United States)");
         }
@@ -75,7 +75,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var city = (String) token.SelectToken("records")[0].SelectToken("city");
+            var city = (string) token.SelectToken("records")[0].SelectToken("city");
 
             Assert.AreEqual(city, "Anchorage");
         }
@@ -89,7 +89,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var stateName = (String) token.SelectToken("name");
+            var stateName = (string) token.SelectToken("name");
 
             Assert.AreEqual(stateName, "Alaska");
         }
@@ -105,7 +105,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var stateName = (String) token.SelectToken("records")[0].SelectToken("name");
+            var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(stateName, "Alabama");
         }
@@ -119,7 +119,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var timeZoneName = (String) token.SelectToken("name");
+            var timeZoneName = (string) token.SelectToken("name");
 
             Assert.AreEqual(timeZoneName, "GMT");
         }
@@ -131,7 +131,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var stateName = (String) token.SelectToken("records")[0].SelectToken("name");
+            var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(stateName, "GMT");
         }

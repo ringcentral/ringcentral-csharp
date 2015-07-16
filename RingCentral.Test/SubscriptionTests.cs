@@ -24,7 +24,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(createResult);
 
-            var subscriptioniId = (String) token.SelectToken("id");
+            var subscriptioniId = (string) token.SelectToken("id");
 
             Assert.IsNotNullOrEmpty(subscriptioniId);
 
@@ -41,7 +41,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var status = (String) token.SelectToken("status");
+            var status = (string) token.SelectToken("status");
 
             Assert.AreEqual(status, "Active");
         }
@@ -55,7 +55,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(createResult);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.IsNotNullOrEmpty(id);
 
@@ -63,7 +63,7 @@ namespace RingCentral.Test
 
             token = JObject.Parse(getResult);
 
-            var getStatus = (String) token.SelectToken("status");
+            var getStatus = (string) token.SelectToken("status");
 
             Assert.AreEqual(getStatus, "Active");
         }
@@ -77,7 +77,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(createResult);
 
-            var subscriptioniId = (String) token.SelectToken("id");
+            var subscriptioniId = (string) token.SelectToken("id");
 
             Assert.IsNotNullOrEmpty(subscriptioniId);
 
@@ -85,7 +85,7 @@ namespace RingCentral.Test
 
             token = JObject.Parse(renewResult);
 
-            var getStatus = (String) token.SelectToken("status");
+            var getStatus = (string) token.SelectToken("status");
 
             Assert.AreEqual(getStatus, "Active");
         }
