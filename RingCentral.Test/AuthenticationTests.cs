@@ -13,11 +13,10 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            string result = RingCentralClient.Authenticate(UserName, Password, Extension);
 
-            Assert.NotNull(result);
+            Assert.NotNull(AuthResult);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(AuthResult);
             var accessToken = (String) token.SelectToken("access_token");
             var refreshToken = (String) token.SelectToken("refresh_token");
 
@@ -28,11 +27,10 @@ namespace RingCentral.Test
         [Test]
         public void TestRefresh()
         {
-            string authenticateResult = RingCentralClient.Authenticate(UserName, Password, Extension);
 
-            Assert.NotNull(authenticateResult);
+            Assert.NotNull(AuthResult);
 
-            JToken token = JObject.Parse(authenticateResult);
+            JToken token = JObject.Parse(AuthResult);
             var accessTokenBeforeRefresh = (String) token.SelectToken("access_token");
             var refreshTokenBeforeFresh = (String) token.SelectToken("refresh_token");
 

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Runtime.InteropServices;
+using NUnit.Framework;
 
 namespace RingCentral.Test
 {
@@ -13,7 +14,9 @@ namespace RingCentral.Test
         protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
 
         protected const string RevokeEndPoint = "/restapi/oauth/revoke";
+        protected const string AuthenticateEndPoint = "/restapi/oauth/token";
 
+        protected string AuthResult;
 
         public RingCentralClient RingCentralClient;
 
@@ -21,7 +24,7 @@ namespace RingCentral.Test
         public void SetUp()
         {
             RingCentralClient = new RingCentralClient(AppKey, AppSecret, ApiEndPoint);
-            RingCentralClient.Authenticate(UserName, Password, Extension);
+            AuthResult = RingCentralClient.Authenticate(UserName, Password, Extension, AuthenticateEndPoint);
         }
 
         [TestFixtureTearDown]
