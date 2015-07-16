@@ -17,6 +17,8 @@ namespace RingCentral
         private String AccessToken { get; set; }
         private String RefreshToken { get; set; }
 
+        private List<KeyValuePair<String, String>> QueryParameters { get; set; } 
+
         public RingCentralClient(String appKey, String appSecret, String apiEndPoint)
         {
             AppKey = appKey;
@@ -150,18 +152,18 @@ namespace RingCentral
         }
 
         //TODO: some get requests have query parameters in the request, need to add to client.GetAsync if present
-        public String GetRequest(String request,Dictionary<String,String> queryData )
+        public String GetRequest(String request, String queryString)
         {
+
             using (var client = new HttpClient())
             {
-                //var uriBuilder = new UriBuilder();
 
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
-
-                var accountResult = client.GetAsync(request);
+                
+                var accountResult = client.GetAsync(request + queryString);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
 
@@ -224,6 +226,39 @@ namespace RingCentral
         public Boolean IsAuthorized()
         {
             return true;
+        }
+
+        public String GetQueryString()
+        {
+            if (!QueryParameters.Any()) return null;
+
+            var queryString = "?";
+            var last = QueryParameters.Last();
+            foreach (KeyValuePair<string, string> parameter in QueryParameters)
+            {
+                queryString = queryString + (parameter.Key + "=" + parameter.Value );
+                if (!parameter.Equals(last))
+                {
+                    queryString += "&";
+                }
+            }
+
+            return queryString;
+        }
+
+        public void ClearQueryParameters()
+        {
+            QueryParameters = new List<KeyValuePair<string, string>>();
+        }
+
+        public void AddQueryParameters(String queryField, String queryValue)
+        {
+            if (QueryParameters == null)
+            {
+                QueryParameters = new List<KeyValuePair<string, string>>();
+            }
+
+            QueryParameters.Add(new KeyValuePair<string, string>(queryField, queryValue));
         }
     }
 }
