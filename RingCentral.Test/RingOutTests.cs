@@ -20,7 +20,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            var result = RingCentralClient.PostRequest(RingOutEndPoint, json);
+            RingCentralClient.SetJsonData(json);
+
+            var result = RingCentralClient.PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -37,7 +39,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            var result = RingCentralClient.PostRequest(RingOutEndPoint, json);
+            RingCentralClient.SetJsonData(json);
+
+            var result = RingCentralClient.PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -62,7 +66,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            var result = RingCentralClient.PostRequest(RingOutEndPoint, json);
+            RingCentralClient.SetJsonData(json);
+
+            var result = RingCentralClient.PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 

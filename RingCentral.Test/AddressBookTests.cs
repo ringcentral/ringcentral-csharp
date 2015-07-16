@@ -11,15 +11,15 @@ namespace RingCentral.Test
     {
         private const string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
 
-        //TODO: This isn't working, permissions related issue
-        [Test]
+        //TODO: This isn't working, a known permissions related issue
+        //[Test]
         public void GetAddressBook()
         {
             var result = RingCentralClient.GetRequest(AddressBookEndPoint);
         }
 
-        //TODO: This isn't working, permissions related issue
-        [Test]
+        //TODO: This isn't working, a known permissions related issue
+        //[Test]
         public void CreateAddressBookContact()
         {
             var jsonData = "{firstName\": \"Vanessa\", " +
@@ -31,11 +31,13 @@ namespace RingCentral.Test
                                "\"state\": \"CA\", " +
                                "\"zip\": \"94123\"}" +
                            "}";
-            var result = RingCentralClient.PostRequest(AddressBookEndPoint, jsonData);
+            RingCentralClient.SetJsonData(jsonData);
+
+            var result = RingCentralClient.PostRequest(AddressBookEndPoint);
         }
 
-        //TODO: This isn't working, permissions related issue
-        [Test]
+        //TODO: This isn't working, a known permissions related issue
+        //[Test]
         public void GetContactFromAddressBook()
         {
             const string contactId = "";
@@ -43,17 +45,17 @@ namespace RingCentral.Test
             var result = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + contactId);
         }
 
-        //TODO: This isn't working, permissions related issue
-        [Test]
+        //TODO: This isn't working, a known permissions related issue
+        //[Test]
         public void UpdateContactInAddressbook()
         {
             const string contactId = "";
 
-            var result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId,"");
+            var result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId);
         }
 
-        //TODO: This isn't working, permissions related issue
-        [Test]
+        //TODO: This isn't working, a known permissions related issue
+        //[Test]
         public void DeleteContactFromAddressBook()
         {
             const string contactId = "";

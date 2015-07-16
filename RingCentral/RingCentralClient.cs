@@ -17,7 +17,9 @@ namespace RingCentral
         private String AccessToken { get; set; }
         private String RefreshToken { get; set; }
 
-        private List<KeyValuePair<String, String>> QueryParameters { get; set; } 
+        private List<KeyValuePair<String, String>> QueryParameters { get; set; }
+        private Dictionary<String, String> FormParameters { get; set; }
+        private String JsonData { get; set; }
 
         public RingCentralClient(String appKey, String appSecret, String apiEndPoint)
         {
@@ -34,7 +36,7 @@ namespace RingCentral
             {
                 client.BaseAddress = new Uri(ApiEndpoint);
 
-                var formBodyContent = new Dictionary<String, String>
+                FormParameters = new Dictionary<String, String>
                                       {
                                           { "username", userName }, 
                                           { "password", Uri.EscapeUriString(password) }, 
@@ -42,7 +44,7 @@ namespace RingCentral
                                           { "grant_type", "password" }
                                       };
 
-                var result = AuthPostRequest("/restapi/oauth/token", formBodyContent);
+                var result = AuthPostRequest("/restapi/oauth/token");
 
                 JToken token = JObject.Parse(result);
                 AccessToken = (String)token.SelectToken("access_token");
@@ -56,9 +58,13 @@ namespace RingCentral
         public String Refresh(String request)
         {
 
-            var formBodyContent = new Dictionary<String, String> { { "grant_type", "refresh_token" }, { "refresh_token", RefreshToken } };
-
-            var result = AuthPostRequest(request, formBodyContent);
+            FormParameters = new Dictionary<String, String>
+                             {
+                                 { "grant_type", "refresh_token" }, 
+                                 { "refresh_token", RefreshToken }
+                             };
+            
+            var result = AuthPostRequest(request);
 
             JToken token = JObject.Parse(result);
 
@@ -72,47 +78,44 @@ namespace RingCentral
         public String Revoke(String request)
         {
 
-            var formBodyContent = new Dictionary<String, String> { { "token", AccessToken } };
+            FormParameters = new Dictionary<String, String>
+                             {
+                                 { "token", AccessToken }
+                             };
 
-            return AuthPostRequest(request, formBodyContent);
+            return AuthPostRequest(request);
 
         }
 
-        public String PostRequest(String request, Dictionary<String, String> formContent)
+        public String PostRequest(String request)
         {
             using (var client = new HttpClient())
             {
+
+                HttpContent httpContent = null;
+
                 client.BaseAddress = new Uri(ApiEndpoint);
 
+                if (JsonData != null)
+                {
+                    httpContent = new StringContent(JsonData, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+                }
+                else
+                {
+                    httpContent = GetFormParameters();
+                }
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+                
 
-                var formBodyList = formContent.ToList();
-
-                var content = new FormUrlEncodedContent(formBodyList);
-
-                var result = client.PostAsync(request, content).Result;
+                var result = client.PostAsync(request, httpContent).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
             }
         }
 
-        public String PostRequest(String request, String jsonData)
-        {
-            using (var client = new HttpClient())
-            {
-
-                client.BaseAddress = new Uri(ApiEndpoint);
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-
-                var result = client.PostAsync(request, new StringContent(jsonData, Encoding.UTF8, "application/json")).Result;
-
-                return result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        public String AuthPostRequest(String request, Dictionary<String, String> formContent)
+        public String AuthPostRequest(String request)
         {
             using (var client = new HttpClient())
             {
@@ -124,17 +127,12 @@ namespace RingCentral
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                var formBodyList = formContent.ToList();
-
-                var content = new FormUrlEncodedContent(formBodyList);
-
-                var result = client.PostAsync(request, content).Result;
+                var result = client.PostAsync(request, GetFormParameters()).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
             }
         }
 
-        
         public String GetRequest(String request)
         {
             using (var client = new HttpClient())
@@ -144,29 +142,13 @@ namespace RingCentral
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
 
+                request += GetQueryString();
+
                 var accountResult = client.GetAsync(request);
 
-                return accountResult.Result.Content.ReadAsStringAsync().Result;
-
-            }
-        }
-
-        //TODO: some get requests have query parameters in the request, need to add to client.GetAsync if present
-        public String GetRequest(String request, String queryString)
-        {
-
-            using (var client = new HttpClient())
-            {
-
-                client.BaseAddress = new Uri(ApiEndpoint);
-
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", AccessToken);
-                
-                var accountResult = client.GetAsync(request + queryString);
+                ClearQueryParameters();
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
-
             }
         }
 
@@ -180,45 +162,40 @@ namespace RingCentral
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
 
+                request += GetQueryString();
+
                 var accountResult = client.DeleteAsync(request);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
-
             }
         }
 
-        public String PutRequest(String request, Dictionary<String, String> formContent)
+        public String PutRequest(String request)
         {
             using (var client = new HttpClient())
             {
+                HttpContent httpContent;
+
                 client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
 
-                var formBodyList = formContent.ToList();
+                if (JsonData != null)
+                {
+                    httpContent = new StringContent(JsonData, Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+                }
+                else
+                {
+                    httpContent = GetFormParameters();
+                }
 
-                var content = new FormUrlEncodedContent(formBodyList);
+                request += GetQueryString();
 
-                var accountResult = client.PutAsync(request, content);
+                var accountResult = client.PutAsync(request, httpContent);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        public String PutRequest(String request, String jsonData)
-        {
-            using (var client = new HttpClient())
-            {
-
-                client.BaseAddress = new Uri(ApiEndpoint);
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-
-                var result = client.PutAsync(request, new StringContent(jsonData, Encoding.UTF8, "application/json")).Result;
-
-                return result.Content.ReadAsStringAsync().Result;
             }
         }
 
@@ -230,11 +207,13 @@ namespace RingCentral
 
         public String GetQueryString()
         {
-            if (!QueryParameters.Any()) return null;
+            if (QueryParameters == null || !QueryParameters.Any()) return "";
 
             var queryString = "?";
+            
             var last = QueryParameters.Last();
-            foreach (KeyValuePair<string, string> parameter in QueryParameters)
+
+            foreach (var parameter in QueryParameters)
             {
                 queryString = queryString + (parameter.Key + "=" + parameter.Value );
                 if (!parameter.Equals(last))
@@ -260,5 +239,43 @@ namespace RingCentral
 
             QueryParameters.Add(new KeyValuePair<string, string>(queryField, queryValue));
         }
+
+        public void AddFormParameter(String formName, String formValue)
+        {
+            if (FormParameters == null)
+            {
+                FormParameters = new Dictionary<string, string>();
+            }
+
+            FormParameters.Add(formName,formValue);
+        }
+
+        public HttpContent GetFormParameters()
+        {
+            var formBodyList = FormParameters.ToList();
+
+            return new FormUrlEncodedContent(formBodyList);
+        }
+
+        public void ClearFormParameters()
+        {
+            FormParameters = new Dictionary<string, string>();
+        }
+
+        public void SetJsonData(String jsonData)
+        {
+            JsonData = jsonData;
+        }
+
+        public String GetJsonData()
+        {
+            return JsonData;
+        }
+
+        public void ClearJsonDat()
+        {
+            JsonData = null;
+        }
+
     }
 }
