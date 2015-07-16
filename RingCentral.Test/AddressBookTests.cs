@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace RingCentral.Test
 {
@@ -15,25 +11,25 @@ namespace RingCentral.Test
         //[Test]
         public void GetAddressBook()
         {
-            var result = RingCentralClient.GetRequest(AddressBookEndPoint);
+            string result = RingCentralClient.GetRequest(AddressBookEndPoint);
         }
 
         //TODO: This isn't working, a known permissions related issue
         //[Test]
         public void CreateAddressBookContact()
         {
-            var jsonData = "{firstName\": \"Vanessa\", " +
-                           "\"lastName\": \"May\", " +
-                           "\"businessAddress\": " +
-                           "{ " +
-                               "\"street\": \"2 Marina Blvd\", " +
-                               "\"city\": \"San-Francisco\", " +
-                               "\"state\": \"CA\", " +
-                               "\"zip\": \"94123\"}" +
-                           "}";
+            string jsonData = "{firstName\": \"Vanessa\", " +
+                              "\"lastName\": \"May\", " +
+                              "\"businessAddress\": " +
+                              "{ " +
+                              "\"street\": \"2 Marina Blvd\", " +
+                              "\"city\": \"San-Francisco\", " +
+                              "\"state\": \"CA\", " +
+                              "\"zip\": \"94123\"}" +
+                              "}";
             RingCentralClient.SetJsonData(jsonData);
 
-            var result = RingCentralClient.PostRequest(AddressBookEndPoint);
+            string result = RingCentralClient.PostRequest(AddressBookEndPoint);
         }
 
         //TODO: This isn't working, a known permissions related issue
@@ -42,7 +38,7 @@ namespace RingCentral.Test
         {
             const string contactId = "";
 
-            var result = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + contactId);
+            string result = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + contactId);
         }
 
         //TODO: This isn't working, a known permissions related issue
@@ -51,7 +47,7 @@ namespace RingCentral.Test
         {
             const string contactId = "";
 
-            var result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId);
+            string result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId);
         }
 
         //TODO: This isn't working, a known permissions related issue
@@ -60,7 +56,7 @@ namespace RingCentral.Test
         {
             const string contactId = "";
 
-            var result = RingCentralClient.DeleteRequest(AddressBookEndPoint + "/" + contactId);
+            string result = RingCentralClient.DeleteRequest(AddressBookEndPoint + "/" + contactId);
         }
     }
 }
