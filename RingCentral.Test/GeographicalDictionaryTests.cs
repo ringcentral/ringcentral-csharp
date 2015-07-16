@@ -42,6 +42,7 @@ namespace RingCentral.Test
 
             Assert.AreEqual(countryName, "Afghanistan");
         }
+
         [Test]
         public void GetStateById()
         {
@@ -55,11 +56,19 @@ namespace RingCentral.Test
 
             Assert.AreEqual(stateName, "Alaska");
         }
+
         [Test]
         public void GetStates()
         {
-            var result = RingCentralClient.GetRequest(StateEndPoint);
 
+            RingCentralClient.AddQueryParameters("countryId", "1");
+            RingCentralClient.AddQueryParameters("withPhoneNumbers", "True");
+            RingCentralClient.AddQueryParameters("perPage", "5");
+
+            var result = RingCentralClient.GetRequest(StateEndPoint, RingCentralClient.GetQueryString());
+            
+            RingCentralClient.ClearQueryParameters();
+            
             JToken token = JObject.Parse(result);
 
             var stateName = (String)token.SelectToken("records")[0].SelectToken("name");
@@ -71,8 +80,19 @@ namespace RingCentral.Test
         [Test]
         public void GetLocation()
         {
-            var result = RingCentralClient.GetRequest(LocationEndPoint);
+            RingCentralClient.AddQueryParameters("stateId", "13");
+
+            var result = RingCentralClient.GetRequest(LocationEndPoint,RingCentralClient.GetQueryString());
+
+            RingCentralClient.ClearQueryParameters();
+
+            JToken token = JObject.Parse(result);
+
+            var city = (String)token.SelectToken("records")[0].SelectToken("city");
+
+            Assert.AreEqual(city, "Anchorage");
         }
+
         [Test]
         public void GetTimeZoneById()
         {
