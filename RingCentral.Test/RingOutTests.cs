@@ -23,7 +23,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.IsNotNull(id);
 
@@ -43,7 +43,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.IsNotNull(id);
 
@@ -51,7 +51,7 @@ namespace RingCentral.Test
 
             token = JObject.Parse(getStatusResult);
 
-            var message = (String) token.SelectToken("status").SelectToken("callStatus");
+            var message = (string) token.SelectToken("status").SelectToken("callStatus");
 
             Assert.AreEqual(message, "InProgress");
         }
@@ -69,7 +69,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var callStatus = (String) token.SelectToken("status").SelectToken("callStatus");
+            var callStatus = (string) token.SelectToken("status").SelectToken("callStatus");
 
             Assert.AreEqual(callStatus, "InProgress");
         }

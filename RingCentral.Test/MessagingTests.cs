@@ -32,7 +32,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(getResult);
 
-            var availability = (String) token.SelectToken("availability");
+            var availability = (string) token.SelectToken("availability");
 
             Assert.AreEqual(availability, "Purged");
         }
@@ -55,9 +55,9 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(ExtensionMessageEndPoint);
 
             JToken token = JObject.Parse(result);
-            var phoneNumber = (String) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
+            var phoneNumber = (string) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
-            Assert.AreEqual(phoneNumber.Replace("+", String.Empty), UserName);
+            Assert.AreEqual(phoneNumber.Replace("+", string.Empty), UserName);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.AreEqual(messageStore, id);
         }
@@ -99,7 +99,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.PostRequest(SmsEndPoint);
 
             JToken token = JObject.Parse(result);
-            var messageStatus = (String) token.SelectToken("messageStatus");
+            var messageStatus = (string) token.SelectToken("messageStatus");
 
             Assert.AreEqual(messageStatus, "Sent");
         }
@@ -115,7 +115,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var availability = (String) token.SelectToken("availability");
+            var availability = (string) token.SelectToken("availability");
 
             if (availability.Equals("Purged"))
             {
@@ -123,7 +123,7 @@ namespace RingCentral.Test
             }
             else
             {
-                var readStatus = (String) token.SelectToken("readStatus");
+                var readStatus = (string) token.SelectToken("readStatus");
                 Assert.AreEqual("Read", readStatus);
             }
         }

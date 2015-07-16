@@ -16,14 +16,14 @@ namespace RingCentral.Http
         private const string Put = "PUT";
         private const string Patch = "PATCH";
 
-        protected static List<String> AllowedMethods = new List<String>(new [] {Get,Post,Put,Delete});
+        protected static List<string> AllowedMethods = new List<string>(new [] {Get,Post,Put,Delete});
 
-        protected String Method;
-        protected String Url;
-        protected List<String> Query;
-        protected List<String> Body;
+        protected string Method;
+        protected string Url;
+        protected List<string> Query;
+        protected List<string> Body;
 
-        public Request(String method, String url, List<String> query, List<String> body)
+        public Request(string method, string url, List<string> query, List<string> body)
         {
             Method = method;
             Url = url;
@@ -34,37 +34,37 @@ namespace RingCentral.Http
             SetHeaders(headers);
         }
 
-        public Boolean IsPost()
+        public bool IsPost()
         {
             return Method.Equals(Post);
         }
 
-        public Boolean IsGet()
+        public bool IsGet()
         {
             return Method.Equals(Get);
         }
 
-        public Boolean IsDelete()
+        public bool IsDelete()
         {
             return Method.Equals(Delete);
         }
 
-        public Boolean IsPut()
+        public bool IsPut()
         {
             return Method.Equals(Put);
         }
 
-        public Boolean IsLoaded()
+        public bool IsLoaded()
         {
             return false;
         }
 
-        public String GetMethod()
+        public string GetMethod()
         {
             return Method;
         }
 
-        public void SetMethod(String method)
+        public void SetMethod(string method)
         {
             if (!AllowedMethods.Contains(method))
             {
@@ -74,32 +74,32 @@ namespace RingCentral.Http
             Method = method;
         }
 
-        public String GetUrl()
+        public string GetUrl()
         {
             return Url;
         }
 
-        public void SetUrl(String url)
+        public void SetUrl(string url)
         {
             Url = url;
         }
 
-        public List<String> GetQuery()
+        public List<string> GetQuery()
         {
             return Query;
         }
 
-        public void SetQuery(List<String> query)
+        public void SetQuery(List<string> query)
         {
             Query = query;
         }
 
-        public List<String> GetBody()
+        public List<string> GetBody()
         {
             return Body;
         }
 
-        public void SetBody(List<String> body)
+        public void SetBody(List<string> body)
         {
             Body = body;
         }
@@ -109,7 +109,7 @@ namespace RingCentral.Http
           
         }
 
-        private String GetEncodedBody()
+        private string GetEncodedBody()
         {
             if (IsJson())
             {
@@ -124,7 +124,7 @@ namespace RingCentral.Http
             return "";
         }
 
-        private String GetUrlWithQuery()
+        private string GetUrlWithQuery()
         {
             var url = Url;
             //TODO: Determine if Query is the right datatype and then properly encode

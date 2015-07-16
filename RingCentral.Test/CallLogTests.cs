@@ -17,7 +17,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/active-calls");
             JToken token = JObject.Parse(result);
 
-            var uri = (String) token.SelectToken("uri");
+            var uri = (string) token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -30,7 +30,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/extension/~/active-calls");
             JToken token = JObject.Parse(result);
 
-            var uri = (String) token.SelectToken("uri");
+            var uri = (string) token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -43,7 +43,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/call-log/");
             JToken token = JObject.Parse(result);
 
-            var uri = (String) token.SelectToken("uri");
+            var uri = (string) token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -56,7 +56,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/extension/~/call-log");
             JToken token = JObject.Parse(result);
 
-            var uri = (String) token.SelectToken("uri");
+            var uri = (string) token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -70,7 +70,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/extension/~/call-log/" + callLogId);
             JToken token = JObject.Parse(result);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.AreEqual(id, callLogId);
         }
@@ -84,7 +84,7 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(CallLogEndPoint + "/call-log/" + callLogId);
             JToken token = JObject.Parse(result);
 
-            var id = (String) token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.AreEqual(id, callLogId);
         }

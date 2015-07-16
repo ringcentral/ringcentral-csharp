@@ -13,10 +13,10 @@ namespace RingCentral.Http
     {
 
         private int Status;
-        private String StatusText;
-        private String Body;
+        private string StatusText;
+        private string Body;
 
-        public Response(int status, String statusText, String body, Dictionary<String, String> headers)
+        public Response(int status, string statusText, string body, Dictionary<string, string> headers)
         {
             Body = body;
             StatusText = statusText;
@@ -26,12 +26,12 @@ namespace RingCentral.Http
             SetHeaders(headers);
         }
 
-        public Boolean CheckStatus()
+        public bool CheckStatus()
         {
             return Status >= 200 && Status < 300;
         }
 
-        public String GetBody()
+        public string GetBody()
         {
             return Body;
         }
@@ -48,7 +48,7 @@ namespace RingCentral.Http
         }
         
         //TODO: Method unimplemented
-        public List<String> GetResponse()
+        public List<string> GetResponse()
         {
             return null;
         }
@@ -58,12 +58,12 @@ namespace RingCentral.Http
             return Status;
         }
 
-        public String GetStatusText()
+        public string GetStatusText()
         {
             return StatusText;
         }
 
-        public String GetError()
+        public string GetError()
         {
             if (CheckStatus())
             {
@@ -74,15 +74,15 @@ namespace RingCentral.Http
 
             var data = GetJson();
 
-            if (!String.IsNullOrEmpty((string) (data["message"])))
+            if (!string.IsNullOrEmpty((string) (data["message"])))
             {
                 message = (string) (data["message"]);
             }
-            if (!String.IsNullOrEmpty((string)(data["error_description"])))
+            if (!string.IsNullOrEmpty((string)(data["error_description"])))
             {
                 message = (string)(data["error_description"]);
             }
-            if (!String.IsNullOrEmpty((string)(data["description"])))
+            if (!string.IsNullOrEmpty((string)(data["description"])))
             {
                 message = (string)(data["description"]);
             }

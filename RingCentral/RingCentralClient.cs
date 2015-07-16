@@ -12,36 +12,36 @@ namespace RingCentral
 {
     public class RingCentralClient
     {
-        public RingCentralClient(String appKey, String appSecret, String apiEndPoint)
+        public RingCentralClient(string appKey, string appSecret, string apiEndPoint)
         {
             AppKey = appKey;
             AppSecret = appSecret;
             ApiEndpoint = apiEndPoint;
         }
 
-        private String AppKey { get; set; }
-        private String AppSecret { get; set; }
-        private String ApiEndpoint { get; set; }
-        private String AccessToken { get; set; }
-        private String RefreshToken { get; set; }
+        private string AppKey { get; set; }
+        private string AppSecret { get; set; }
+        private string ApiEndpoint { get; set; }
+        private string AccessToken { get; set; }
+        private string RefreshToken { get; set; }
         
         private long AccessTokenExpiresIn { get; set; }
         private long AccessTokenExpireTime { get; set; }
         private long RefreshTokenExpiresIn { get; set; }
         private long RefreshTokenExpireTime { get; set; }
 
-        private List<KeyValuePair<String, String>> QueryParameters { get; set; }
-        private Dictionary<String, String> FormParameters { get; set; }
-        private String JsonData { get; set; }
+        private List<KeyValuePair<string, string>> QueryParameters { get; set; }
+        private Dictionary<string, string> FormParameters { get; set; }
+        private string JsonData { get; set; }
 
 
-        public String Authenticate(string userName, String password, String extension, String endPoint)
+        public string Authenticate(string userName, string password, string extension, string endPoint)
         {
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiEndpoint);
 
-                FormParameters = new Dictionary<String, String>
+                FormParameters = new Dictionary<string, string>
                                  {
                                      {"username", userName},
                                      {"password", Uri.EscapeUriString(password)},
@@ -53,8 +53,8 @@ namespace RingCentral
 
                 JToken token = JObject.Parse(result);
                
-                AccessToken = (String) token.SelectToken("access_token");
-                RefreshToken = (String) token.SelectToken("refresh_token");
+                AccessToken = (string) token.SelectToken("access_token");
+                RefreshToken = (string) token.SelectToken("refresh_token");
                 AccessTokenExpiresIn = (long) token.SelectToken("expires_in");
                 RefreshTokenExpiresIn = (long) token.SelectToken("refresh_token_expires_in");
 
@@ -68,11 +68,11 @@ namespace RingCentral
             }
         }
 
-        public String Refresh(String request)
+        public string Refresh(string request)
         {
             if (!IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
             
-            FormParameters = new Dictionary<String, String>
+            FormParameters = new Dictionary<string, string>
                              {
                                  {"grant_type", "refresh_token"},
                                  {"refresh_token", RefreshToken}
@@ -82,8 +82,8 @@ namespace RingCentral
 
             JToken token = JObject.Parse(result);
 
-            AccessToken = (String) token.SelectToken("access_token");
-            RefreshToken = (String) token.SelectToken("refresh_token");
+            AccessToken = (string) token.SelectToken("access_token");
+            RefreshToken = (string) token.SelectToken("refresh_token");
             AccessTokenExpiresIn = (long) token.SelectToken("expires_in");
             RefreshTokenExpiresIn = (long) token.SelectToken("refresh_token_expires_in");
 
@@ -96,9 +96,9 @@ namespace RingCentral
             return result;
         }
 
-        public String Revoke(String request)
+        public string Revoke(string request)
         {
-            FormParameters = new Dictionary<String, String>
+            FormParameters = new Dictionary<string, string>
                              {
                                  {"token", AccessToken}
                              };
@@ -106,7 +106,7 @@ namespace RingCentral
             return AuthPostRequest(request);
         }
 
-        public String AuthPostRequest(String request)
+        public string AuthPostRequest(string request)
         {
             using (var client = new HttpClient())
             {
@@ -123,7 +123,7 @@ namespace RingCentral
             }
         }
 
-        public String PostRequest(String request)
+        public string PostRequest(string request)
         {
             if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -152,7 +152,7 @@ namespace RingCentral
             }
         }
 
-        public String GetRequest(String request)
+        public string GetRequest(string request)
         {
             if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -163,7 +163,7 @@ namespace RingCentral
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
 
-                request += GetQueryString();
+                request += GetQuerystring();
 
                 Task<HttpResponseMessage> accountResult = client.GetAsync(request);
 
@@ -173,7 +173,7 @@ namespace RingCentral
             }
         }
 
-        public String DeleteRequest(String request)
+        public string DeleteRequest(string request)
         {
             if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -184,7 +184,7 @@ namespace RingCentral
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", AccessToken);
 
-                request += GetQueryString();
+                request += GetQuerystring();
 
                 Task<HttpResponseMessage> accountResult = client.DeleteAsync(request);
 
@@ -192,7 +192,7 @@ namespace RingCentral
             }
         }
 
-        public String PutRequest(String request)
+        public string PutRequest(string request)
         {
             if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -215,7 +215,7 @@ namespace RingCentral
                     httpContent = GetFormParameters();
                 }
 
-                request += GetQueryString();
+                request += GetQuerystring();
 
                 Task<HttpResponseMessage> accountResult = client.PutAsync(request, httpContent);
 
@@ -223,41 +223,41 @@ namespace RingCentral
             }
         }
 
-        public Boolean IsTokenValid(long accessToken)
+        public bool IsTokenValid(long accessToken)
         {
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
             return accessToken > currentTimeInMilliseconds;
         }
 
-        public Boolean IsAccessTokenValid()
+        public bool IsAccessTokenValid()
         {
             return IsTokenValid(AccessTokenExpireTime);
         }
 
-        public Boolean IsRefreshTokenValid()
+        public bool IsRefreshTokenValid()
         {
             return IsTokenValid(RefreshTokenExpireTime);
         }
 
-        public String GetQueryString()
+        public string GetQuerystring()
         {
             if (QueryParameters == null || !QueryParameters.Any()) return "";
 
-            string queryString = "?";
+            string querystring = "?";
 
             KeyValuePair<string, string> last = QueryParameters.Last();
 
             foreach (var parameter in QueryParameters)
             {
-                queryString = queryString + (parameter.Key + "=" + parameter.Value);
+                querystring = querystring + (parameter.Key + "=" + parameter.Value);
                 if (!parameter.Equals(last))
                 {
-                    queryString += "&";
+                    querystring += "&";
                 }
             }
 
-            return queryString;
+            return querystring;
         }
 
         public void ClearQueryParameters()
@@ -265,7 +265,7 @@ namespace RingCentral
             QueryParameters = new List<KeyValuePair<string, string>>();
         }
 
-        public void AddQueryParameters(String queryField, String queryValue)
+        public void AddQueryParameters(string queryField, string queryValue)
         {
             if (QueryParameters == null)
             {
@@ -275,7 +275,7 @@ namespace RingCentral
             QueryParameters.Add(new KeyValuePair<string, string>(queryField, queryValue));
         }
 
-        public void AddFormParameter(String formName, String formValue)
+        public void AddFormParameter(string formName, string formValue)
         {
             if (FormParameters == null)
             {
@@ -297,12 +297,12 @@ namespace RingCentral
             FormParameters = new Dictionary<string, string>();
         }
 
-        public void SetJsonData(String jsonData)
+        public void SetJsonData(string jsonData)
         {
             JsonData = jsonData;
         }
 
-        public String GetJsonData()
+        public string GetJsonData()
         {
             return JsonData;
         }
