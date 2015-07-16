@@ -34,13 +34,27 @@ namespace RingCentral.Test
         public void UpdateMessage()
         {
             const string messageStore = "1153141004";
-            var result = RingCentralClient.PutRequest(ExtensionMessageEndPoint + messageStore, "{\"readStatus\": \"Read\"}");
+
+            RingCentralClient.SetJsonData("{\"readStatus\": \"Read\"}");
+
+            var result = RingCentralClient.PutRequest(ExtensionMessageEndPoint + messageStore);
 
             JToken token = JObject.Parse(result);
 
-            var readStatus = (String)token.SelectToken("readStatus");
+            var availability = (String)token.SelectToken("availability");
 
-            Assert.AreEqual("Read", readStatus);
+            if (availability.Equals("Purged"))
+            {
+                Assert.AreEqual("Purged", availability);
+            }
+            else
+            {
+               var readStatus = (String)token.SelectToken("readStatus");
+               Assert.AreEqual("Read", readStatus);
+            }
+           
+
+            
         }
 
         //The messageStore in this test needs to exist or have existed at one point otherwise it will fail
@@ -109,7 +123,9 @@ namespace RingCentral.Test
             var smsHelper = new SmsHelper(toPhone, UserName, smsText);
             var jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            var result = RingCentralClient.PostRequest(SmsEndPoint, jsonObject);
+            RingCentralClient.SetJsonData(jsonObject);
+
+            var result = RingCentralClient.PostRequest(SmsEndPoint);
 
             JToken token = JObject.Parse(result);
             var messageStatus = (String)token.SelectToken("messageStatus");

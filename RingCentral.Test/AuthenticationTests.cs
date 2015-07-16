@@ -16,7 +16,6 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            RingCentralClient.Revoke(RevokeEndPoint);
             var result = RingCentralClient.Authenticate(UserName, Password, Extension);
 
             Assert.NotNull(result);
@@ -32,7 +31,7 @@ namespace RingCentral.Test
         [Test]
         public void TestRefresh()
         {
-            RingCentralClient.Revoke(RevokeEndPoint);
+            
             var authenticateResult = RingCentralClient.Authenticate(UserName, Password, Extension);
 
             Assert.NotNull(authenticateResult);

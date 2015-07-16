@@ -65,9 +65,7 @@ namespace RingCentral.Test
             RingCentralClient.AddQueryParameters("withPhoneNumbers", "True");
             RingCentralClient.AddQueryParameters("perPage", "5");
 
-            var result = RingCentralClient.GetRequest(StateEndPoint, RingCentralClient.GetQueryString());
-            
-            RingCentralClient.ClearQueryParameters();
+            var result = RingCentralClient.GetRequest(StateEndPoint);
             
             JToken token = JObject.Parse(result);
 
@@ -76,15 +74,12 @@ namespace RingCentral.Test
             Assert.AreEqual(stateName, "Alabama");
         }
 
-        //TODO: need to modify GetRequest to handle query parameters
         [Test]
         public void GetLocation()
         {
             RingCentralClient.AddQueryParameters("stateId", "13");
 
-            var result = RingCentralClient.GetRequest(LocationEndPoint,RingCentralClient.GetQueryString());
-
-            RingCentralClient.ClearQueryParameters();
+            var result = RingCentralClient.GetRequest(LocationEndPoint);
 
             JToken token = JObject.Parse(result);
 
