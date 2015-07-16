@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,13 +24,18 @@ namespace RingCentral
         private String ApiEndpoint { get; set; }
         private String AccessToken { get; set; }
         private String RefreshToken { get; set; }
+        
+        private long AccessTokenExpiresIn { get; set; }
+        private long AccessTokenExpireTime { get; set; }
+        private long RefreshTokenExpiresIn { get; set; }
+        private long RefreshTokenExpireTime { get; set; }
 
         private List<KeyValuePair<String, String>> QueryParameters { get; set; }
         private Dictionary<String, String> FormParameters { get; set; }
         private String JsonData { get; set; }
 
 
-        public String Authenticate(string userName, String password, String extension)
+        public String Authenticate(string userName, String password, String extension, String endPoint)
         {
             using (var client = new HttpClient())
             {
@@ -43,11 +49,20 @@ namespace RingCentral
                                      {"grant_type", "password"}
                                  };
 
-                string result = AuthPostRequest("/restapi/oauth/token");
+                string result = AuthPostRequest(endPoint);
 
                 JToken token = JObject.Parse(result);
+               
                 AccessToken = (String) token.SelectToken("access_token");
                 RefreshToken = (String) token.SelectToken("refresh_token");
+                AccessTokenExpiresIn = (long) token.SelectToken("expires_in");
+                RefreshTokenExpiresIn = (long) token.SelectToken("refresh_token_expires_in");
+
+                var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+                AccessTokenExpireTime = (AccessTokenExpiresIn + currentTimeInMilliseconds);
+                                
+                RefreshTokenExpireTime = (RefreshTokenExpiresIn + currentTimeInMilliseconds);
 
                 return result;
             }
@@ -55,6 +70,8 @@ namespace RingCentral
 
         public String Refresh(String request)
         {
+            if (!IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
+            
             FormParameters = new Dictionary<String, String>
                              {
                                  {"grant_type", "refresh_token"},
@@ -67,6 +84,14 @@ namespace RingCentral
 
             AccessToken = (String) token.SelectToken("access_token");
             RefreshToken = (String) token.SelectToken("refresh_token");
+            AccessTokenExpiresIn = (long) token.SelectToken("expires_in");
+            RefreshTokenExpiresIn = (long) token.SelectToken("refresh_token_expires_in");
+
+            var currentTimeInMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
+            AccessTokenExpireTime = (AccessTokenExpiresIn + currentTimeInMilliseconds);
+
+            RefreshTokenExpireTime = (RefreshTokenExpiresIn + currentTimeInMilliseconds);
 
             return result;
         }
@@ -81,8 +106,27 @@ namespace RingCentral
             return AuthPostRequest(request);
         }
 
+        public String AuthPostRequest(String request)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiEndpoint);
+
+                byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
+
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                HttpResponseMessage result = client.PostAsync(request, GetFormParameters()).Result;
+
+                return result.Content.ReadAsStringAsync().Result;
+            }
+        }
+
         public String PostRequest(String request)
         {
+            if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
+
             using (var client = new HttpClient())
             {
                 HttpContent httpContent = null;
@@ -108,25 +152,10 @@ namespace RingCentral
             }
         }
 
-        public String AuthPostRequest(String request)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiEndpoint);
-
-                byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
-
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-                HttpResponseMessage result = client.PostAsync(request, GetFormParameters()).Result;
-
-                return result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
         public String GetRequest(String request)
         {
+            if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiEndpoint);
@@ -146,6 +175,8 @@ namespace RingCentral
 
         public String DeleteRequest(String request)
         {
+            if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiEndpoint);
@@ -163,6 +194,8 @@ namespace RingCentral
 
         public String PutRequest(String request)
         {
+            if (!IsAccessTokenValid()) throw new Exception("Access has Expired");
+
             using (var client = new HttpClient())
             {
                 HttpContent httpContent;
@@ -190,10 +223,21 @@ namespace RingCentral
             }
         }
 
-        //TODO: need to implement, returns based on token expiration time
-        public Boolean IsAuthorized()
+        public Boolean IsTokenValid(long accessToken)
         {
-            return true;
+            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+            return accessToken > currentTimeInMilliseconds;
+        }
+
+        public Boolean IsAccessTokenValid()
+        {
+            return IsTokenValid(AccessTokenExpireTime);
+        }
+
+        public Boolean IsRefreshTokenValid()
+        {
+            return IsTokenValid(RefreshTokenExpireTime);
         }
 
         public String GetQueryString()
