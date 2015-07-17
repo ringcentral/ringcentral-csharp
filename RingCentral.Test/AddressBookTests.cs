@@ -9,7 +9,6 @@ namespace RingCentral.Test
     {
         private const string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
 
-        //TODO: This isn't working, a known permissions related issue
         [Test]
         public void GetAddressBook()
         {
@@ -21,7 +20,6 @@ namespace RingCentral.Test
             Assert.AreEqual(firstName, "Test");
         }
 
-        //TODO: This isn't working, a known permissions related issue
         [Test]
         public void CreateAddressBookContact()
         {
@@ -46,7 +44,6 @@ namespace RingCentral.Test
             Assert.AreEqual(firstNameResponse, "Vanessa");
         }
 
-        //TODO: This isn't working, a known permissions related issue
         [Test]
         public void GetContactFromAddressBook()
         {
@@ -60,7 +57,6 @@ namespace RingCentral.Test
             Assert.AreEqual(firstNameResponse, "Vanessa");
         }
 
-        //TODO: This isn't working, a known permissions related issue
         [Test]
         public void UpdateContactInAddressbook()
         {
@@ -85,7 +81,6 @@ namespace RingCentral.Test
             Assert.AreEqual(street, "3 Marina Blvd");
         }
 
-        //TODO: This isn't working, a known permissions related issue
         [Test]
         public void DeleteContactFromAddressBook()
         {

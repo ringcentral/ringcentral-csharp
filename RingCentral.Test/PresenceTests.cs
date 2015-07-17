@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace RingCentral.Test
@@ -8,13 +9,16 @@ namespace RingCentral.Test
     {
         private const string PresenceEndPoint = "/restapi/v1.0/account/~/extension/~/presence";
 
-
-        //TODO: this isn't working in the online api tool so it doesn't assert properly here, seems to be permissions related
-        //[Test]
+        [Test]
         public void GetPresence()
         {
             string result = RingCentralClient.GetRequest(PresenceEndPoint);
-            Debug.WriteLine(result);
+
+            JToken token = JObject.Parse(result);
+
+            var presenceStatus = (string)token.SelectToken("presenceStatus");
+
+            Assert.AreEqual(presenceStatus, "Available");
         }
     }
 }
