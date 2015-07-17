@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RingCentral.Subscription
 {
-    class Subscription
+    public class Subscription
     {
     }
 }

@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 
 namespace RingCentral.Test
 {
@@ -8,17 +10,24 @@ namespace RingCentral.Test
         private const string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
 
         //TODO: This isn't working, a known permissions related issue
-        //[Test]
+        [Test]
         public void GetAddressBook()
         {
             string result = RingCentralClient.GetRequest(AddressBookEndPoint);
+
+            JToken token = JObject.Parse(result);
+            var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
+
+            Assert.AreEqual(firstName, "Test");
         }
 
         //TODO: This isn't working, a known permissions related issue
-        //[Test]
+        [Test]
         public void CreateAddressBookContact()
         {
-            string jsonData = "{firstName\": \"Vanessa\", " +
+
+
+            string jsonData = "{\"firstName\": \"Vanessa\", " +
                               "\"lastName\": \"May\", " +
                               "\"businessAddress\": " +
                               "{ " +
@@ -30,33 +39,83 @@ namespace RingCentral.Test
             RingCentralClient.SetJsonData(jsonData);
 
             string result = RingCentralClient.PostRequest(AddressBookEndPoint);
+
+            JToken token = JObject.Parse(result);
+            var firstNameResponse = (string)token.SelectToken("firstName");
+
+            Assert.AreEqual(firstNameResponse, "Vanessa");
         }
 
         //TODO: This isn't working, a known permissions related issue
-        //[Test]
+        [Test]
         public void GetContactFromAddressBook()
         {
-            const string contactId = "";
+            const string contactId = "389441004";
 
             string result = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + contactId);
+
+            JToken token = JObject.Parse(result);
+            var firstNameResponse = (string)token.SelectToken("firstName");
+
+            Assert.AreEqual(firstNameResponse, "Vanessa");
         }
 
         //TODO: This isn't working, a known permissions related issue
-        //[Test]
+        [Test]
         public void UpdateContactInAddressbook()
         {
-            const string contactId = "";
+            string jsonData = "{\"firstName\": \"Vanessa\", " +
+                              "\"lastName\": \"May\", " +
+                              "\"businessAddress\": " +
+                              "{ " +
+                              "\"street\": \"3 Marina Blvd\", " +
+                              "\"city\": \"San-Francisco\", " +
+                              "\"state\": \"CA\", " +
+                              "\"zip\": \"94123\"}" +
+                              "}";
+            RingCentralClient.SetJsonData(jsonData);
+
+            const string contactId = "389441004";
 
             string result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId);
+
+            JToken token = JObject.Parse(result);
+            var street = (string)token.SelectToken("businessAddress").SelectToken("street");
+
+            Assert.AreEqual(street, "3 Marina Blvd");
         }
 
         //TODO: This isn't working, a known permissions related issue
-        //[Test]
+        [Test]
         public void DeleteContactFromAddressBook()
         {
-            const string contactId = "";
 
-            string result = RingCentralClient.DeleteRequest(AddressBookEndPoint + "/" + contactId);
+            string jsonData = "{\"firstName\": \"Delete\", " +
+                              "\"lastName\": \"Me\", " +
+                              "\"businessAddress\": " +
+                              "{ " +
+                              "\"street\": \"2 Marina Blvd\", " +
+                              "\"city\": \"San-Francisco\", " +
+                              "\"state\": \"CA\", " +
+                              "\"zip\": \"94123\"}" +
+                              "}";
+            RingCentralClient.SetJsonData(jsonData);
+
+            string createResult = RingCentralClient.PostRequest(AddressBookEndPoint);
+
+            JToken token = JObject.Parse(createResult);
+            var id = (string)token.SelectToken("id");
+
+            Assert.NotNull(id);
+
+            RingCentralClient.DeleteRequest(AddressBookEndPoint + "/" + id);
+
+            string getResult = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + id);
+            token = JObject.Parse(getResult);
+            var message = (string)token.SelectToken("message");
+
+            Assert.AreEqual(message, "Resource for parameter [contactId] is not found");
+
         }
     }
 }
