@@ -256,7 +256,10 @@ namespace RingCentral
             var output = Regex.Split(multiResult, "--Boundary([^;]+)");
 
             var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+            
             var responses = new List<string>();
+            
+            //We Can convert this to linq but for the sake of readability we'll leave it like this.
             foreach (var s in splitString)
             {
                 if (s.Contains("{"))
@@ -267,7 +270,6 @@ namespace RingCentral
 
                     responses.Add(token.ToString());
                 }
-
             }
 
             return responses;
