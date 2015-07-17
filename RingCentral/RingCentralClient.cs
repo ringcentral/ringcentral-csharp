@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
@@ -33,6 +34,8 @@ namespace RingCentral
         private List<KeyValuePair<string, string>> QueryParameters { get; set; }
         private Dictionary<string, string> FormParameters { get; set; }
         private string JsonData { get; set; }
+
+        public bool IsMultiPartResponse { get; set; }
 
 
         public string Authenticate(string userName, string password, string extension, string endPoint)
@@ -165,11 +168,19 @@ namespace RingCentral
 
                 request += GetQuerystring();
 
-                Task<HttpResponseMessage> accountResult = client.GetAsync(request);
+                Task<HttpResponseMessage> getResult = client.GetAsync(request);
+
+                var contentType = getResult.Result.Content.Headers.ContentType;
+                Debug.WriteLine("Content type in response is: " + contentType);
+
+                if (contentType.ToString().Contains("multipart/mixed"))
+                {
+                    IsMultiPartResponse = true;
+                }
 
                 ClearQueryParameters();
 
-                return accountResult.Result.Content.ReadAsStringAsync().Result;
+                return getResult.Result.Content.ReadAsStringAsync().Result;
             }
         }
 
@@ -238,6 +249,28 @@ namespace RingCentral
         public bool IsRefreshTokenValid()
         {
             return IsTokenValid(RefreshTokenExpireTime);
+        }
+
+        public List<string> GetMultiPartResponses(string multiResult)
+        {
+            var output = Regex.Split(multiResult, "--Boundary([^;]+)");
+
+            var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+            var responses = new List<string>();
+            foreach (var s in splitString)
+            {
+                if (s.Contains("{"))
+                {
+                    string json = s.Substring(s.IndexOf('{'));
+
+                    JToken token = JObject.Parse(json);
+
+                    responses.Add(token.ToString());
+                }
+
+            }
+
+            return responses;
         }
 
         public string GetQuerystring()
@@ -311,5 +344,6 @@ namespace RingCentral
         {
             JsonData = null;
         }
+
     }
 }

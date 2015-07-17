@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace RingCentral.Test
 {
+    [TestFixture]
     public class TestConfiguration
     {
         protected const string AppKey = "***REMOVED***";

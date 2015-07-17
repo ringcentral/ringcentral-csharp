@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -71,6 +74,35 @@ namespace RingCentral.Test
             var id = (string) token.SelectToken("id");
 
             Assert.AreEqual(messageStore, id);
+        }
+
+        [Test]
+        public void GetBatchMessage()
+        {
+            var messages = new List<string> {"1180709004", "1180693004ab"};
+            var batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
+
+            string result = RingCentralClient.GetRequest(ExtensionMessageEndPoint + batchMessages);
+
+            if (RingCentralClient.IsMultiPartResponse)
+            {
+                var multiPartResult = RingCentralClient.GetMultiPartResponses(result);
+
+                //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
+                JToken responseStatuses = JObject.Parse(multiPartResult[0]);
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    string status = (string)responseStatuses.SelectToken("response")[i].SelectToken("status");
+                    Assert.AreEqual(status,"200");
+                }
+
+                foreach (var response in multiPartResult.Skip(1))
+                {
+                    JToken token = JObject.Parse(response);
+                    string id = (string) token.SelectToken("id");
+                    Assert.IsNotNull(id);
+                }
+            }
         }
 
         [Test]
