@@ -89,8 +89,5 @@ namespace RingCentral.Test
 
             Assert.AreEqual(getStatus, "Active");
         }
-
-        //TODO: Online API-Explorer returns an error, not sure what to expect here
-        //[Test]
     }
 }
