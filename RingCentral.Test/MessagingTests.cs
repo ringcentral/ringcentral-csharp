@@ -79,7 +79,7 @@ namespace RingCentral.Test
         [Test]
         public void GetBatchMessage()
         {
-            var messages = new List<string> {"1180709004", "1180693004ab"};
+            var messages = new List<string> {"1180709004", "1180693004"};
             var batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
 
             string result = RingCentralClient.GetRequest(ExtensionMessageEndPoint + batchMessages);
