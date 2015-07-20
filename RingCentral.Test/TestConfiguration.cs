@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using NUnit.Framework;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace RingCentral.Test
 {
@@ -29,10 +31,14 @@ namespace RingCentral.Test
         }
 
         [TestFixtureTearDown]
-        public void TearDown()
+        public  void TearDown()
         {
             RingCentralClient.Revoke(RevokeEndPoint);
             RingCentralClient = null;
+            //Due to Request limitions a wait of 15 second is needed to sure not to exceed the maximum requst rate / minute
+            Thread.Sleep(15000);
         }
+
+
     }
 }
