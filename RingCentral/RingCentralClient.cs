@@ -63,9 +63,9 @@ namespace RingCentral
 
                 var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-                AccessTokenExpireTime = (AccessTokenExpiresIn + currentTimeInMilliseconds);
+                AccessTokenExpireTime = ((AccessTokenExpiresIn * 1000) + currentTimeInMilliseconds);
                                 
-                RefreshTokenExpireTime = (RefreshTokenExpiresIn + currentTimeInMilliseconds);
+                RefreshTokenExpireTime = ((RefreshTokenExpiresIn * 1000) + currentTimeInMilliseconds);
 
                 return result;
             }

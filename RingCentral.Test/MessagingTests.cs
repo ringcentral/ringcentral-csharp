@@ -121,8 +121,8 @@ namespace RingCentral.Test
         public void SendSms()
         {
             const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
-            const string toPhone = "***REMOVED***"; //cellphone number of Paul
-
+            //const string toPhone = "***REMOVED***"; //cellphone number of Paul
+            const string toPhone = "***REMOVED***"; //cellphone number of Nate
             var smsHelper = new SmsHelper(toPhone, UserName, smsText);
             string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
