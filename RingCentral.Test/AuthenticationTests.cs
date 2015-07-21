@@ -58,9 +58,9 @@ namespace RingCentral.Test
             string result = RingCentralClient.GetRequest(VersionEndPoint);
 
             JToken token = JObject.Parse(result);
-            var version = (string) token.SelectToken("apiVersions")[0].SelectToken("versionString");
+            var version = (string) token.SelectToken("apiVersions")[0].SelectToken("uriString");
 
-            Assert.AreEqual(version, "1.0.18");
+            Assert.AreEqual(version, "v1.0");
         }
     }
 }
