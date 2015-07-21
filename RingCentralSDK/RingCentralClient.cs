@@ -171,7 +171,6 @@ namespace RingCentralSDK
                 Task<HttpResponseMessage> getResult = client.GetAsync(request);
 
                 var contentType = getResult.Result.Content.Headers.ContentType;
-                Debug.WriteLine("Content type in response is: " + contentType);
 
                 if (contentType.ToString().Contains("multipart/mixed"))
                 {
