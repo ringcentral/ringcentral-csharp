@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using RingCentral.Subscription;
 
-namespace RingCentral.NET40
+namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation : ISubscriptionService
     {
