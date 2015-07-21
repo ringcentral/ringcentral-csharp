@@ -10,8 +10,6 @@ namespace RingCentral.NET40
     {
         public void Subscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<SubscriptionError> errorCallback)
         {
-       
-
             throw new NotImplementedException();
         }
 
