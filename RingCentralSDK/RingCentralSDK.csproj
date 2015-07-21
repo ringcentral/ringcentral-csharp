@@ -74,14 +74,6 @@
   <ItemGroup>
     <Compile Include="Helper\SmsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubnubCore\ClientNetworkStatus.cs" />
-    <Compile Include="PubnubCore\LoggingMethod.cs" />
-    <Compile Include="PubnubCore\MD5.cs" />
-    <Compile Include="PubnubCore\Pubnub.cs" />
-    <Compile Include="PubnubCore\PubnubCore.cs" />
-    <Compile Include="PubnubCore\PubnubWin.cs" />
-    <Compile Include="PubnubCore\ReconnectState.cs" />
-    <Compile Include="PubnubExample.cs" />
     <Compile Include="RingCentralClient.cs" />
   </ItemGroup>
   <ItemGroup>
