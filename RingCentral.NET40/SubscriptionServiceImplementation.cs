@@ -24,7 +24,7 @@ namespace RingCentral.Subscription
 
         public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<object> disconnectCallback, Action<SubscriptionError> errorCallback)
         {
-            throw new NotImplementedException();
+            _pubnub.Unsubscribe(channel,DisplaySubscribeReturnMessage,DisplaySubscribeConnectStatusMessage,DisplayDisconnectMessage,DisplayErrorMessage);
         }
 
         public void DisplaySubscribeReturnMessage(object message)
@@ -41,5 +41,11 @@ namespace RingCentral.Subscription
         {
             Debug.WriteLine("Error Message: " + message);
         }
+
+        public void DisplayDisconnectMessage(object message)
+        {
+            Debug.WriteLine("Disconnect Message: " + message);
+        }
+
     }
 }

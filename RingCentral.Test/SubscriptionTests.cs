@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Newtonsoft.Json;
 
 namespace RingCentral.Test
 {
@@ -61,11 +62,15 @@ namespace RingCentral.Test
 
             string getResult = RingCentralClient.GetRequest(SubscriptionEndPoint + "/" + id);
 
-            token = JObject.Parse(getResult);
+            var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(getResult);
 
-            var getStatus = (string) token.SelectToken("status");
-
-            Assert.AreEqual(getStatus, "Active");
+            Assert.AreEqual(SubscriptionItem.DeliveryMode.TransportType, "PubNub");
+            
+            Assert.AreEqual(SubscriptionItem.DeliveryMode.Encryption, true);
+            
+            Assert.IsNotEmpty(SubscriptionItem.EventFilters);
+            
+            Assert.AreEqual(SubscriptionItem.Status, "Active");
         }
 
         [Test]
