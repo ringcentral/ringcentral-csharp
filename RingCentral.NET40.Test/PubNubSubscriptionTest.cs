@@ -27,12 +27,14 @@ namespace RingCentral.NET40.Test
 
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
         
+        
         public Task  Wait(int milliseconds)
         {
             var tcs = new TaskCompletionSource<object>();
             new Timer(_ => tcs.SetResult(null)).Change(milliseconds, -1);
             return tcs.Task;
         }
+
         [Test]
         public void SetPubNubSubscription()
         {
@@ -57,10 +59,6 @@ namespace RingCentral.NET40.Test
 
             SubscriptionServiceImplementation.Subscribe(SubscriptionItem.DeliveryMode.Address, "", null, null, null);
 
-            const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
-            
-            const string toPhone = "***REMOVED***"; 
-           
             var smsHelper = new SmsHelper(toPhone, UserName, smsText);
             
             string jsonObject = JsonConvert.SerializeObject(smsHelper);

@@ -14,31 +14,123 @@ namespace RingCentral.Test
     {
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
         private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store/";
-
-        //TODO: need to find a valid conversationId to delete to pass this test
+         const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
+         private  string[] MessageSentValues = new[] { "Sent", "Queued" };
+        
         [Test]
-        public void DeleteConversationById()
+        public void SendSms()
         {
-            const string conversationId = "1035491849837189800";
+           
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
+            string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            string result = RingCentralClient.DeleteRequest(ExtensionMessageEndPoint + conversationId);
-            string getResult = RingCentralClient.GetRequest(ExtensionMessageEndPoint + conversationId);
+            RingCentralClient.SetJsonData(jsonObject);
+
+            string result = RingCentralClient.PostRequest(SmsEndPoint);
+
+            JToken token = JObject.Parse(result);
+            var messageStatus = (string)token.SelectToken("messageStatus");
+            Assert.Contains(messageStatus,MessageSentValues);
+        
+          
         }
+
+        [Test]
+        public void GetSingleMessage()
+        {
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
+            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+
+            RingCentralClient.SetJsonData(jsonObject);
+
+            string messageResult = RingCentralClient.PostRequest(SmsEndPoint);
+
+            JToken messageToken = JObject.Parse(messageResult);
+            string messageStore = (string)messageToken.SelectToken("id");
+            string result = RingCentralClient.GetRequest(ExtensionMessageEndPoint + messageStore);
+
+            JToken token = JObject.Parse(result);
+
+            var id = (string)token.SelectToken("id");
+
+            Assert.AreEqual(messageStore, id);
+        }
+
+        [Test]
+        public void UpdateMessage()
+        {
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
+            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+
+            RingCentralClient.SetJsonData(jsonObject);
+
+            string messageResult = RingCentralClient.PostRequest(SmsEndPoint);
+
+            JToken messageToken = JObject.Parse(messageResult);
+            string messageStore = (string)messageToken.SelectToken("id");
+
+            RingCentralClient.SetJsonData("{\"readStatus\": \"Read\"}");
+
+            string result = RingCentralClient.PutRequest(ExtensionMessageEndPoint + messageStore);
+
+            JToken token = JObject.Parse(result);
+
+            var availability = (string)token.SelectToken("availability");
+
+            if (availability.Equals("Purged"))
+            {
+                Assert.AreEqual("Purged", availability);
+            }
+            else
+            {
+                var readStatus = (string)token.SelectToken("readStatus");
+                Assert.AreEqual("Read", readStatus);
+            }
+        }
+
 
         [Test]
         public void DeleteMessage()
         {
-            const string messageStore = "1153141004";
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
+            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+
+            RingCentralClient.SetJsonData(jsonObject);
+
+            string messageResult = RingCentralClient.PostRequest(SmsEndPoint);
+
+            JToken messageToken = JObject.Parse(messageResult);
+            string messageStore = (string)messageToken.SelectToken("id");
             string result = RingCentralClient.DeleteRequest(ExtensionMessageEndPoint + messageStore);
 
             string getResult = RingCentralClient.GetRequest(ExtensionMessageEndPoint + messageStore);
 
             JToken token = JObject.Parse(getResult);
 
-            var availability = (string) token.SelectToken("availability");
+            var availability = (string)token.SelectToken("availability");
 
-            Assert.AreEqual(availability, "Purged");
+            Assert.AreEqual("Deleted",availability);
         }
+
+        //TODO: need to find a valid conversationId to delete to pass this test
+        [Test]
+        public void DeleteConversationById()
+        {
+            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
+            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+
+            RingCentralClient.SetJsonData(jsonObject);
+
+            string messageResult = RingCentralClient.PostRequest(SmsEndPoint);
+
+            JToken messageToken = JObject.Parse(messageResult);
+            string conversationId = (string)messageToken.SelectToken("conversationId");
+
+            string result = RingCentralClient.DeleteRequest(ExtensionMessageEndPoint + conversationId);
+            string getResult = RingCentralClient.GetRequest(ExtensionMessageEndPoint + conversationId);
+
+        }
+
 
         [Test]
         public void GetAttachmentFromExtension()
@@ -63,19 +155,7 @@ namespace RingCentral.Test
             Assert.AreEqual(phoneNumber.Replace("+", string.Empty), UserName);
         }
 
-        [Test]
-        public void GetSingleMessage()
-        {
-            const string messageStore = "1153141004";
-            string result = RingCentralClient.GetRequest(ExtensionMessageEndPoint + messageStore);
-
-            JToken token = JObject.Parse(result);
-
-            var id = (string) token.SelectToken("id");
-
-            Assert.AreEqual(messageStore, id);
-        }
-
+        
         [Test]
         public void GetBatchMessage()
         {
@@ -117,47 +197,11 @@ namespace RingCentral.Test
             //TODO unimplemented
         }
 
-        [Test]
-        public void SendSms()
-        {
-            const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
-            //const string toPhone = "***REMOVED***"; //cellphone number of Paul
-            const string toPhone = "***REMOVED***"; //cellphone number of Nate
-            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            RingCentralClient.SetJsonData(jsonObject);
 
-            string result = RingCentralClient.PostRequest(SmsEndPoint);
+     
 
-            JToken token = JObject.Parse(result);
-            var messageStatus = (string) token.SelectToken("messageStatus");
-
-            Assert.AreEqual(messageStatus, "Sent");
-        }
-
-        [Test]
-        public void UpdateMessage()
-        {
-            const string messageStore = "1153141004";
-
-            RingCentralClient.SetJsonData("{\"readStatus\": \"Read\"}");
-
-            string result = RingCentralClient.PutRequest(ExtensionMessageEndPoint + messageStore);
-
-            JToken token = JObject.Parse(result);
-
-            var availability = (string) token.SelectToken("availability");
-
-            if (availability.Equals("Purged"))
-            {
-                Assert.AreEqual("Purged", availability);
-            }
-            else
-            {
-                var readStatus = (string) token.SelectToken("readStatus");
-                Assert.AreEqual("Read", readStatus);
-            }
-        }
+        
+       
     }
 }
