@@ -12,6 +12,7 @@ namespace RingCentral.Subscription
     {
         private PubNubMessaging.Core.Pubnub _pubnub;
 
+        
         public SubscriptionServiceImplementation(string publishKey, string subscribeKey)
         {
             _pubnub = new PubNubMessaging.Core.Pubnub(publishKey,subscribeKey);
