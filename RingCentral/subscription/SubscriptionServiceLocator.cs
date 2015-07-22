@@ -30,7 +30,7 @@ namespace RingCentral.Subscription
 #if PORTABLE
         return null;
 #else
-        return new SubscriptionServiceImplementation();
+        return new SubscriptionServiceImplementation("","");
 #endif
     }
 

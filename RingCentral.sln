@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40418.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral", "RingCentral\RingCentral.csproj", "{67CBCAAF-36E8-424B-8D49-28F43AE7793F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Test", "RingCentral.Test\RingCentral.Test.csproj", "{96B878AF-BFD3-4E56-BEBF-7697D85F174A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.NET40", "RingCentral.NET40\RingCentral.NET40.csproj", "{7B8F30AC-8286-4629-B4A6-8AFFA20F1203}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.NET40.Test", "RingCentral.NET40.Test\RingCentral.NET40.Test.csproj", "{EFACBE93-BC62-46BD-9B3F-14255E459C26}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7B8F30AC-8286-4629-B4A6-8AFFA20F1203} = {7B8F30AC-8286-4629-B4A6-8AFFA20F1203}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +32,10 @@ Global
 		{7B8F30AC-8286-4629-B4A6-8AFFA20F1203}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B8F30AC-8286-4629-B4A6-8AFFA20F1203}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B8F30AC-8286-4629-B4A6-8AFFA20F1203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFACBE93-BC62-46BD-9B3F-14255E459C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFACBE93-BC62-46BD-9B3F-14255E459C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFACBE93-BC62-46BD-9B3F-14255E459C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFACBE93-BC62-46BD-9B3F-14255E459C26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

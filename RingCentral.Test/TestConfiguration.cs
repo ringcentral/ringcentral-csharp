@@ -35,8 +35,8 @@ namespace RingCentral.Test
         {
             RingCentralClient.Revoke(RevokeEndPoint);
             RingCentralClient = null;
-            //Due to Request limitions a wait of 15 second is needed to sure not to exceed the maximum requst rate / minute
-            Thread.Sleep(15000);
+            //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
+            Thread.Sleep(25000);
         }
 
 
