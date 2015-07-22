@@ -17,8 +17,13 @@ namespace RingCentral.Test
         protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
 
         protected const string RevokeEndPoint = "/restapi/oauth/revoke";
+
         protected const string AuthenticateEndPoint = "/restapi/oauth/token";
 
+        protected const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
+
+        protected const string toPhone = "***REMOVED***";
+        
         protected string AuthResult;
 
         public RingCentralClient RingCentralClient;
