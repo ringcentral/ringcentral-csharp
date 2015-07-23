@@ -1,14 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RingCentral.Subscription
 {
     public class Subscription
     {
- 
         public string Id { get; set; }
         public DateTime CreationTime { get; set; }
         public List<string> EventFilters { get; set; }
@@ -17,11 +13,8 @@ namespace RingCentral.Subscription
         public DeliveryMode DeliveryMode { get; set; }
         public string Status { get; set; }
         public string Uri { get; set; }
-
-
-  
-        
     }
+
     public class DeliveryMode
     {
         public string TransportType { get; set; }
@@ -31,7 +24,5 @@ namespace RingCentral.Subscription
         public string SecretKey { get; set; }
         public string EncryptionAlgorithm { get; set; }
         public string EncryptionKey { get; set; }
-
     }
-    
 }

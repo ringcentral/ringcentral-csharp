@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Threading;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace RingCentral.Test
 {
@@ -20,10 +18,10 @@ namespace RingCentral.Test
 
         protected const string AuthenticateEndPoint = "/restapi/oauth/token";
 
-        protected const string smsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
+        protected const string SmsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
 
-        protected const string toPhone = "***REMOVED***";
-        
+        protected const string ToPhone = "***REMOVED***";
+
         protected string AuthResult;
 
         public RingCentralClient RingCentralClient;
@@ -36,14 +34,12 @@ namespace RingCentral.Test
         }
 
         [TestFixtureTearDown]
-        public  void TearDown()
+        public void TearDown()
         {
             RingCentralClient.Revoke(RevokeEndPoint);
             RingCentralClient = null;
             //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
             Thread.Sleep(25000);
         }
-
-
     }
 }
