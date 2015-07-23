@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace RingCentral.Test
@@ -16,7 +15,7 @@ namespace RingCentral.Test
 
             JToken token = JObject.Parse(result);
 
-            var presenceStatus = (string)token.SelectToken("presenceStatus");
+            var presenceStatus = (string) token.SelectToken("presenceStatus");
 
             Assert.AreEqual(presenceStatus, "Available");
         }

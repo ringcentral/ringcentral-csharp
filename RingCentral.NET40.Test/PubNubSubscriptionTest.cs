@@ -1,15 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
+using RingCentral.Subscription;
 
 namespace RingCentral.NET40.Test
 {
@@ -26,9 +22,9 @@ namespace RingCentral.NET40.Test
             "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
-        
-        
-        public Task  Wait(int milliseconds)
+
+
+        public Task Wait(int milliseconds)
         {
             var tcs = new TaskCompletionSource<object>();
             new Timer(_ => tcs.SetResult(null)).Change(milliseconds, -1);
@@ -38,14 +34,13 @@ namespace RingCentral.NET40.Test
         [Test]
         public void SetPubNubSubscription()
         {
-
             RingCentralClient.SetJsonData(JsonData);
 
             string createResult = RingCentralClient.PostRequest(SubscriptionEndPoint);
 
             JToken token = JObject.Parse(createResult);
 
-            var id = (string)token.SelectToken("id");
+            var id = (string) token.SelectToken("id");
 
             Assert.IsNotNullOrEmpty(id);
 
@@ -55,26 +50,26 @@ namespace RingCentral.NET40.Test
 
             Assert.IsNotNull(SubscriptionItem.DeliveryMode.Address);
 
-            SubscriptionServiceImplementation = new Subscription.SubscriptionServiceImplementation("", SubscriptionItem.DeliveryMode.SubscriberKey);
+            SubscriptionServiceImplementation = new SubscriptionServiceImplementation("",
+                SubscriptionItem.DeliveryMode.SubscriberKey);
 
             SubscriptionServiceImplementation.Subscribe(SubscriptionItem.DeliveryMode.Address, "", null, null, null);
 
-            var smsHelper = new SmsHelper(toPhone, UserName, smsText);
-            
+            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
+
             string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
             RingCentralClient.SetJsonData(jsonObject);
-            
+
             string result = RingCentralClient.PostRequest(SmsEndPoint);
 
             token = JObject.Parse(result);
 
-            var messageStatus = (string)token.SelectToken("messageStatus");
+            var messageStatus = (string) token.SelectToken("messageStatus");
 
             Assert.AreEqual(messageStatus, "Sent");
 
             Wait(15000).ContinueWith(_ => Debug.WriteLine("Done"));
-
         }
     }
 }

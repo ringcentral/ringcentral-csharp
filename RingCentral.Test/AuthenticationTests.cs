@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace RingCentral.Test
@@ -13,7 +12,6 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult);
@@ -27,7 +25,6 @@ namespace RingCentral.Test
         [Test]
         public void TestRefresh()
         {
-
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult);

@@ -1,31 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using PubNubMessaging;
 using System.Diagnostics;
+using PubNubMessaging.Core;
 
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation : ISubscriptionService
     {
-        private PubNubMessaging.Core.Pubnub _pubnub;
+        private readonly Pubnub _pubnub;
 
-        
+
         public SubscriptionServiceImplementation(string publishKey, string subscribeKey)
         {
-            _pubnub = new PubNubMessaging.Core.Pubnub(publishKey,subscribeKey);
+            _pubnub = new Pubnub(publishKey, subscribeKey);
         }
 
-        public void Subscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<SubscriptionError> errorCallback)
+        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
+            Action<object> connectCallback, Action<SubscriptionError> errorCallback)
         {
-            _pubnub.Subscribe<string>(channel, channelGroup, DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage, DisplayErrorMessage);
+            _pubnub.Subscribe<string>(channel, channelGroup, DisplaySubscribeReturnMessage,
+                DisplaySubscribeConnectStatusMessage, DisplayErrorMessage);
         }
 
-        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<object> disconnectCallback, Action<SubscriptionError> errorCallback)
+        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
+            Action<object> connectCallback, Action<object> disconnectCallback, Action<SubscriptionError> errorCallback)
         {
-            _pubnub.Unsubscribe(channel,DisplaySubscribeReturnMessage,DisplaySubscribeConnectStatusMessage,DisplayDisconnectMessage,DisplayErrorMessage);
+            _pubnub.Unsubscribe(channel, DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage,
+                DisplayDisconnectMessage, DisplayErrorMessage);
         }
 
         public void DisplaySubscribeReturnMessage(object message)
@@ -47,6 +47,5 @@ namespace RingCentral.Subscription
         {
             Debug.WriteLine("Disconnect Message: " + message);
         }
-
     }
 }
