@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using NUnit.Framework;
 
 namespace RingCentral.Test
@@ -6,10 +8,9 @@ namespace RingCentral.Test
     [TestFixture]
     public class TestConfiguration
     {
-        protected const string AppKey = "***REMOVED***";
-        protected const string AppSecret = "***REMOVED***";
-        protected const string UserName = "***REMOVED***";
-        protected const string Password = "***REMOVED***";
+
+        protected string UserName = "";
+
         protected const string Extension = "101";
 
         protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
@@ -29,8 +30,40 @@ namespace RingCentral.Test
         [TestFixtureSetUp]
         public void SetUp()
         {
-            RingCentralClient = new RingCentralClient(AppKey, AppSecret, ApiEndPoint);
-            AuthResult = RingCentralClient.Authenticate(UserName, Password, Extension, AuthenticateEndPoint);
+
+            var appKey = "";
+            var appSecret = "";
+            var password = "";
+
+            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_KEY")))
+            {
+
+                appKey = Environment.GetEnvironmentVariable("APP_KEY");
+            }
+
+            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_SECRET")))
+            {
+                appSecret = Environment.GetEnvironmentVariable("APP_SECRET");
+            }
+
+            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("USER_NAME")))
+            {
+                UserName = Environment.GetEnvironmentVariable("USER_NAME");
+            }
+
+            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PASSWORD")))
+            {
+                password = Environment.GetEnvironmentVariable("PASSWORD");
+            }
+
+            //TODO: we'll have these removed and drive the application credentials via environment variables
+            //appKey = "***REMOVED***";
+            //appSecret = "***REMOVED***";
+            //UserName = "***REMOVED***";
+            //password = "***REMOVED***";
+
+            RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
+            AuthResult = RingCentralClient.Authenticate(UserName, password, Extension, AuthenticateEndPoint);
         }
 
         [TestFixtureTearDown]
@@ -39,7 +72,7 @@ namespace RingCentral.Test
             RingCentralClient.Revoke(RevokeEndPoint);
             RingCentralClient = null;
             //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
-            Thread.Sleep(25000);
+            //Thread.Sleep(25000);
         }
     }
 }
