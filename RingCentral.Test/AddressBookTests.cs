@@ -20,9 +20,9 @@ namespace RingCentral.Test
                               "\"state\": \"CA\", " +
                               "\"zip\": \"94123\"}" +
                               "}";
-            RingCentralClient.SetJsonData(jsonData);
+            RingCentralClient.GetPlatform().SetJsonData(jsonData);
 
-            string result = RingCentralClient.PostRequest(AddressBookEndPoint);
+            string result = RingCentralClient.GetPlatform().PostRequest(AddressBookEndPoint);
 
             JToken token = JObject.Parse(result);
             var firstNameResponse = (string) token.SelectToken("firstName");
@@ -42,18 +42,18 @@ namespace RingCentral.Test
                               "\"state\": \"CA\", " +
                               "\"zip\": \"94123\"}" +
                               "}";
-            RingCentralClient.SetJsonData(jsonData);
+            RingCentralClient.GetPlatform().SetJsonData(jsonData);
 
-            string createResult = RingCentralClient.PostRequest(AddressBookEndPoint);
+            string createResult = RingCentralClient.GetPlatform().PostRequest(AddressBookEndPoint);
 
             JToken token = JObject.Parse(createResult);
             var id = (string) token.SelectToken("id");
 
             Assert.NotNull(id);
 
-            RingCentralClient.DeleteRequest(AddressBookEndPoint + "/" + id);
+            RingCentralClient.GetPlatform().DeleteRequest(AddressBookEndPoint + "/" + id);
 
-            string getResult = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + id);
+            string getResult = RingCentralClient.GetPlatform().GetRequest(AddressBookEndPoint + "/" + id);
             token = JObject.Parse(getResult);
             var message = (string) token.SelectToken("message");
 
@@ -63,7 +63,7 @@ namespace RingCentral.Test
         [Test]
         public void GetAddressBook()
         {
-            string result = RingCentralClient.GetRequest(AddressBookEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(AddressBookEndPoint);
 
             JToken token = JObject.Parse(result);
             var firstName = (string) token.SelectToken("records")[0].SelectToken("firstName");
@@ -76,7 +76,7 @@ namespace RingCentral.Test
         {
             const string contactId = "389441004";
 
-            string result = RingCentralClient.GetRequest(AddressBookEndPoint + "/" + contactId);
+            string result = RingCentralClient.GetPlatform().GetRequest(AddressBookEndPoint + "/" + contactId);
 
             JToken token = JObject.Parse(result);
             var firstNameResponse = (string) token.SelectToken("firstName");
@@ -96,11 +96,11 @@ namespace RingCentral.Test
                               "\"state\": \"CA\", " +
                               "\"zip\": \"94123\"}" +
                               "}";
-            RingCentralClient.SetJsonData(jsonData);
+            RingCentralClient.GetPlatform().SetJsonData(jsonData);
 
             const string contactId = "389441004";
 
-            string result = RingCentralClient.PutRequest(AddressBookEndPoint + "/" + contactId);
+            string result = RingCentralClient.GetPlatform().PutRequest(AddressBookEndPoint + "/" + contactId);
 
             JToken token = JObject.Parse(result);
             var street = (string) token.SelectToken("businessAddress").SelectToken("street");

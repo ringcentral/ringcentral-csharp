@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RingCentral.Http
@@ -15,22 +17,18 @@ namespace RingCentral.Http
         public const string JsonContentType = "application/json";
         const string MultipartContentType = "multipart/mixed";
 
-        private readonly Dictionary<string, string> _headers;
+        private HttpContentHeaders _headers;
 
-        public Headers()
-        {
-            _headers = new Dictionary<string, string>();
-        }
+        //public Headers(HttpContentHeaders headers)
+        //{
+        //    _headers = headers;
+        //}
         
         public bool HasHeader(string name)
         {
-            return _headers.ContainsKey(name);
+            return _headers.Contains(name);
         }
 
-        public string GetHeader(string name)
-        {
-            return _headers.ContainsKey(name) ? _headers[name] : null;
-        }
 
         public void SetHeader(string name, string value)
         {
@@ -39,25 +37,30 @@ namespace RingCentral.Http
 
         public void SetHeaders(Dictionary<string, string> headers)
         {
-            foreach (var k in headers.Keys)
+            foreach (var k in headers.Where(k => !_headers.Contains(k.Key)))
             {
-                SetHeader(k, headers[k]);
+                SetHeader(k.Key, k.Value);
             }
         }
 
-        public Dictionary<string, string> GetHeaders()
+        public void SetHeaders(HttpContentHeaders headers)
+        {
+            _headers = headers;
+        }
+
+        public HttpContentHeaders GetHeaders()
         {
             return _headers;
         }
 
         public string[] GetHeadersArray()
         {
-            return _headers.Keys.Select(k => k.ToLower() + HeaderSeperator + _headers[k]).ToArray();
+            return _headers.Select(header => header.Key.ToLower() + HeaderSeperator + header.Value).ToArray();
         }
 
         public string GetContentType()
         {
-            return GetHeader(ContentType);
+            return _headers.ContentType.ToString();
         }
 
         public void SetContentType(string contentType)
@@ -67,7 +70,7 @@ namespace RingCentral.Http
 
         public bool IsContentType(string contentType)
         {
-            return GetContentType().Equals(contentType);
+            return GetContentType().Contains(contentType);
         }
 
         public bool IsJson()

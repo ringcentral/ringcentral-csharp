@@ -34,7 +34,7 @@ namespace RingCentral.Test
             Assert.NotNull(accessTokenBeforeRefresh);
             Assert.NotNull(refreshTokenBeforeFresh);
 
-            string refreshResult = RingCentralClient.Refresh(RefreshEndPoint);
+            string refreshResult = RingCentralClient.GetPlatform().Refresh(RefreshEndPoint);
 
             Assert.NotNull(refreshResult);
 
@@ -52,7 +52,7 @@ namespace RingCentral.Test
         [Test]
         public void TestVersion()
         {
-            string result = RingCentralClient.GetRequest(VersionEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(VersionEndPoint);
 
             JToken token = JObject.Parse(result);
             var version = (string) token.SelectToken("apiVersions")[0].SelectToken("uriString");

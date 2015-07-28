@@ -12,7 +12,7 @@ namespace RingCentral.Test
         [Test]
         public void GetAccountExtensionInformation()
         {
-            string result = RingCentralClient.GetRequest(AccountExtensionInformationEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(AccountExtensionInformationEndPoint);
 
             Assert.IsNotNull(result);
         }
@@ -20,7 +20,7 @@ namespace RingCentral.Test
         [Test]
         public void GetAccountInformation()
         {
-            string result = RingCentralClient.GetRequest(AccountInformationEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(AccountInformationEndPoint);
 
             JToken token = JObject.Parse(result);
             var mainNumber = (string) token.SelectToken("mainNumber");
@@ -31,7 +31,7 @@ namespace RingCentral.Test
         [Test]
         public void GetExtensionInformation()
         {
-            string result = RingCentralClient.GetRequest(AccountExtensionInformationEndPoint + "/~");
+            string result = RingCentralClient.GetPlatform().GetRequest(AccountExtensionInformationEndPoint + "/~");
 
             Assert.IsNotNull(result);
         }

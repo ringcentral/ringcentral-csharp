@@ -16,7 +16,7 @@ namespace RingCentral.Test
         [Test]
         public void GetCountries()
         {
-            string result = RingCentralClient.GetRequest(CountryEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -30,7 +30,7 @@ namespace RingCentral.Test
         {
             const string countryId = "1";
 
-            string result = RingCentralClient.GetRequest(CountryEndPoint + "/" + countryId);
+            string result = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/" + countryId);
 
             JToken token = JObject.Parse(result);
 
@@ -42,7 +42,7 @@ namespace RingCentral.Test
         [Test]
         public void GetLanguage()
         {
-            string result = RingCentralClient.GetRequest(LanguageEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(LanguageEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -56,7 +56,7 @@ namespace RingCentral.Test
         {
             const string languageId = "1033";
 
-            string result = RingCentralClient.GetRequest(LanguageEndPoint + "/" + languageId);
+            string result = RingCentralClient.GetPlatform().GetRequest(LanguageEndPoint + "/" + languageId);
 
             JToken token = JObject.Parse(result);
 
@@ -68,9 +68,9 @@ namespace RingCentral.Test
         [Test]
         public void GetLocation()
         {
-            RingCentralClient.AddQueryParameters("stateId", "13");
+            RingCentralClient.GetPlatform().AddQueryParameters("stateId", "13");
 
-            string result = RingCentralClient.GetRequest(LocationEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(LocationEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -84,7 +84,7 @@ namespace RingCentral.Test
         {
             const string stateId = "13";
 
-            string result = RingCentralClient.GetRequest(StateEndPoint + "/" + stateId);
+            string result = RingCentralClient.GetPlatform().GetRequest(StateEndPoint + "/" + stateId);
 
             JToken token = JObject.Parse(result);
 
@@ -96,11 +96,11 @@ namespace RingCentral.Test
         [Test]
         public void GetStates()
         {
-            RingCentralClient.AddQueryParameters("countryId", "1");
-            RingCentralClient.AddQueryParameters("withPhoneNumbers", "True");
-            RingCentralClient.AddQueryParameters("perPage", "5");
+            RingCentralClient.GetPlatform().AddQueryParameters("countryId", "1");
+            RingCentralClient.GetPlatform().AddQueryParameters("withPhoneNumbers", "True");
+            RingCentralClient.GetPlatform().AddQueryParameters("perPage", "5");
 
-            string result = RingCentralClient.GetRequest(StateEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(StateEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -114,7 +114,7 @@ namespace RingCentral.Test
         {
             const string timeZoneId = "1";
 
-            string result = RingCentralClient.GetRequest(TimeZoneEndPoint + "/" + timeZoneId);
+            string result = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/" + timeZoneId);
 
             JToken token = JObject.Parse(result);
 
@@ -126,7 +126,7 @@ namespace RingCentral.Test
         [Test]
         public void GetTimeZones()
         {
-            string result = RingCentralClient.GetRequest(TimeZoneEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint);
 
             JToken token = JObject.Parse(result);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -15,6 +16,9 @@ namespace RingCentral.Http
         private int Status;
         private string StatusText;
         private string Body;
+
+        public bool IsMultiPartResponse { get; set; }
+
 
         public Response(int status, string statusText, string body, Dictionary<string, string> headers)
         {
@@ -88,6 +92,35 @@ namespace RingCentral.Http
             }
 
             return message;
+        }
+
+        /// <summary>
+        ///     Parses a multipart response into List of responses that can be accessed by index.
+        /// </summary>
+        /// <param name="multiResult">The multipart response that needs to be broken up into a list of responses</param>
+        /// <returns>A List of responses from a multipart response</returns>
+        public List<string> GetMultiPartResponses(string multiResult)
+        {
+            string[] output = Regex.Split(multiResult, "--Boundary([^;]+)");
+
+            string[] splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+
+            var responses = new List<string>();
+
+            //We Can convert this to linq but for the sake of readability we'll leave it like this.
+            foreach (string s in splitString)
+            {
+                if (s.Contains("{"))
+                {
+                    string json = s.Substring(s.IndexOf('{'));
+
+                    JToken token = JObject.Parse(json);
+
+                    responses.Add(token.ToString());
+                }
+            }
+
+            return responses;
         }
     }
 }
