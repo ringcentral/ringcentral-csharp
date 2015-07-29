@@ -115,7 +115,7 @@ namespace RingCentral.Test
                              "}";
             Platform.SetJsonData(jsonData);
             Response response = Platform.PostRequest(AddressBookEndPoint);
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var firstName = (string)token.SelectToken("firstName");
             Assert.AreEqual("Jim", firstName);

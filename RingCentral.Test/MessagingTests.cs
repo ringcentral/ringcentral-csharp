@@ -79,9 +79,9 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + batchMessages);
 
-            if (RingCentralClient.GetPlatform().IsMultiPartResponse)
+            if (response.IsMultiPartResponse)
             {
-                List<string> multiPartResult = RingCentralClient.GetPlatform().GetMultiPartResponses(response.GetBody());
+                List<string> multiPartResult = response.GetMultiPartResponses();
 
                 //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
                 JToken responseStatuses = JObject.Parse(multiPartResult[0]);
