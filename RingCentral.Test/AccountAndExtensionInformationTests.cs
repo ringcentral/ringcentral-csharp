@@ -57,7 +57,7 @@ namespace RingCentral.Test
                 "\"records\": [ { "+ "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," +"\"id\": 1,"+
                 "\"extensionNumber\": \"102\"," + "\"contact\": {\"firstName\": \"Alice\",\"lastName\": \"Keys\",\"email\": \"alice.keys@example.com\"}," +
                 "\"name\": \"Alice Keys\",\"type\": \"User\",\"status\": \"NotActivated\",\"permissions\": { \"admin\": {\"enabled\": false }," + 
-                "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/14/extension/1/profile-image\"}}" +
+                "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/profile-image\"}}" +
                 "],\"paging\": {\"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1, \"pageStart\": 0,\"pageEnd\": 0},\"navigation\": {\"firstPage\": {" +
                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\"}}}"
                   )

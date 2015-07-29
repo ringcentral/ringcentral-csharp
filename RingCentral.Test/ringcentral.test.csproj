@@ -93,7 +93,6 @@
     <Compile Include="AuthenticationTests.cs" />
     <Compile Include="CallLogTests.cs" />
     <Compile Include="GeographicalDictionaryTests.cs" />
-    <Compile Include="Injeciton_test.cs" />
     <Compile Include="MessagingTests.cs" />
     <Compile Include="MockHttpClient.cs" />
     <Compile Include="PresenceTests.cs" />
