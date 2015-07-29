@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using RingCentral.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -28,7 +29,7 @@ namespace RingCentral.Test
                                  "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
                                    "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
                                "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
-                                 "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}")
+                                 "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "application/json")
                 }
 
                 );
@@ -45,7 +46,7 @@ namespace RingCentral.Test
                                "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
                                  "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
                              "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
-                               "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}")
+                               "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "application/json")
               }
 
               );
@@ -61,7 +62,7 @@ namespace RingCentral.Test
                 "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/profile-image\"}}" +
                 "],\"paging\": {\"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1, \"pageStart\": 0,\"pageEnd\": 0},\"navigation\": {\"firstPage\": {" +
                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\"}}}"
-                  )
+                 , Encoding.UTF8, "application/json")
              });
         }
 
@@ -71,7 +72,7 @@ namespace RingCentral.Test
         {
             Response response = Platform.GetRequest(AccountExtensionInformationEndPoint);
 
-            Assert.AreEqual(response.GetStatus(),"200");
+            Assert.AreEqual(response.GetStatus(),200);
         }
 
         [Test]

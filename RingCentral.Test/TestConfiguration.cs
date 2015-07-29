@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 using System.Net.Http;
+using System.Net;
 
 namespace RingCentral.Test
 {
@@ -59,11 +60,20 @@ namespace RingCentral.Test
             {
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
-
+            mockResponseHandler.AddPostMockResponse(
+               new Uri(ApiEndPoint + AuthenticateEndPoint),
+               new HttpResponseMessage(HttpStatusCode.OK)
+               {
+                   Content = new StringContent(
+                       "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," +
+                       "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\"," +
+                       "\"owner_id\": \"1\" }"
+                       )
+               });
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
-            AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, AuthenticateEndPoint);
             Platform = RingCentralClient.GetPlatform();
             Platform.SetClient(new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });
+            AuthResult = Platform.Authenticate(UserName, password, Extension, AuthenticateEndPoint);
         }
 
         [TestFixtureTearDown]

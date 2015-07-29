@@ -16,16 +16,7 @@ namespace RingCentral.Test
         [TestFixtureSetUp]
         public void Setup()
         {
-            mockResponseHandler.AddPostMockResponse(
-                new Uri(ApiEndPoint + RefreshEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(
-                        "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," + 
-                        "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\","+
-                        "\"owner_id\": \"1\" }"
-                        )
-                });
+           
             mockResponseHandler.AddGetMockResponse(
                 new Uri(ApiEndPoint + VersionEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
