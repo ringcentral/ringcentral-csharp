@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using RingCentral.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -21,7 +22,7 @@ namespace RingCentral.Test
                 new Uri(ApiEndPoint + VersionEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }" )
+                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }" ,Encoding.UTF8, "application/json")
                 });
         }
 

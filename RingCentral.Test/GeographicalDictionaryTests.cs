@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -13,7 +17,111 @@ namespace RingCentral.Test
         private const string LocationEndPoint = DictionaryEndPoint + "/location";
         private const string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
         private const string LanguageEndPoint = DictionaryEndPoint + "/language";
-
+        [TestFixtureSetUp]
+        public void SetUp()
+        {
+            mockResponseHandler.AddGetMockResponse(
+               new Uri(ApiEndPoint + CountryEndPoint),
+               new HttpResponseMessage(HttpStatusCode.OK)
+               {
+                   Content = new StringContent(
+                      "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country?page=1&perPage=100\"," +
+                        "\"records\": [{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/89\"," +
+                        "\"id\": \"89\",\"name\": \"Afghanistan\",\"isoCode\": \"AF\",\"callingCode\": \"93\", \"emergencyCalling\": false," +
+                        "\"numberSelling\": false},{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/3\"," +
+                        "\"id\": \"3\",\"name\": \"Albania\",\"isoCode\": \"AL\",\"callingCode\": \"355\"," +
+                        "\"emergencyCalling\": false,\"numberSelling\": false}]}", Encoding.UTF8, "application/json")
+               });
+            mockResponseHandler.AddGetMockResponse(
+           new Uri(ApiEndPoint + CountryEndPoint + "/3"),
+           new HttpResponseMessage(HttpStatusCode.OK)
+           {
+               Content = new StringContent(
+                  "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/3\"," +
+                    "\"id\": \"3\",\"name\": \"Albania\",\"isoCode\": \"AL\",\"callingCode\": \"355\"," +
+                    "\"emergencyCalling\": false,\"numberSelling\": false}", Encoding.UTF8, "application/json")
+           });
+            mockResponseHandler.AddGetMockResponse(
+           new Uri(ApiEndPoint + LanguageEndPoint),
+           new HttpResponseMessage(HttpStatusCode.OK)
+           {
+               Content = new StringContent(
+                 "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language?page=1&perPage=100\","+
+                  "\"records\": [ {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language/1033\","+
+                  "\"id\": \"1033\",\"name\": \"English (United States)\",\"isoCode\": \"en\","+
+                  "\"localeCode\": \"en-US\",\"ui\": true,\"greeting\": true,\"formattingLocale\": true} ]," + 
+                  "\"paging\": { \"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1,\"pageStart\": 0,"+
+                  "\"pageEnd\": 0},\"navigation\": {\"firstPage\": {"+
+                  "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language?page=1&perPage=100\"},"+
+                  "\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language?page=1&perPage=100\"}}}", 
+                  Encoding.UTF8, "application/json")
+           });
+            mockResponseHandler.AddGetMockResponse(
+          new Uri(ApiEndPoint + LanguageEndPoint + "/1033"),
+          new HttpResponseMessage(HttpStatusCode.OK)
+          {
+              Content = new StringContent(
+                "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language/1033\"," +
+                 "\"id\": \"1033\",\"name\": \"English (United States)\",\"isoCode\": \"en\"," +
+                 "\"localeCode\": \"en-US\",\"ui\": true,\"greeting\": true,\"formattingLocale\": true}",
+                 Encoding.UTF8, "application/json")
+          });
+         mockResponseHandler.AddGetMockResponse(
+          new Uri(ApiEndPoint + LocationEndPoint+ "?stateId=13"),
+            new HttpResponseMessage(HttpStatusCode.OK)
+          {
+              Content = new StringContent(
+                "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/location?stateId=13&withNxx=true&orderBy=City&page=1&perPage=100\","+
+                "\"records\": [{\"city\": \"Anchorage\",\"npa\": \"907\",\"nxx\": \"268\",\"state\": {"+
+                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\",\"id\": \"13\" } },"+
+                "{\"city\": \"Anchorage\",\"npa\": \"907\",\"nxx\": \"312\",\"state\": {" + 
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\"," +
+                 "\"id\": \"13\"} }, {\"city\": \"Anchorage\",\"npa\": \"907\",\"nxx\": \"331\",\"state\": {" + 
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\"," + 
+                  "\"id\": \"13\" } } ] }",Encoding.UTF8, "application/json")
+          });
+         mockResponseHandler.AddGetMockResponse(
+         new Uri(ApiEndPoint + StateEndPoint + "/13"),
+         new HttpResponseMessage(HttpStatusCode.OK)
+         {
+             Content = new StringContent(
+               "{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\"," +
+                "\"id\": \"13\",\"name\": \"Alaska\",\"isoCode\": \"AK\",\"country\": {" +
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\",\"id\": \"1\" } }", Encoding.UTF8, "application/json")
+         });
+         mockResponseHandler.AddGetMockResponse(
+            new Uri(ApiEndPoint + StateEndPoint + "?countryId=1&withPhoneNumbers=True&perPage=2"),
+            new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(
+                  "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state?countryId=1&withPhoneNumbers=true&page=1&perPage=2\"," +
+                     "\"records\": [ {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/12\"," +
+                      "\"id\": \"12\",\"name\": \"Alabama\",\"isoCode\": \"AL\",\"country\": {" +
+                      "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\",\"id\": \"1\"}}," +
+                      "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\",\"id\": \"13\"," +
+                      "\"name\": \"Alaska\",\"isoCode\": \"AK\",\"country\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"," +
+                       "\"id\": \"1\"}}]}", Encoding.UTF8, "application/json")
+            });
+        mockResponseHandler.AddGetMockResponse(
+        new Uri(ApiEndPoint + TimeZoneEndPoint + "/1"),
+        new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(
+              "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone/1\"," +
+              "\"id\": \"1\",\"name\": \"GMT\",\"description\": \"Casablanca, Monrovia, Reykjavik\" } ", Encoding.UTF8, "application/json")
+        });
+        mockResponseHandler.AddGetMockResponse(
+          new Uri(ApiEndPoint + TimeZoneEndPoint ),
+          new HttpResponseMessage(HttpStatusCode.OK)
+          {
+              Content = new StringContent(
+                "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone?page=1&perPage=100\"," +
+                "\"records\": [" +"{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone/1\"," +
+                "\"id\": \"1\",\"name\": \"GMT\",\"description\": \"Casablanca, Monrovia, Reykjavik\" }," +
+                "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone/2\"," +
+                "\"id\": \"2\",\"name\": \"WET\",\"description\": \"Dublin, Edinburgh, Lisbon, London\" } ]}", Encoding.UTF8, "application/json")
+          });
+        }
         [Test]
         public void GetCountries()
         {
@@ -29,15 +137,14 @@ namespace RingCentral.Test
         [Test]
         public void GetCountryById()
         {
-            const string countryId = "1";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/" + countryId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/3");
 
             JToken token = JObject.Parse(response.GetBody());
 
             var countryName = (string) token.SelectToken("name");
 
-            Assert.AreEqual(countryName, "United States");
+            Assert.AreEqual(countryName, "Albania");
         }
 
         [Test]
@@ -99,7 +206,7 @@ namespace RingCentral.Test
         {
             RingCentralClient.GetPlatform().AddQueryParameters("countryId", "1");
             RingCentralClient.GetPlatform().AddQueryParameters("withPhoneNumbers", "True");
-            RingCentralClient.GetPlatform().AddQueryParameters("perPage", "5");
+            RingCentralClient.GetPlatform().AddQueryParameters("perPage", "2");
 
             Response response = RingCentralClient.GetPlatform().GetRequest(StateEndPoint);
 
@@ -113,9 +220,8 @@ namespace RingCentral.Test
         [Test]
         public void GetTimeZoneById()
         {
-            const string timeZoneId = "1";
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/" + timeZoneId);
+            
+            Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/1");
 
             JToken token = JObject.Parse(response.GetBody());
 

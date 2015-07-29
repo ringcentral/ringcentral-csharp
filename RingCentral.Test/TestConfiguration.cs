@@ -4,6 +4,7 @@ using System.Threading;
 using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -67,8 +68,7 @@ namespace RingCentral.Test
                    Content = new StringContent(
                        "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," +
                        "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\"," +
-                       "\"owner_id\": \"1\" }"
-                       )
+                       "\"owner_id\": \"1\" }", Encoding.UTF8, "application/json")
                });
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
             Platform = RingCentralClient.GetPlatform();
@@ -76,13 +76,6 @@ namespace RingCentral.Test
             AuthResult = Platform.Authenticate(UserName, password, Extension, true);
         }
 
-        [TestFixtureTearDown]
-        public void TearDown()
-        {
-            //RingCentralClient.GetPlatform().Revoke(RevokeEndPoint);
-            //RingCentralClient = null;
-            //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
-            //Thread.Sleep(25000);
-        }
+      
     }
 }
