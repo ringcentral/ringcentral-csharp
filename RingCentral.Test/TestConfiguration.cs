@@ -60,13 +60,6 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
 
-
-            //TODO: we'll have these removed and drive the application credentials via environment variables
-            //appKey = "***REMOVED***";
-            //appSecret = "***REMOVED***";
-            //UserName = "***REMOVED***";
-            //password = "***REMOVED***";
-
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
             AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, AuthenticateEndPoint);
             Platform = RingCentralClient.GetPlatform();
