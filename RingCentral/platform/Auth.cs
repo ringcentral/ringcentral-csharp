@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace RingCentral
@@ -16,6 +17,11 @@ namespace RingCentral
 
         public void SetData(JToken jToken)
         {
+            if (!String.IsNullOrEmpty((string)jToken.SelectToken("remember")))
+            {
+                Remember = (bool)jToken.SelectToken("remember");
+            }
+
             if (!String.IsNullOrEmpty((string) jToken.SelectToken("access_token")))
             {
                 AccessToken = (string) jToken.SelectToken("access_token");
@@ -34,11 +40,25 @@ namespace RingCentral
                 AccessTokenExpireTime = ((AccessTokenExpiresIn*1000) + currentTimeInMilliseconds);
             }
 
-            if (!String.IsNullOrEmpty((string) jToken.SelectToken("refresh_token")))
+            if (!String.IsNullOrEmpty((string) jToken.SelectToken("refresh_token_expires_in")))
             {
                 RefreshTokenExpiresIn = (long) jToken.SelectToken("refresh_token_expires_in");
                 RefreshTokenExpireTime = ((RefreshTokenExpiresIn*1000) + currentTimeInMilliseconds);
             }
+        }
+
+        public Dictionary<string, string> GetAuthData()
+        {
+            var authData = new Dictionary<string, string>
+                           {
+                               {"access_token", GetAccessToken()},
+                               {"refresh_token", GetRefreshToken()},
+                               {"expires_in", GetAccessTokenExpiresIn()},
+                               {"refresh_token_expires_in", GetRefreshTokenExpiresIn()},
+                               {"remember", IsRemember().ToString()}
+                           };
+
+            return authData;
         }
 
         public void Reset()
@@ -100,6 +120,16 @@ namespace RingCentral
         public void SetRemember(bool isRemember)
         {
             Remember = isRemember;
+        }
+
+        public string GetAccessTokenExpiresIn()
+        {
+            return AccessTokenExpiresIn.ToString();
+        }
+
+        public string GetRefreshTokenExpiresIn()
+        {
+            return RefreshTokenExpiresIn.ToString();
         }
     }
 }
