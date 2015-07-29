@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Net.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -67,9 +68,9 @@ namespace RingCentral.Test
         [Test]
         public void TestVersion()
         {
-            string result = Platform.GetRequest(VersionEndPoint);
+            Response response = Platform.GetRequest(VersionEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(response.GetBody());
             var version = (string) token.SelectToken("apiVersions").SelectToken("uriString");
 
             Assert.AreEqual(version, "v1.0");

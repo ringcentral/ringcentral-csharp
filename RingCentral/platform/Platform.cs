@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -132,7 +133,7 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the POST request targeted</param>
         /// <returns>The string value of the POST request result</returns>
-        public string PostRequest(string endPoint)
+        public Response PostRequest(string endPoint)
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -140,9 +141,9 @@ namespace RingCentral
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            HttpResponseMessage result = _client.PostAsync(endPoint, httpContent).Result;
+           Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
 
-            return result.Content.ReadAsStringAsync().Result;
+           return SetResponse(postResult);
         }
 
         /// <summary>
@@ -151,7 +152,7 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the GET request</param>
         /// <returns>string response of the GET request</returns>
-        public string GetRequest(string endPoint)
+        public Response GetRequest(string endPoint)
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -159,11 +160,12 @@ namespace RingCentral
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> getResult = _client.GetAsync(endPoint);
+            Task<HttpResponseMessage> result = _client.GetAsync(endPoint);
 
             ClearQueryParameters();
 
-            return getResult.Result.Content.ReadAsStringAsync().Result;
+            return SetResponse(result);
+
         }
 
         /// <summary>
@@ -171,7 +173,7 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the DELETE request</param>
         /// <returns>string response of the DELETE request</returns>
-        public string DeleteRequest(string endPoint)
+        public Response DeleteRequest(string endPoint)
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -179,9 +181,9 @@ namespace RingCentral
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> accountResult = _client.DeleteAsync(endPoint);
+            Task<HttpResponseMessage> deleteResult = _client.DeleteAsync(endPoint);
 
-            return accountResult.Result.Content.ReadAsStringAsync().Result;
+            return SetResponse(deleteResult);
         }
 
         /// <summary>
@@ -190,7 +192,7 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the PUT request</param>
         /// <returns>string response of the PUT request</returns>
-        public string PutRequest(string endPoint)
+        public Response PutRequest(string endPoint)
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
@@ -200,9 +202,19 @@ namespace RingCentral
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> accountResult = _client.PutAsync(endPoint, httpContent);
+            Task<HttpResponseMessage> putResult = _client.PutAsync(endPoint, httpContent);
 
-            return accountResult.Result.Content.ReadAsStringAsync().Result;
+            return SetResponse(putResult);
+        }
+
+        public Response SetResponse(Task<HttpResponseMessage> responseMessage)
+        {
+
+            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
+            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
+            var headers = responseMessage.Result.Content.Headers;
+
+            return new Response(statusCode,body,headers);
         }
 
         public HttpContent GetHttpContent(HttpClient client)
