@@ -88,7 +88,7 @@ namespace RingCentral.Test
 
             Response renewResult = RingCentralClient.GetPlatform().PutRequest(SubscriptionEndPoint + "/" + subscriptioniId);
 
-            token = JObject.Parse(renewResult.GetBody());
+            token = renewResult.GetJson();
 
             var getStatus = (string) token.SelectToken("status");
 
