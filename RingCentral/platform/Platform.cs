@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RingCentral.Http;
@@ -13,7 +11,10 @@ using RingCentral.Http;
 namespace RingCentral
 {
     public class Platform
-    {        
+    {
+        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
+        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
+        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
         protected Auth Auth;
         private HttpClient _client;
 
@@ -30,15 +31,10 @@ namespace RingCentral
         private string AppSecret { get; set; }
         private string ApiEndpoint { get; set; }
 
-        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
-        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
-        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
-
         private List<KeyValuePair<string, string>> QueryParameters { get; set; }
         private Dictionary<string, string> FormParameters { get; set; }
 
         private string JsonData { get; set; }
-        public bool IsMultiPartResponse { get; set; }
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -141,9 +137,9 @@ namespace RingCentral
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-           Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
+            Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
 
-           return SetResponse(postResult);
+            return SetResponse(postResult);
         }
 
         /// <summary>
@@ -165,7 +161,6 @@ namespace RingCentral
             ClearQueryParameters();
 
             return SetResponse(result);
-
         }
 
         /// <summary>
@@ -207,17 +202,16 @@ namespace RingCentral
             return SetResponse(putResult);
         }
 
-        public Response SetResponse(Task<HttpResponseMessage> responseMessage)
+        private static Response SetResponse(Task<HttpResponseMessage> responseMessage)
         {
+            int statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
+            string body = responseMessage.Result.Content.ReadAsStringAsync().Result;
+            HttpContentHeaders headers = responseMessage.Result.Content.Headers;
 
-            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
-            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Result.Content.Headers;
-
-            return new Response(statusCode,body,headers);
+            return new Response(statusCode, body, headers);
         }
 
-        public HttpContent GetHttpContent(HttpClient client)
+        private HttpContent GetHttpContent(HttpClient client)
         {
             HttpContent httpContent;
 
@@ -342,13 +336,11 @@ namespace RingCentral
             JsonData = null;
         }
 
-        public String GetApiKey()
+        private String GetApiKey()
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
         }
-
-        
 
         public HttpClient GetClient()
         {

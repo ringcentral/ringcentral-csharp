@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Net.Http.Headers;
 using Newtonsoft.Json;
 
 namespace RingCentral.Http
 {
-    class Request : Headers
+    public class Request : Headers
     {
         private const string Post = "POST";
         private const string Get = "GET";
@@ -16,21 +14,24 @@ namespace RingCentral.Http
         private const string Put = "PUT";
         private const string Patch = "PATCH";
 
-        protected static List<string> AllowedMethods = new List<string>(new [] {Get,Post,Put,Delete});
+        protected static List<string> AllowedMethods = new List<string>(new[] {Get, Post, Put, Delete});
 
         protected string Method;
         protected string Url;
-        protected List<string> Query;
-        protected List<string> Body;
 
-        public Request(string method, string url, List<string> query, List<string> body, Dictionary<string, string> headers  )
+        public Request(string method, string url, List<KeyValuePair<string, string>> query,
+            Dictionary<String, String> body, HttpContentHeaders headers)
         {
             Method = method;
             Url = url;
             Query = query;
             Body = body;
 
-            var contentHeaders = new Dictionary<string, string> {{Accept, JsonContentType}, {ContentType, JsonContentType}};
+            var contentHeaders = new Dictionary<string, string>
+                                 {
+                                     {Accept, JsonContentType},
+                                     {ContentType, JsonContentType}
+                                 };
             SetHeaders(contentHeaders);
 
             if (headers != null && headers.Any())
@@ -38,6 +39,9 @@ namespace RingCentral.Http
                 SetHeaders(headers);
             }
         }
+
+        private List<KeyValuePair<string, string>> Query { get; set; }
+        private Dictionary<string, string> Body { get; set; }
 
         public bool IsPost()
         {
@@ -89,29 +93,28 @@ namespace RingCentral.Http
             Url = url;
         }
 
-        public List<string> GetQuery()
+        public List<KeyValuePair<string, string>> GetQuery()
         {
             return Query;
         }
 
-        public void SetQuery(List<string> query)
+        public void SetQuery(List<KeyValuePair<string, string>> query)
         {
             Query = query;
         }
 
-        public List<string> GetBody()
+        public Dictionary<string, string> GetBody()
         {
             return Body;
         }
 
-        public void SetBody(List<string> body)
+        public void SetBody(Dictionary<string, string> body)
         {
             Body = body;
         }
 
         public void Send()
         {
-          
         }
 
         private string GetEncodedBody()
@@ -131,13 +134,11 @@ namespace RingCentral.Http
 
         private string GetUrlWithQuery()
         {
-            var url = Url;
+            string url = Url;
             //TODO: Determine if Query is the right datatype and then properly encode
-            var query = Uri.EscapeUriString(Query.ToString());
+            string query = Uri.EscapeUriString(Query.ToString());
 
             return query;
-
         }
-
     }
 }
