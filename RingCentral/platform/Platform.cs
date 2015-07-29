@@ -15,6 +15,8 @@ namespace RingCentral
         private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
         private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
         private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
+        private const string TOKEN_ENDPOINT = "/restapi/oauth/token";
+        private const string REVOKE_ENDPOINT = "/restapi/oauth/revoke";
         protected Auth Auth;
         private HttpClient _client;
 
@@ -42,22 +44,23 @@ namespace RingCentral
         /// <param name="userName">Login of RingCentral user</param>
         /// <param name="password">Password of the RingCentral User</param>
         /// <param name="extension">Optional: Extension number to login</param>
-        /// <param name="endPoint">Authentication Endpoint</param>
+        /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public string Authenticate(string userName, string password, string extension, string endPoint)
+        public string Authenticate(string userName, string password, string extension, bool isRemember)
         {
+
             FormParameters = new Dictionary<string, string>
                              {
                                  {"username", userName},
                                  {"password", Uri.EscapeUriString(password)},
-                                 {"extension", extension},
+                                 {"extension", extension },
                                  {"grant_type", "password"},
                                  {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
+                                 {"refresh_token_ttl", isRemember ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
                              };
 
-            string result = AuthPostRequest(endPoint);
-
+            string result = AuthPostRequest(TOKEN_ENDPOINT);
+            Auth.SetRemember(isRemember);
             Auth.SetData(JObject.Parse(result));
 
             return result;
@@ -66,9 +69,8 @@ namespace RingCentral
         /// <summary>
         ///     Refreshes expired Access token during valid lifetime of Refresh Token
         /// </summary>
-        /// <param name="endPoint">The Refresh token endpoint</param>
         /// <returns>string response of Refresh result</returns>
-        public string Refresh(string endPoint)
+        public string Refresh()
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
@@ -77,10 +79,10 @@ namespace RingCentral
                                  {"grant_type", "refresh_token"},
                                  {"refresh_token", Auth.GetRefreshToken()},
                                  {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
+                                 {"refresh_token_ttl", Auth.IsRemember() ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
                              };
 
-            string result = AuthPostRequest(endPoint);
+            string result = AuthPostRequest(TOKEN_ENDPOINT);
 
             Auth.SetData(JObject.Parse(result));
 
@@ -90,9 +92,8 @@ namespace RingCentral
         /// <summary>
         ///     Revokes the already granted access to stop application activity
         /// </summary>
-        /// <param name="endPoint">The Revoke Endpoint</param>
         /// <returns>string response of Revoke result</returns>
-        public string Revoke(string endPoint)
+        public string Revoke()
         {
             FormParameters = new Dictionary<string, string>
                              {
@@ -101,7 +102,7 @@ namespace RingCentral
 
             Auth.Reset();
 
-            return AuthPostRequest(endPoint);
+            return AuthPostRequest(REVOKE_ENDPOINT);
         }
 
         /// <summary>

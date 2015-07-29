@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Linq;
 
 namespace RingCentral
 {
     public class Auth
     {
-
         private string AccessToken { get; set; }
         private string RefreshToken { get; set; }
         private long AccessTokenExpiresIn { get; set; }
         private long AccessTokenExpireTime { get; set; }
         private long RefreshTokenExpiresIn { get; set; }
         private long RefreshTokenExpireTime { get; set; }
+        private bool Remember { get; set; }
 
 
         public void SetData(JToken jToken)
@@ -24,23 +21,23 @@ namespace RingCentral
                 AccessToken = (string) jToken.SelectToken("access_token");
             }
 
-            if (!String.IsNullOrEmpty((string)jToken.SelectToken("refresh_token")))
+            if (!String.IsNullOrEmpty((string) jToken.SelectToken("refresh_token")))
             {
-                RefreshToken = (string)jToken.SelectToken("refresh_token");
+                RefreshToken = (string) jToken.SelectToken("refresh_token");
             }
 
-            long currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            
-            if (!String.IsNullOrEmpty((string)jToken.SelectToken("expires_in")))
+            long currentTimeInMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
+            if (!String.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
             {
-                AccessTokenExpiresIn = (long)jToken.SelectToken("expires_in");
-                AccessTokenExpireTime = ((AccessTokenExpiresIn * 1000) + currentTimeInMilliseconds);
+                AccessTokenExpiresIn = (long) jToken.SelectToken("expires_in");
+                AccessTokenExpireTime = ((AccessTokenExpiresIn*1000) + currentTimeInMilliseconds);
             }
 
-            if (!String.IsNullOrEmpty((string)jToken.SelectToken("refresh_token")))
+            if (!String.IsNullOrEmpty((string) jToken.SelectToken("refresh_token")))
             {
-                RefreshTokenExpiresIn = (long)jToken.SelectToken("refresh_token_expires_in");
-                RefreshTokenExpireTime = ((RefreshTokenExpiresIn * 1000) + currentTimeInMilliseconds);
+                RefreshTokenExpiresIn = (long) jToken.SelectToken("refresh_token_expires_in");
+                RefreshTokenExpireTime = ((RefreshTokenExpiresIn*1000) + currentTimeInMilliseconds);
             }
         }
 
@@ -52,6 +49,7 @@ namespace RingCentral
             AccessTokenExpireTime = 0;
             RefreshTokenExpiresIn = 0;
             RefreshTokenExpireTime = 0;
+            Remember = false;
         }
 
         /// <summary>
@@ -61,7 +59,7 @@ namespace RingCentral
         /// <returns>bool value of token validity</returns>
         private bool IsTokenValid(long accessToken)
         {
-            long currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            long currentTimeInMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
 
             return accessToken > currentTimeInMilliseconds;
         }
@@ -92,6 +90,16 @@ namespace RingCentral
         public string GetAccessToken()
         {
             return AccessToken;
+        }
+
+        public bool IsRemember()
+        {
+            return Remember;
+        }
+
+        public void SetRemember(bool isRemember)
+        {
+            Remember = isRemember;
         }
     }
 }
