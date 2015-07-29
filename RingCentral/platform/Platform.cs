@@ -14,7 +14,7 @@ namespace RingCentral
     public class Platform
     {        
         protected Auth Auth;
-        protected HttpClient Client { get; set; }
+        private HttpClient _client;
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
@@ -22,7 +22,7 @@ namespace RingCentral
             AppSecret = appSecret;
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
-            Client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
+            _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
         }
 
         private string AppKey { get; set; }
@@ -119,9 +119,9 @@ namespace RingCentral
         /// <returns>string response of the AuthPostRequest</returns>
         public string AuthPostRequest(string endPoint)
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
-            HttpResponseMessage result = Client.PostAsync(endPoint, GetFormParameters()).Result;
+            HttpResponseMessage result = _client.PostAsync(endPoint, GetFormParameters()).Result;
 
             return result.Content.ReadAsStringAsync().Result;
         }
@@ -136,11 +136,11 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            HttpContent httpContent = GetHttpContent(Client);
+            HttpContent httpContent = GetHttpContent(_client);
 
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            HttpResponseMessage result = Client.PostAsync(endPoint, httpContent).Result;
+            HttpResponseMessage result = _client.PostAsync(endPoint, httpContent).Result;
 
             return result.Content.ReadAsStringAsync().Result;
         }
@@ -155,11 +155,11 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> getResult = Client.GetAsync(endPoint);
+            Task<HttpResponseMessage> getResult = _client.GetAsync(endPoint);
 
             ClearQueryParameters();
 
@@ -175,11 +175,11 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> accountResult = Client.DeleteAsync(endPoint);
+            Task<HttpResponseMessage> accountResult = _client.DeleteAsync(endPoint);
 
             return accountResult.Result.Content.ReadAsStringAsync().Result;
         }
@@ -194,13 +194,13 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            HttpContent httpContent = GetHttpContent(Client);
+            HttpContent httpContent = GetHttpContent(_client);
 
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
             endPoint += GetQuerystring();
 
-            Task<HttpResponseMessage> accountResult = Client.PutAsync(endPoint, httpContent);
+            Task<HttpResponseMessage> accountResult = _client.PutAsync(endPoint, httpContent);
 
             return accountResult.Result.Content.ReadAsStringAsync().Result;
         }
@@ -325,7 +325,7 @@ namespace RingCentral
         /// <summary>
         ///     Clears the json data that was set
         /// </summary>
-        public void ClearJsonDat()
+        public void ClearJsonData()
         {
             JsonData = null;
         }
@@ -363,6 +363,16 @@ namespace RingCentral
             }
 
             return responses;
+        }
+
+        public HttpClient GetClient()
+        {
+            return _client;
+        }
+
+        public void SetClient(HttpClient client)
+        {
+            _client = client;
         }
     }
 }
