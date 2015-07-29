@@ -12,25 +12,9 @@ using RingCentral.Http;
 namespace RingCentral
 {
     public class Platform
-    {
-        private string AppKey { get; set; }
-        private string AppSecret { get; set; }
-        private string ApiEndpoint { get; set; }
-
-        private List<KeyValuePair<string, string>> QueryParameters { get; set; }
-        private Dictionary<string, string> FormParameters { get; set; }
-
-        private string JsonData { get; set; }
-
+    {        
         protected Auth Auth;
-        public HttpClient client { get; set; }
-
-        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
-        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
-        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
-
-        public bool IsMultiPartResponse { get; set; }
-     
+        protected HttpClient Client { get; set; }
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
@@ -38,8 +22,22 @@ namespace RingCentral
             AppSecret = appSecret;
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
-            client = new HttpClient(){ BaseAddress = new Uri(ApiEndpoint)};
+            Client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
         }
+
+        private string AppKey { get; set; }
+        private string AppSecret { get; set; }
+        private string ApiEndpoint { get; set; }
+
+        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
+        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
+        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
+
+        private List<KeyValuePair<string, string>> QueryParameters { get; set; }
+        private Dictionary<string, string> FormParameters { get; set; }
+
+        private string JsonData { get; set; }
+        public bool IsMultiPartResponse { get; set; }
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -51,26 +49,21 @@ namespace RingCentral
         /// <returns>string response of Authenticate result.</returns>
         public string Authenticate(string userName, string password, string extension, string endPoint)
         {
-            //using (var client = new HttpClient())
-            //{
-            //    client.BaseAddress = new Uri(ApiEndpoint);
+            FormParameters = new Dictionary<string, string>
+                             {
+                                 {"username", userName},
+                                 {"password", Uri.EscapeUriString(password)},
+                                 {"extension", extension},
+                                 {"grant_type", "password"},
+                                 {"access_token_ttl", ACCESS_TOKEN_TTL},
+                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
+                             };
 
-                FormParameters = new Dictionary<string, string>
-                                 {
-                                     {"username", userName},
-                                     {"password", Uri.EscapeUriString(password)},
-                                     {"extension", extension},
-                                     {"grant_type", "password"},
-                                     {"access_token_ttl",ACCESS_TOKEN_TTL},
-                                     {"refresh_token_ttl",REFRESH_TOKEN_TTL}
-                                 };
+            string result = AuthPostRequest(endPoint);
 
-                string result = AuthPostRequest(endPoint);
+            Auth.SetData(JObject.Parse(result));
 
-                Auth.SetData(JObject.Parse(result));
-
-                return result;
-            //}
+            return result;
         }
 
         /// <summary>
@@ -86,8 +79,8 @@ namespace RingCentral
                              {
                                  {"grant_type", "refresh_token"},
                                  {"refresh_token", Auth.GetRefreshToken()},
-                                 {"access_token_ttl",ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl",REFRESH_TOKEN_TTL}
+                                 {"access_token_ttl", ACCESS_TOKEN_TTL},
+                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
                              };
 
             string result = AuthPostRequest(endPoint);
@@ -126,16 +119,11 @@ namespace RingCentral
         /// <returns>string response of the AuthPostRequest</returns>
         public string AuthPostRequest(string endPoint)
         {
-            //using (var client = new HttpClient())
-            //{
-                //client.BaseAddress = new Uri(ApiEndpoint);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
+            HttpResponseMessage result = Client.PostAsync(endPoint, GetFormParameters()).Result;
 
-                HttpResponseMessage result = client.PostAsync(endPoint, GetFormParameters()).Result;
-
-                return result.Content.ReadAsStringAsync().Result;
-            //}
+            return result.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
@@ -148,18 +136,13 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            //using (var client = new HttpClient())
-            //{
-                HttpContent httpContent = GetHttpContent(client);
+            HttpContent httpContent = GetHttpContent(Client);
 
-               // client.BaseAddress = new Uri(ApiEndpoint);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            HttpResponseMessage result = Client.PostAsync(endPoint, httpContent).Result;
 
-                HttpResponseMessage result = client.PostAsync(endPoint, httpContent).Result;
-
-                return result.Content.ReadAsStringAsync().Result;
-            //}
+            return result.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
@@ -172,26 +155,15 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            //using (var client = new HttpClient())
-            //{
-                //client.BaseAddress = new Uri(ApiEndpoint);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            endPoint += GetQuerystring();
 
-                endPoint += GetQuerystring();
+            Task<HttpResponseMessage> getResult = Client.GetAsync(endPoint);
 
-                Task<HttpResponseMessage> getResult = client.GetAsync(endPoint);
-                
-                var body = getResult.Result.Content.ReadAsStringAsync().Result;
-                
-                var headers = getResult.Result.Content.Headers;
-                
-                var response = new Response(0, null, body, headers);
+            ClearQueryParameters();
 
-                ClearQueryParameters();
-
-                return getResult.Result.Content.ReadAsStringAsync().Result;
-           // }
+            return getResult.Result.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
@@ -203,18 +175,13 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            //using (var client = new HttpClient())
-            //{
-            //    client.BaseAddress = new Uri(ApiEndpoint);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            endPoint += GetQuerystring();
 
-                endPoint += GetQuerystring();
+            Task<HttpResponseMessage> accountResult = Client.DeleteAsync(endPoint);
 
-                Task<HttpResponseMessage> accountResult = client.DeleteAsync(endPoint);
-
-                return accountResult.Result.Content.ReadAsStringAsync().Result;
-            //}
+            return accountResult.Result.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
@@ -227,20 +194,15 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            //using (var client = new HttpClient())
-            //{
-               HttpContent httpContent = GetHttpContent(client);
+            HttpContent httpContent = GetHttpContent(Client);
 
-               // client.BaseAddress = new Uri(ApiEndpoint);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            endPoint += GetQuerystring();
 
-                endPoint += GetQuerystring();
+            Task<HttpResponseMessage> accountResult = Client.PutAsync(endPoint, httpContent);
 
-                Task<HttpResponseMessage> accountResult = client.PutAsync(endPoint, httpContent);
-
-                return accountResult.Result.Content.ReadAsStringAsync().Result;
-           // }
+            return accountResult.Result.Content.ReadAsStringAsync().Result;
         }
 
         public HttpContent GetHttpContent(HttpClient client)
@@ -383,7 +345,7 @@ namespace RingCentral
         {
             string[] output = Regex.Split(multiResult, "--Boundary([^;]+)");
 
-            string[] splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+            string[] splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
 
             var responses = new List<string>();
 
