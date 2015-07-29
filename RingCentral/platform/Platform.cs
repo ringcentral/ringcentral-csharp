@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RingCentral.Http;
@@ -27,6 +28,8 @@ namespace RingCentral
         private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
         private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
 
+        public bool IsMultiPartResponse { get; set; }
+
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
             AppKey = appKey;
@@ -35,9 +38,6 @@ namespace RingCentral
 
             Auth = new Auth();
         }
-
-
-        public bool IsMultiPartResponse { get; set; }
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -179,14 +179,12 @@ namespace RingCentral
                 endPoint += GetQuerystring();
 
                 Task<HttpResponseMessage> getResult = client.GetAsync(endPoint);
-
-                var headers = new Headers();
-                headers.SetHeaders(getResult.Result.Content.Headers);
-
-                if (headers.IsMultiPart())
-                {
-                    IsMultiPartResponse = true;
-                }
+                
+                var body = getResult.Result.Content.ReadAsStringAsync().Result;
+                
+                var headers = getResult.Result.Content.Headers;
+                
+                var response = new Response(0, null, body, headers);
 
                 ClearQueryParameters();
 
@@ -372,6 +370,35 @@ namespace RingCentral
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
+        }
+
+        /// <summary>
+        ///     Parses a multipart response into List of responses that can be accessed by index.
+        /// </summary>
+        /// <param name="multiResult">The multipart response that needs to be broken up into a list of responses</param>
+        /// <returns>A List of responses from a multipart response</returns>
+        public List<string> GetMultiPartResponses(string multiResult)
+        {
+            string[] output = Regex.Split(multiResult, "--Boundary([^;]+)");
+
+            string[] splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+
+            var responses = new List<string>();
+
+            //We Can convert this to linq but for the sake of readability we'll leave it like this.
+            foreach (string s in splitString)
+            {
+                if (s.Contains("{"))
+                {
+                    string json = s.Substring(s.IndexOf('{'));
+
+                    JToken token = JObject.Parse(json);
+
+                    responses.Add(token.ToString());
+                }
+            }
+
+            return responses;
         }
     }
 }

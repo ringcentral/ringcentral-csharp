@@ -78,25 +78,25 @@ namespace RingCentral.Test
 
             string result = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + batchMessages);
 
-            //if (RingCentralClient.GetPlatform().IsMultiPartResponse)
-            //{
-            //    List<string> multiPartResult = RingCentralClient.GetPlatform().GetMultiPartResponses(result);
+            if (RingCentralClient.GetPlatform().IsMultiPartResponse)
+            {
+                List<string> multiPartResult = RingCentralClient.GetPlatform().GetMultiPartResponses(result);
 
-            //    //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
-            //    JToken responseStatuses = JObject.Parse(multiPartResult[0]);
-            //    for (int i = 0; i < messages.Count; i++)
-            //    {
-            //        var status = (string) responseStatuses.SelectToken("response")[i].SelectToken("status");
-            //        Assert.AreEqual(status, "200");
-            //    }
+                //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
+                JToken responseStatuses = JObject.Parse(multiPartResult[0]);
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    var status = (string)responseStatuses.SelectToken("response")[i].SelectToken("status");
+                    Assert.AreEqual(status, "200");
+                }
 
-            //    foreach (string response in multiPartResult.Skip(1))
-            //    {
-            //        JToken token = JObject.Parse(response);
-            //        var id = (string) token.SelectToken("id");
-            //        Assert.IsNotNull(id);
-            //    }
-            //}
+                foreach (string response in multiPartResult.Skip(1))
+                {
+                    JToken token = JObject.Parse(response);
+                    var id = (string)token.SelectToken("id");
+                    Assert.IsNotNull(id);
+                }
+            }
         }
 
         [Test]
