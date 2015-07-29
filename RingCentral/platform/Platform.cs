@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RingCentral.Http;
@@ -13,8 +11,15 @@ using RingCentral.Http;
 namespace RingCentral
 {
     public class Platform
-    {        
+    {
+        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
+        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
+        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
+        private const string TOKEN_ENDPOINT = "/restapi/oauth/token";
+        private const string REVOKE_ENDPOINT = "/restapi/oauth/revoke";
+        
         protected Auth Auth;
+        
         private HttpClient _client;
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
@@ -30,15 +35,10 @@ namespace RingCentral
         private string AppSecret { get; set; }
         private string ApiEndpoint { get; set; }
 
-        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
-        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
-        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
-
         private List<KeyValuePair<string, string>> QueryParameters { get; set; }
         private Dictionary<string, string> FormParameters { get; set; }
 
         private string JsonData { get; set; }
-        public bool IsMultiPartResponse { get; set; }
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -46,22 +46,23 @@ namespace RingCentral
         /// <param name="userName">Login of RingCentral user</param>
         /// <param name="password">Password of the RingCentral User</param>
         /// <param name="extension">Optional: Extension number to login</param>
-        /// <param name="endPoint">Authentication Endpoint</param>
+        /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public string Authenticate(string userName, string password, string extension, string endPoint)
+        public string Authenticate(string userName, string password, string extension, bool isRemember)
         {
+
             FormParameters = new Dictionary<string, string>
                              {
                                  {"username", userName},
                                  {"password", Uri.EscapeUriString(password)},
-                                 {"extension", extension},
+                                 {"extension", extension },
                                  {"grant_type", "password"},
                                  {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
+                                 {"refresh_token_ttl", isRemember ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
                              };
 
-            string result = AuthPostRequest(endPoint);
-
+            string result = AuthPostRequest(TOKEN_ENDPOINT);
+            Auth.SetRemember(isRemember);
             Auth.SetData(JObject.Parse(result));
 
             return result;
@@ -70,9 +71,8 @@ namespace RingCentral
         /// <summary>
         ///     Refreshes expired Access token during valid lifetime of Refresh Token
         /// </summary>
-        /// <param name="endPoint">The Refresh token endpoint</param>
         /// <returns>string response of Refresh result</returns>
-        public string Refresh(string endPoint)
+        public string Refresh()
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
@@ -81,10 +81,10 @@ namespace RingCentral
                                  {"grant_type", "refresh_token"},
                                  {"refresh_token", Auth.GetRefreshToken()},
                                  {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", REFRESH_TOKEN_TTL}
+                                 {"refresh_token_ttl", Auth.IsRemember() ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
                              };
 
-            string result = AuthPostRequest(endPoint);
+            string result = AuthPostRequest(TOKEN_ENDPOINT);
 
             Auth.SetData(JObject.Parse(result));
 
@@ -94,9 +94,8 @@ namespace RingCentral
         /// <summary>
         ///     Revokes the already granted access to stop application activity
         /// </summary>
-        /// <param name="endPoint">The Revoke Endpoint</param>
         /// <returns>string response of Revoke result</returns>
-        public string Revoke(string endPoint)
+        public string Revoke()
         {
             FormParameters = new Dictionary<string, string>
                              {
@@ -105,7 +104,7 @@ namespace RingCentral
 
             Auth.Reset();
 
-            return AuthPostRequest(endPoint);
+            return AuthPostRequest(REVOKE_ENDPOINT);
         }
 
         /// <summary>
@@ -141,9 +140,9 @@ namespace RingCentral
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-           Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
+            Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
 
-           return SetResponse(postResult);
+            return SetResponse(postResult);
         }
 
         /// <summary>
@@ -165,7 +164,6 @@ namespace RingCentral
             ClearQueryParameters();
 
             return SetResponse(result);
-
         }
 
         /// <summary>
@@ -207,17 +205,16 @@ namespace RingCentral
             return SetResponse(putResult);
         }
 
-        public Response SetResponse(Task<HttpResponseMessage> responseMessage)
+        private static Response SetResponse(Task<HttpResponseMessage> responseMessage)
         {
+            int statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
+            string body = responseMessage.Result.Content.ReadAsStringAsync().Result;
+            HttpContentHeaders headers = responseMessage.Result.Content.Headers;
 
-            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
-            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Result.Content.Headers;
-
-            return new Response(statusCode,body,headers);
+            return new Response(statusCode, body, headers);
         }
 
-        public HttpContent GetHttpContent(HttpClient client)
+        private HttpContent GetHttpContent(HttpClient client)
         {
             HttpContent httpContent;
 
@@ -342,13 +339,11 @@ namespace RingCentral
             JsonData = null;
         }
 
-        public String GetApiKey()
+        private String GetApiKey()
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
         }
-
-        
 
         public HttpClient GetClient()
         {

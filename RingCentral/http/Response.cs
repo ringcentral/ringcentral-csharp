@@ -1,43 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace RingCentral.Http
 {
     public class Response : Headers
     {
-
-        private int Status;
-        private string StatusText;
-        private string Body;
-
-        public bool IsMultiPartResponse { get; set; }
+        private readonly string _body;
+        private readonly int _status;
 
 
         public Response(int status, string body, HttpContentHeaders headers)
         {
-            Body = body;
-            Status = status;
+            _body = body;
+            _status = status;
 
             SetHeaders(headers);
         }
 
+        public bool IsMultiPartResponse { get; set; }
+
         public bool CheckStatus()
         {
-            return Status >= 200 && Status < 300;
+            return _status >= 200 && _status < 300;
         }
 
         public string GetBody()
         {
-            return Body;
+            return _body;
         }
 
         public JObject GetJson()
@@ -46,8 +38,7 @@ namespace RingCentral.Http
             {
                 throw new Exception("Response is not JSON");
             }
-             return JObject.Parse(Body);
-
+            return JObject.Parse(_body);
         }
 
         /// <summary>
@@ -57,9 +48,9 @@ namespace RingCentral.Http
         /// <returns>A List of responses from a multipart response</returns>
         public List<string> GetMultiPartResponses()
         {
-            string[] output = Regex.Split(Body, "--Boundary([^;]+)");
+            string[] output = Regex.Split(_body, "--Boundary([^;]+)");
 
-            string[] splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
+            string[] splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
 
             var responses = new List<string>();
 
@@ -81,12 +72,7 @@ namespace RingCentral.Http
 
         public int GetStatus()
         {
-            return Status;
-        }
-
-        public string GetStatusText()
-        {
-            return StatusText;
+            return _status;
         }
 
         public string GetError()
@@ -96,26 +82,24 @@ namespace RingCentral.Http
                 return null;
             }
 
-            var message = GetStatus().ToString();
+            string message = GetStatus().ToString();
 
-            var data = GetJson();
+            JObject data = GetJson();
 
             if (!string.IsNullOrEmpty((string) (data["message"])))
             {
                 message = (string) (data["message"]);
             }
-            if (!string.IsNullOrEmpty((string)(data["error_description"])))
+            if (!string.IsNullOrEmpty((string) (data["error_description"])))
             {
-                message = (string)(data["error_description"]);
+                message = (string) (data["error_description"]);
             }
-            if (!string.IsNullOrEmpty((string)(data["description"])))
+            if (!string.IsNullOrEmpty((string) (data["description"])))
             {
-                message = (string)(data["description"]);
+                message = (string) (data["description"]);
             }
 
             return message;
         }
-
-        
     }
 }

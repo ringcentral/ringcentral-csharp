@@ -28,7 +28,7 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            AuthResult = Platform.Authenticate("username", "password", "101", RefreshEndPoint);
+            AuthResult = Platform.Authenticate("username", "password", "101", true);
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult);
@@ -43,7 +43,7 @@ namespace RingCentral.Test
         public void TestRefresh()
         {
             
-            string refreshResult = Platform.Refresh(RefreshEndPoint);
+            string refreshResult = Platform.Refresh();
 
             Assert.NotNull(refreshResult);
 
