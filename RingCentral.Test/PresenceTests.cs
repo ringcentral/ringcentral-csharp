@@ -11,7 +11,7 @@ namespace RingCentral.Test
         [Test]
         public void GetPresence()
         {
-            string result = RingCentralClient.GetRequest(PresenceEndPoint);
+            string result = RingCentralClient.GetPlatform().GetRequest(PresenceEndPoint);
 
             JToken token = JObject.Parse(result);
 

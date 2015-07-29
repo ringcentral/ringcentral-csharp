@@ -16,9 +16,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            RingCentralClient.SetJsonData(json);
+            RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.PostRequest(RingOutEndPoint);
+            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -26,7 +26,7 @@ namespace RingCentral.Test
 
             Assert.IsNotNull(id);
 
-            string cancelResult = RingCentralClient.DeleteRequest(RingOutEndPoint + "/" + id);
+            string cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/" + id);
         }
 
         [Test]
@@ -36,9 +36,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            RingCentralClient.SetJsonData(json);
+            RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.PostRequest(RingOutEndPoint);
+            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 
@@ -46,7 +46,7 @@ namespace RingCentral.Test
 
             Assert.IsNotNull(id);
 
-            string getStatusResult = RingCentralClient.GetRequest(RingOutEndPoint + "/" + id);
+            string getStatusResult = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/" + id);
 
             token = JObject.Parse(getStatusResult);
 
@@ -62,9 +62,9 @@ namespace RingCentral.Test
                                 "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
                                 "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            RingCentralClient.SetJsonData(json);
+            RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.PostRequest(RingOutEndPoint);
+            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
             JToken token = JObject.Parse(result);
 

@@ -23,15 +23,20 @@ namespace RingCentral.Http
         protected List<string> Query;
         protected List<string> Body;
 
-        public Request(string method, string url, List<string> query, List<string> body)
+        public Request(string method, string url, List<string> query, List<string> body, Dictionary<string, string> headers  )
         {
             Method = method;
             Url = url;
             Query = query;
             Body = body;
 
-            var headers = new Dictionary<string, string> {{Accept, JsonContentType}, {ContentType, JsonContentType}};
-            SetHeaders(headers);
+            var contentHeaders = new Dictionary<string, string> {{Accept, JsonContentType}, {ContentType, JsonContentType}};
+            SetHeaders(contentHeaders);
+
+            if (headers != null && headers.Any())
+            {
+                SetHeaders(headers);
+            }
         }
 
         public bool IsPost()

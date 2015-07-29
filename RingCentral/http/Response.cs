@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -16,7 +18,10 @@ namespace RingCentral.Http
         private string StatusText;
         private string Body;
 
-        public Response(int status, string statusText, string body, Dictionary<string, string> headers)
+        public bool IsMultiPartResponse { get; set; }
+
+
+        public Response(int status, string statusText, string body, HttpContentHeaders headers)
         {
             Body = body;
             StatusText = statusText;
@@ -89,5 +94,7 @@ namespace RingCentral.Http
 
             return message;
         }
+
+        
     }
 }

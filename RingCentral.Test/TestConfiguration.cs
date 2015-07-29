@@ -63,13 +63,13 @@ namespace RingCentral.Test
             //password = "***REMOVED***";
 
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
-            AuthResult = RingCentralClient.Authenticate(UserName, password, Extension, AuthenticateEndPoint);
+            AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, AuthenticateEndPoint);
         }
 
         [TestFixtureTearDown]
         public void TearDown()
         {
-            RingCentralClient.Revoke(RevokeEndPoint);
+            RingCentralClient.GetPlatform().Revoke(RevokeEndPoint);
             RingCentralClient = null;
             //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
             Thread.Sleep(25000);
