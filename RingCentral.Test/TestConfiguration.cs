@@ -61,7 +61,7 @@ namespace RingCentral.Test
             }
 
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
-            AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, AuthenticateEndPoint);
+            AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, true);
             Platform = RingCentralClient.GetPlatform();
             Platform.SetClient(new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });
         }

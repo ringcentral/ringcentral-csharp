@@ -17,7 +17,9 @@ namespace RingCentral
         private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
         private const string TOKEN_ENDPOINT = "/restapi/oauth/token";
         private const string REVOKE_ENDPOINT = "/restapi/oauth/revoke";
+        
         protected Auth Auth;
+        
         private HttpClient _client;
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
