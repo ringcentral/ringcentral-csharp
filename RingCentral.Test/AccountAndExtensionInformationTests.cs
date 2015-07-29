@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using System;
+using System.Net;
+using System.Net.Http;
 
 namespace RingCentral.Test
 {
@@ -8,11 +11,64 @@ namespace RingCentral.Test
     {
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/~";
         protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
+       [TestFixtureSetUp]
+        public void Setup()
+        {
+            mockResponseHandler.AddGetMockResponse(
+                new Uri(ApiEndPoint + AccountExtensionInformationEndPoint),
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1\"," + "\"id\": 1," + "\"serviceInfo\": {" +
+                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/service-info\"," + "\"brand\": {" +
+                                   "\"id\": \"1\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"1\"," +
+                                   "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
+                                 "\"servicePlan\": {" + "\"id\": \"1\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
+                                 "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
+                                   "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
+                               "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
+                                 "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}")
+                }
+
+                );
+            mockResponseHandler.AddGetMockResponse(
+              new Uri(ApiEndPoint + AccountInformationEndPoint),
+              new HttpResponseMessage(HttpStatusCode.OK)
+              {
+                  Content = new StringContent(
+                      "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1\"," + "\"id\": 1," + "\"serviceInfo\": {" +
+                               "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/service-info\"," + "\"brand\": {" +
+                                 "\"id\": \"1\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"1\"," +
+                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
+                               "\"servicePlan\": {" + "\"id\": \"1\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
+                               "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
+                                 "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
+                             "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
+                               "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}")
+              }
+
+              );
+
+            mockResponseHandler.AddGetMockResponse(
+             new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/1"),
+             new HttpResponseMessage(HttpStatusCode.OK)
+             {
+                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\"," + 
+                "\"records\": [ { "+ "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," +"\"id\": 1,"+
+                "\"extensionNumber\": \"102\"," + "\"contact\": {\"firstName\": \"Alice\",\"lastName\": \"Keys\",\"email\": \"alice.keys@example.com\"}," +
+                "\"name\": \"Alice Keys\",\"type\": \"User\",\"status\": \"NotActivated\",\"permissions\": { \"admin\": {\"enabled\": false }," + 
+                "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/profile-image\"}}" +
+                "],\"paging\": {\"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1, \"pageStart\": 0,\"pageEnd\": 0},\"navigation\": {\"firstPage\": {" +
+                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\"}}}"
+                  )
+             });
+        }
+
 
         [Test]
         public void GetAccountExtensionInformation()
         {
-            string result = RingCentralClient.GetPlatform().GetRequest(AccountExtensionInformationEndPoint);
+            string result = Platform.GetRequest(AccountExtensionInformationEndPoint);
 
             Assert.IsNotNull(result);
         }
@@ -20,18 +76,18 @@ namespace RingCentral.Test
         [Test]
         public void GetAccountInformation()
         {
-            string result = RingCentralClient.GetPlatform().GetRequest(AccountInformationEndPoint);
+            string result = Platform.GetRequest(AccountInformationEndPoint);
 
             JToken token = JObject.Parse(result);
             var mainNumber = (string) token.SelectToken("mainNumber");
 
-            Assert.AreEqual(mainNumber, "***REMOVED***");
+            Assert.AreEqual(mainNumber, "19999999999");
         }
 
         [Test]
         public void GetExtensionInformation()
         {
-            string result = RingCentralClient.GetPlatform().GetRequest(AccountExtensionInformationEndPoint + "/~");
+            string result = Platform.GetRequest(AccountExtensionInformationEndPoint + "/1");
 
             Assert.IsNotNull(result);
         }
