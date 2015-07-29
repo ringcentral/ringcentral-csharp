@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
+using RingCentral.Http;
 using RingCentral.Subscription;
 
 namespace RingCentral.NET40.Test
@@ -36,17 +37,17 @@ namespace RingCentral.NET40.Test
         {
             RingCentralClient.GetPlatform().SetJsonData(JsonData);
 
-            string createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
+            Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
 
-            JToken token = JObject.Parse(createResult);
+            JToken token = JObject.Parse(createResult.GetBody());
 
             var id = (string) token.SelectToken("id");
 
             Assert.IsNotNullOrEmpty(id);
 
-            string getResult = RingCentralClient.GetPlatform().GetRequest(SubscriptionEndPoint + "/" + id);
+            Response response = RingCentralClient.GetPlatform().GetRequest(SubscriptionEndPoint + "/" + id);
 
-            var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(getResult);
+            var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
 
             Assert.IsNotNull(SubscriptionItem.DeliveryMode.Address);
 
@@ -61,9 +62,9 @@ namespace RingCentral.NET40.Test
 
             RingCentralClient.GetPlatform().SetJsonData(jsonObject);
 
-            string result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
+            Response result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
 
-            token = JObject.Parse(result);
+            token = JObject.Parse(result.GetBody());
 
             var messageStatus = (string) token.SelectToken("messageStatus");
 

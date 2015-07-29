@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Net.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -72,8 +73,8 @@ namespace RingCentral.Test
         [Test]
         public void GetContactFromAddressBook()
         {
-            string result = Platform.GetRequest(AddressBookEndPoint + "/1");
-            JToken token = JObject.Parse(result);
+            Response response = Platform.GetRequest(AddressBookEndPoint + "/1");
+            JToken token = JObject.Parse(response.GetBody());
             var firstNameResponse = (string)token.SelectToken("firstName");
 
             Assert.AreEqual(firstNameResponse, "Delete");
@@ -81,8 +82,8 @@ namespace RingCentral.Test
         [Test]
         public void GetAddressBook()
         {
-            string result = Platform.GetRequest(AddressBookEndPoint);
-            JToken token = JObject.Parse(result);
+            Response response = Platform.GetRequest(AddressBookEndPoint);
+            JToken token = JObject.Parse(response.GetBody());
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
             Assert.AreEqual("Delete", firstName);
@@ -95,8 +96,8 @@ namespace RingCentral.Test
         [Test]
         public void DeleteContactFromAddressBook()
         {
-            string result = Platform.DeleteRequest(AddressBookEndPoint + "/3");
-            JToken token = JObject.Parse(result);
+            Response response = Platform.DeleteRequest(AddressBookEndPoint + "/3");
+            JToken token = JObject.Parse(response.GetBody());
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
         }
@@ -113,8 +114,8 @@ namespace RingCentral.Test
                              "\"zip\": \"94123\"}" +
                              "}";
             Platform.SetJsonData(jsonData);
-            string result = Platform.PostRequest(AddressBookEndPoint);
-            JToken token = JObject.Parse(result);
+            Response response = Platform.PostRequest(AddressBookEndPoint);
+            JToken token = JObject.Parse(response.GetBody());
 
             var firstName = (string)token.SelectToken("firstName");
             Assert.AreEqual("Jim", firstName);
@@ -135,9 +136,9 @@ namespace RingCentral.Test
                               "}";
             Platform.SetJsonData(jsonData);
 
-            string result = Platform.PutRequest(AddressBookEndPoint + "/5");
+            Response response = Platform.PutRequest(AddressBookEndPoint + "/5");
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(response.GetBody());
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");
 
             Assert.AreEqual(street, "3 Marina Blvd");

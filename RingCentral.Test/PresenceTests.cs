@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -11,9 +12,9 @@ namespace RingCentral.Test
         [Test]
         public void GetPresence()
         {
-            string result = RingCentralClient.GetPlatform().GetRequest(PresenceEndPoint);
+            Response response = RingCentralClient.GetPlatform().GetRequest(PresenceEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(response.GetBody());
 
             var presenceStatus = (string) token.SelectToken("presenceStatus");
 

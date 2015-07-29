@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -18,15 +19,15 @@ namespace RingCentral.Test
 
             RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
+            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(result.GetBody());
 
             var id = (string) token.SelectToken("id");
 
             Assert.IsNotNull(id);
 
-            string cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/" + id);
+            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/" + id);
         }
 
         [Test]
@@ -38,17 +39,17 @@ namespace RingCentral.Test
 
             RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
+            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(result.GetBody());
 
             var id = (string) token.SelectToken("id");
 
             Assert.IsNotNull(id);
 
-            string getStatusResult = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/" + id);
+            Response response = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/" + id);
 
-            token = JObject.Parse(getStatusResult);
+            token = JObject.Parse(response.GetBody());
 
             var message = (string) token.SelectToken("status").SelectToken("callStatus");
 
@@ -64,9 +65,9 @@ namespace RingCentral.Test
 
             RingCentralClient.GetPlatform().SetJsonData(json);
 
-            string result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
+            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(result.GetBody());
 
             var callStatus = (string) token.SelectToken("status").SelectToken("callStatus");
 

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Net.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -68,17 +69,17 @@ namespace RingCentral.Test
         [Test]
         public void GetAccountExtensionInformation()
         {
-            string result = Platform.GetRequest(AccountExtensionInformationEndPoint);
+            Response response = Platform.GetRequest(AccountExtensionInformationEndPoint);
 
-            Assert.IsNotNull(result);
+            Assert.AreEqual(response.GetStatus(),"200");
         }
 
         [Test]
         public void GetAccountInformation()
         {
-            string result = Platform.GetRequest(AccountInformationEndPoint);
+            Response response = Platform.GetRequest(AccountInformationEndPoint);
 
-            JToken token = JObject.Parse(result);
+            JToken token = JObject.Parse(response.GetBody());
             var mainNumber = (string) token.SelectToken("mainNumber");
 
             Assert.AreEqual(mainNumber, "19999999999");
@@ -87,9 +88,9 @@ namespace RingCentral.Test
         [Test]
         public void GetExtensionInformation()
         {
-            string result = Platform.GetRequest(AccountExtensionInformationEndPoint + "/1");
+            Response response = Platform.GetRequest(AccountExtensionInformationEndPoint + "/1");
 
-            Assert.IsNotNull(result);
+            Assert.IsNotNull(response);
         }
     }
 }

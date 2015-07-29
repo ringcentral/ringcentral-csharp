@@ -11,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace RingCentral.Http
 {
-    class Response : Headers
+    public class Response : Headers
     {
 
         private int Status;
@@ -21,10 +21,8 @@ namespace RingCentral.Http
         public bool IsMultiPartResponse { get; set; }
 
 
-        public Response(int status, string statusText, string body, HttpContentHeaders headers)
+        public Response(int status, string body, HttpContentHeaders headers)
         {
-            Body = body;
-            StatusText = statusText;
             Body = body;
             Status = status;
 
