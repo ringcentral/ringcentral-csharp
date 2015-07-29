@@ -42,11 +42,10 @@ namespace RingCentral.Http
 
         public JObject GetJson()
         {
-            //TODO - need to implement
-            //if (!IsJson())
-            //{
-            //    throw new Exception("Response is not JSON");
-            //}
+            if (!IsJson())
+            {
+                throw new Exception("Response is not JSON");
+            }
              return JObject.Parse(Body);
 
         }
