@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
+using System.Net.Http;
 
 namespace RingCentral.Test
 {
@@ -25,7 +26,10 @@ namespace RingCentral.Test
 
         protected string AuthResult;
 
-        public RingCentralClient RingCentralClient;
+        protected Platform Platform;
+
+        protected RingCentralClient RingCentralClient;
+        protected MockHttpClient mockResponseHandler = new MockHttpClient();
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -56,6 +60,7 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
 
+
             //TODO: we'll have these removed and drive the application credentials via environment variables
             //appKey = "***REMOVED***";
             //appSecret = "***REMOVED***";
@@ -64,15 +69,17 @@ namespace RingCentral.Test
 
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
             AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, AuthenticateEndPoint);
+            Platform = RingCentralClient.GetPlatform();
+            Platform.client = new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) };
         }
 
         [TestFixtureTearDown]
         public void TearDown()
         {
-            RingCentralClient.GetPlatform().Revoke(RevokeEndPoint);
-            RingCentralClient = null;
+            //RingCentralClient.GetPlatform().Revoke(RevokeEndPoint);
+            //RingCentralClient = null;
             //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
-            Thread.Sleep(25000);
+            //Thread.Sleep(25000);
         }
     }
 }

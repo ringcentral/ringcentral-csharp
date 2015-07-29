@@ -23,20 +23,22 @@ namespace RingCentral
         private string JsonData { get; set; }
 
         protected Auth Auth;
+        public HttpClient client { get; set; }
 
         private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
         private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
         private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
 
         public bool IsMultiPartResponse { get; set; }
+     
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
             AppKey = appKey;
             AppSecret = appSecret;
             ApiEndpoint = apiEndPoint;
-
             Auth = new Auth();
+            client = new HttpClient(){ BaseAddress = new Uri(ApiEndpoint)};
         }
 
         /// <summary>
@@ -49,9 +51,9 @@ namespace RingCentral
         /// <returns>string response of Authenticate result.</returns>
         public string Authenticate(string userName, string password, string extension, string endPoint)
         {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiEndpoint);
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri(ApiEndpoint);
 
                 FormParameters = new Dictionary<string, string>
                                  {
@@ -68,7 +70,7 @@ namespace RingCentral
                 Auth.SetData(JObject.Parse(result));
 
                 return result;
-            }
+            //}
         }
 
         /// <summary>
@@ -124,16 +126,16 @@ namespace RingCentral
         /// <returns>string response of the AuthPostRequest</returns>
         public string AuthPostRequest(string endPoint)
         {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiEndpoint);
+            //using (var client = new HttpClient())
+            //{
+                //client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
                 HttpResponseMessage result = client.PostAsync(endPoint, GetFormParameters()).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
-            }
+            //}
         }
 
         /// <summary>
@@ -146,18 +148,18 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            using (var client = new HttpClient())
-            {
+            //using (var client = new HttpClient())
+            //{
                 HttpContent httpContent = GetHttpContent(client);
 
-                client.BaseAddress = new Uri(ApiEndpoint);
+               // client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
                 HttpResponseMessage result = client.PostAsync(endPoint, httpContent).Result;
 
                 return result.Content.ReadAsStringAsync().Result;
-            }
+            //}
         }
 
         /// <summary>
@@ -170,11 +172,11 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiEndpoint);
+            //using (var client = new HttpClient())
+            //{
+                //client.BaseAddress = new Uri(ApiEndpoint);
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
                 endPoint += GetQuerystring();
 
@@ -189,7 +191,7 @@ namespace RingCentral
                 ClearQueryParameters();
 
                 return getResult.Result.Content.ReadAsStringAsync().Result;
-            }
+           // }
         }
 
         /// <summary>
@@ -201,9 +203,9 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiEndpoint);
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -212,7 +214,7 @@ namespace RingCentral
                 Task<HttpResponseMessage> accountResult = client.DeleteAsync(endPoint);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
-            }
+            //}
         }
 
         /// <summary>
@@ -225,11 +227,11 @@ namespace RingCentral
         {
             if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
 
-            using (var client = new HttpClient())
-            {
-                HttpContent httpContent = GetHttpContent(client);
+            //using (var client = new HttpClient())
+            //{
+               HttpContent httpContent = GetHttpContent(client);
 
-                client.BaseAddress = new Uri(ApiEndpoint);
+               // client.BaseAddress = new Uri(ApiEndpoint);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -238,7 +240,7 @@ namespace RingCentral
                 Task<HttpResponseMessage> accountResult = client.PutAsync(endPoint, httpContent);
 
                 return accountResult.Result.Content.ReadAsStringAsync().Result;
-            }
+           // }
         }
 
         public HttpContent GetHttpContent(HttpClient client)
