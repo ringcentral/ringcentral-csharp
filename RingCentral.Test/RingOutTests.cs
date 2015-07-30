@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -8,48 +12,26 @@ namespace RingCentral.Test
     public class RingOutTests : TestConfiguration
     {
         private const string RingOutEndPoint = "/restapi/v1.0/account/~/extension/~/ringout";
-
+        private const string json = "{\"to\": {\"phoneNumber\": \"19999999999\"}," +
+                                    "\"from\": {\"phoneNumber\": \"19999999999\"}," +
+                                    "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
+    
         //TODO: this doesn't work via the online API, need to investigate
         [Test]
         public void CancelRingOut()
         {
-            const string json = "{\"to\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
 
-            RingCentralClient.GetPlatform().SetJsonData(json);
-
-            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
-
-            JToken token = JObject.Parse(result.GetBody());
-
-            var id = (string) token.SelectToken("id");
-
-            Assert.IsNotNull(id);
-
-            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/" + id);
+            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/1");
+            Assert.AreEqual(204, cancelResult.GetStatus());
         }
 
         [Test]
         public void GetRingOutStatus()
         {
-            const string json = "{\"to\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
+            
+            Response response = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/1");
 
-            RingCentralClient.GetPlatform().SetJsonData(json);
-
-            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
-
-            JToken token = JObject.Parse(result.GetBody());
-
-            var id = (string) token.SelectToken("id");
-
-            Assert.IsNotNull(id);
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/" + id);
-
-            token = JObject.Parse(response.GetBody());
+            JToken token = JObject.Parse(response.GetBody());
 
             var message = (string) token.SelectToken("status").SelectToken("callStatus");
 
@@ -59,10 +41,6 @@ namespace RingCentral.Test
         [Test]
         public void RingOut()
         {
-            const string json = "{\"to\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"from\": {\"phoneNumber\": \"***REMOVED***\"}," +
-                                "\"callerId\": {\"phoneNumber\": \"***REMOVED***\"},\"playPrompt\": true}\"";
-
             RingCentralClient.GetPlatform().SetJsonData(json);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);

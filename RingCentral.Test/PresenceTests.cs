@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {

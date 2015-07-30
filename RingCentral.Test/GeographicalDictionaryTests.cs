@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -13,6 +17,7 @@ namespace RingCentral.Test
         private const string LocationEndPoint = DictionaryEndPoint + "/location";
         private const string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
         private const string LanguageEndPoint = DictionaryEndPoint + "/language";
+   
 
         [Test]
         public void GetCountries()
@@ -29,15 +34,14 @@ namespace RingCentral.Test
         [Test]
         public void GetCountryById()
         {
-            const string countryId = "1";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/" + countryId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/3");
 
             JToken token = JObject.Parse(response.GetBody());
 
             var countryName = (string) token.SelectToken("name");
 
-            Assert.AreEqual(countryName, "United States");
+            Assert.AreEqual(countryName, "Albania");
         }
 
         [Test]
@@ -99,7 +103,7 @@ namespace RingCentral.Test
         {
             RingCentralClient.GetPlatform().AddQueryParameters("countryId", "1");
             RingCentralClient.GetPlatform().AddQueryParameters("withPhoneNumbers", "True");
-            RingCentralClient.GetPlatform().AddQueryParameters("perPage", "5");
+            RingCentralClient.GetPlatform().AddQueryParameters("perPage", "2");
 
             Response response = RingCentralClient.GetPlatform().GetRequest(StateEndPoint);
 
@@ -113,9 +117,8 @@ namespace RingCentral.Test
         [Test]
         public void GetTimeZoneById()
         {
-            const string timeZoneId = "1";
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/" + timeZoneId);
+            
+            Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/1");
 
             JToken token = JObject.Parse(response.GetBody());
 

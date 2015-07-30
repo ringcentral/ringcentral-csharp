@@ -1,6 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+
 
 namespace RingCentral.Test
 {
@@ -12,12 +17,12 @@ namespace RingCentral.Test
         [Test]
         public void GetActiveCalls()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/active-calls");
-            JToken token = JObject.Parse(response.GetBody());
 
-            var uri = (string) token.SelectToken("uri");
+            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/active-calls");
+            JToken token = JObject.Parse(result.GetBody());
+
+            var uri = (string)token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -25,12 +30,12 @@ namespace RingCentral.Test
         [Test]
         public void GetActiveCallsByExtension()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/active-calls");
-            JToken token = JObject.Parse(response.GetBody());
 
-            var uri = (string) token.SelectToken("uri");
+            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/active-calls");
+            JToken token = JObject.Parse(result.GetBody());
+
+            var uri = (string)token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -38,12 +43,11 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLog()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/");
-            JToken token = JObject.Parse(response.GetBody());
+            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/");
+            JToken token = JObject.Parse(result.GetBody());
 
-            var uri = (string) token.SelectToken("uri");
+            var uri = (string)token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -51,12 +55,12 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLogByExtension()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log");
-            JToken token = JObject.Parse(response.GetBody());
 
-            var uri = (string) token.SelectToken("uri");
+            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log");
+            JToken token = JObject.Parse(result.GetBody());
+
+            var uri = (string)token.SelectToken("uri");
 
             Assert.NotNull(uri);
         }
@@ -64,29 +68,26 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLogByExtensionAndId()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
-            const string callLogId = "AP6Xrj3McwzI79c";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log/" + callLogId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log/Abcdefg");
             JToken token = JObject.Parse(response.GetBody());
 
-            var id = (string) token.SelectToken("id");
 
-            Assert.AreEqual(id, callLogId);
+            var id = (string)token.SelectToken("id");
+
+            Assert.AreEqual(id, "Abcdefg");
         }
 
         [Test]
         public void GetCallLogById()
         {
-            //this ID needs to be a call log id that exists in your RingCentral account otherwise this will fail.
-            const string callLogId = "AP6Xsmec3CVm7_U";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/" + callLogId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/Abcdefgh");
             JToken token = JObject.Parse(response.GetBody());
 
-            var id = (string) token.SelectToken("id");
+            var id = (string)token.SelectToken("id");
 
-            Assert.AreEqual(id, callLogId);
+            Assert.AreEqual("Abcdefgh", id);
         }
     }
 }

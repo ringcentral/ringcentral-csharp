@@ -5,6 +5,10 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
 using RingCentral.Http;
+using System;
+using System.Net.Http;
+using System.Net;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -12,60 +16,37 @@ namespace RingCentral.Test
     public class MessagingTests : TestConfiguration
     {
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
-        private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store/";
+        private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
 
         private readonly string[] _messageSentValues = {"Sent", "Queued"};
-
+        
+        
         //TODO: need to find a valid conversationId to delete to pass this test
         [Test]
         public void DeleteConversationById()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var conversationId = (string) messageToken.SelectToken("conversationId");
-
-            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + conversationId);
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + conversationId);
+            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + "/123123123");
+            Assert.AreEqual(204, result.GetStatus());
+           
         }
 
         [Test]
         public void DeleteMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + messageStore);
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageStore);
-
-            JToken token = JObject.Parse(response.GetBody());
-
-            var availability = (string) token.SelectToken("availability");
-
-            Assert.AreEqual("Deleted", availability);
+          //TODO:API explorer not deleting correctly. Ensure following correct responses
+            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + "/123");
+            Assert.AreEqual(204, result.GetStatus());
+     
         }
 
 
         [Test]
         public void GetAttachmentFromExtension()
         {
-            const string messageId = "1152989004";
-            const string contentId = "1152989004";
             const string expectedMessage = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageId + "/content/" + contentId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/1/content/1" );
 
             Assert.AreEqual(response.GetBody(), expectedMessage);
         }
@@ -74,10 +55,10 @@ namespace RingCentral.Test
         [Test]
         public void GetBatchMessage()
         {
-            var messages = new List<string> {"1180709004", "1180693004"};
+            var messages = new List<string> {"1", "2"};
             string batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + batchMessages);
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/" + batchMessages);
 
             if (response.IsMultiPartResponse)
             {
@@ -108,28 +89,20 @@ namespace RingCentral.Test
             JToken token = JObject.Parse(response.GetBody());
             var phoneNumber = (string) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
-            Assert.AreEqual(phoneNumber.Replace("+", string.Empty), UserName);
+            Assert.AreEqual("+19999999999",phoneNumber);
         }
 
         [Test]
         public void GetSingleMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageStore);
+            
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/2");
 
             JToken token = JObject.Parse(response.GetBody());
 
             var id = (string) token.SelectToken("id");
 
-            Assert.AreEqual(messageStore, id);
+            Assert.AreEqual("2",id);
         }
 
         [Test]
@@ -147,10 +120,6 @@ namespace RingCentral.Test
         [Test]
         public void SendSms()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
 
@@ -162,33 +131,16 @@ namespace RingCentral.Test
         [Test]
         public void UpdateMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+            
 
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-
-            RingCentralClient.GetPlatform().SetJsonData("{\"readStatus\": \"Read\"}");
-
-            Response result = RingCentralClient.GetPlatform().PutRequest(ExtensionMessageEndPoint + messageStore);
+            Response result = RingCentralClient.GetPlatform().PutRequest(ExtensionMessageEndPoint +"/3");
 
             JToken token = JObject.Parse(result.GetBody());
 
             var availability = (string) token.SelectToken("availability");
-
-            if (availability.Equals("Purged"))
-            {
-                Assert.AreEqual("Purged", availability);
-            }
-            else
-            {
-                var readStatus = (string) token.SelectToken("readStatus");
-                Assert.AreEqual("Read", readStatus);
-            }
+            var readStatus = (string) token.SelectToken("readStatus");
+            Assert.AreEqual("Read", readStatus);
+            
         }
     }
 }

@@ -2,6 +2,10 @@
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -17,19 +21,12 @@ namespace RingCentral.Test
             "\"deliveryMode\": " +
             "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 
+ 
         public void DeleteSubscription()
         {
-            RingCentralClient.GetPlatform().SetJsonData(JsonData);
-
-            Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
-
-            JToken token = JObject.Parse(createResult.GetBody());
-
-            var subscriptioniId = (string) token.SelectToken("id");
-
-            Assert.IsNotNullOrEmpty(subscriptioniId);
-
-            Response renewResult = RingCentralClient.GetPlatform().DeleteRequest(SubscriptionEndPoint + "/" + subscriptioniId);
+            //TODO: Get proper result once API explore is fixed
+            Response result = RingCentralClient.GetPlatform().DeleteRequest(SubscriptionEndPoint + "/1");
+            Assert.AreEqual(204, result.GetStatus());
         }
 
 
@@ -50,17 +47,7 @@ namespace RingCentral.Test
         [Test]
         public void GetSubscription()
         {
-            RingCentralClient.GetPlatform().SetJsonData(JsonData);
-
-            Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
-
-            JToken token = JObject.Parse(createResult.GetBody());
-
-            var id = (string) token.SelectToken("id");
-
-            Assert.IsNotNullOrEmpty(id);
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(SubscriptionEndPoint + "/" + id);
+            Response response = RingCentralClient.GetPlatform().GetRequest(SubscriptionEndPoint + "/1");
 
             var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
 
@@ -76,19 +63,10 @@ namespace RingCentral.Test
         [Test]
         public void RenewSubscription()
         {
-            RingCentralClient.GetPlatform().SetJsonData(JsonData);
+           
+            Response renewResult = RingCentralClient.GetPlatform().PutRequest(SubscriptionEndPoint + "/1");
 
-            Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
-
-            JToken token = JObject.Parse(createResult.GetBody());
-
-            var subscriptioniId = (string) token.SelectToken("id");
-
-            Assert.IsNotNullOrEmpty(subscriptioniId);
-
-            Response renewResult = RingCentralClient.GetPlatform().PutRequest(SubscriptionEndPoint + "/" + subscriptioniId);
-
-            token = renewResult.GetJson();
+            JToken token = renewResult.GetJson();
 
             var getStatus = (string) token.SelectToken("status");
 

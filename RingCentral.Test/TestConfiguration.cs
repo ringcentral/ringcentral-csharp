@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 using System.Net.Http;
+using System.Net;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -59,20 +61,13 @@ namespace RingCentral.Test
             {
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
-
+           
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
-            AuthResult = RingCentralClient.GetPlatform().Authenticate(UserName, password, Extension, true);
             Platform = RingCentralClient.GetPlatform();
             Platform.SetClient(new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });
+            AuthResult = Platform.Authenticate(UserName, password, Extension, true);
         }
 
-        [TestFixtureTearDown]
-        public void TearDown()
-        {
-            //RingCentralClient.GetPlatform().Revoke(RevokeEndPoint);
-            //RingCentralClient = null;
-            //Due to Request limitions a wait of 25 second is needed to sure not to exceed the maximum requst rate / minute
-            //Thread.Sleep(25000);
-        }
+      
     }
 }
