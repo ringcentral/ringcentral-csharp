@@ -5,6 +5,10 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
 using RingCentral.Http;
+using System;
+using System.Net.Http;
+using System.Net;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -12,60 +16,157 @@ namespace RingCentral.Test
     public class MessagingTests : TestConfiguration
     {
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
-        private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store/";
+        private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
 
         private readonly string[] _messageSentValues = {"Sent", "Queued"};
+        [TestFixtureSetUp]
+        public void SetUp()
+        {
+            mockResponseHandler.AddDeleteMockResponse(
+               new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123123123"),
+               new HttpResponseMessage(HttpStatusCode.NoContent)
+               { Content = new StringContent("")});
+            mockResponseHandler.AddDeleteMockResponse(
+              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123"),
+              new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
+            mockResponseHandler.AddGetMockResponse(
+              new Uri(ApiEndPoint + ExtensionMessageEndPoint +"/1/content/1"),
+              new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("This is a test from the the NUnit Test Suite of the RingCentral C# SDK") });
+            mockResponseHandler.AddGetMockResponse(
+              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/1,2,"),
+              new HttpResponseMessage(HttpStatusCode.OK)
+              { Content = new StringContent("--Boundary_0 Content-Type: application/json {" +
+                "\"response\" : [ {\"href\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\","+
+                "\"status\" : 200, \"responseDescription\" : \"OK\" }, {"+
+                 "\"href\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/2\",\"status\" : 200,"+
+                 "\"responseDescription\" : \"OK\" } ] }" +
+                "--Boundary_1 Content-Type: application/json {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\"," +
+                 "\"id\": 1,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                 "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                 "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:56:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\","+
+                 "\"attachments\": [{\"id\": 1," +
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1/content/1\","+
+                 "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                 "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                 "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1,"+
+                 "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\""+
+                 " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}" +
+                "--Boundary_2  Content-Type: application/json {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\"," + 
+                 "\"id\": 1,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                 "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                 "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:56:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\","+
+                 "\"attachments\": [{\"id\": 1,"+
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1/content/1\"," + 
+                 "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                 "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                 "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1,"+
+                 "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\""+
+                 " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} --Boundary_0") 
+              });
+                        mockResponseHandler.AddGetMockResponse(
+              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/2"),
+              new HttpResponseMessage(HttpStatusCode.OK)
+              { Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/2\","+
+                 "\"id\": 2,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                 "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                 "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:58:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\","+
+                 "\"attachments\": [{\"id\": 2," +
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/2/content/2\","+
+                 "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                 "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                 "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 2, \"conversationId\": 2,"+
+                 "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/2\",\"id\": \"2\""+
+                 " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8,"application/json") 
+              });
+             mockResponseHandler.AddPostMockResponse(
+              new Uri(ApiEndPoint + SmsEndPoint),
+              new HttpResponseMessage(HttpStatusCode.OK)
+              { Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3\","+
+                 "\"id\": 3,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                 "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                 "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:58:21.000Z\",\"readStatus\": \"Unread\",\"priority\": \"Normal\","+
+                 "\"attachments\": [{\"id\": 3," +
+                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3/content/3\","+
+                 "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                 "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                 "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 3, \"conversationId\": 3,"+
+                 "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/3\",\"id\": \"3\""+
+                 " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8,"application/json") 
+              });
+             mockResponseHandler.AddPutMockResponse(
+              new Uri(ApiEndPoint + ExtensionMessageEndPoint+ "/3"),
+              new HttpResponseMessage(HttpStatusCode.OK)
+              {
+                  Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3\"," +
+                   "\"id\": 3,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," +
+                   "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"}," +
+                   "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:58:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\"," +
+                   "\"attachments\": [{\"id\": 3," +
+                   "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3/content/3\"," +
+                   "\"type\": \"Text\",\"contentType\": \"text/plain\" }]," +
+                   "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\"," +
+                   "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 3, \"conversationId\": 3," +
+                   "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/3\",\"id\": \"3\"" +
+                   " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json")
+              });
+             mockResponseHandler.AddGetMockResponse(
+               new Uri(ApiEndPoint + ExtensionMessageEndPoint),
+               new HttpResponseMessage(HttpStatusCode.OK)
+               {
+                   Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store?availability=Alive&dateFrom=2015-07-23T00:00:00.000Z&page=1&perPage=100\","+
+                    "\"records\": [ " +
+                    "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\","+
+                                     "\"id\": 1,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                                     "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                                     "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:56:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\","+
+                                     "\"attachments\": [{\"id\": 1," +
+                                     "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1/content/1\","+
+                                     "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                                     "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                                     "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1,"+
+                                     "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\""+
+                                     " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}, " + 
+	                    " {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\"," + 
+                     "\"id\": 1,\"to\": [{ \"phoneNumber\": \"+19999999999\"}]," + 
+                     "\"from\": {\"phoneNumber\": \"+19999999999\",\"location\": \"South San Francisco, CA\"},"+
+                     "\"type\": \"SMS\",\"creationTime\": \"2015-07-29T15:56:21.000Z\",\"readStatus\": \"Read\",\"priority\": \"Normal\","+
+                     "\"attachments\": [{\"id\": 1,"+
+                     "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1/content/1\"," +
+                     "\"type\": \"Text\",\"contentType\": \"text/plain\" }],"+
+                     "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\","+
+                     "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1,"+
+                     "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\""+
+                     " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} ]}", Encoding.UTF8, "application/json")
+               });
 
+        }
+        
         //TODO: need to find a valid conversationId to delete to pass this test
         [Test]
         public void DeleteConversationById()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var conversationId = (string) messageToken.SelectToken("conversationId");
-
-            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + conversationId);
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + conversationId);
+            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + "/123123123");
+            Assert.AreEqual(204, result.GetStatus());
+           
         }
 
         [Test]
         public void DeleteMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + messageStore);
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageStore);
-
-            JToken token = JObject.Parse(response.GetBody());
-
-            var availability = (string) token.SelectToken("availability");
-
-            Assert.AreEqual("Deleted", availability);
+          //TODO:API explorer not deleting correctly. Ensure following correct responses
+            Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + "/123");
+            Assert.AreEqual(204, result.GetStatus());
+     
         }
 
 
         [Test]
         public void GetAttachmentFromExtension()
         {
-            const string messageId = "1152989004";
-            const string contentId = "1152989004";
             const string expectedMessage = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageId + "/content/" + contentId);
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/1/content/1" );
 
             Assert.AreEqual(response.GetBody(), expectedMessage);
         }
@@ -74,10 +175,10 @@ namespace RingCentral.Test
         [Test]
         public void GetBatchMessage()
         {
-            var messages = new List<string> {"1180709004", "1180693004"};
+            var messages = new List<string> {"1", "2"};
             string batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + batchMessages);
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/" + batchMessages);
 
             if (response.IsMultiPartResponse)
             {
@@ -108,28 +209,20 @@ namespace RingCentral.Test
             JToken token = JObject.Parse(response.GetBody());
             var phoneNumber = (string) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
-            Assert.AreEqual(phoneNumber.Replace("+", string.Empty), UserName);
+            Assert.AreEqual("+19999999999",phoneNumber);
         }
 
         [Test]
         public void GetSingleMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint + messageStore);
+            
+            Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/2");
 
             JToken token = JObject.Parse(response.GetBody());
 
             var id = (string) token.SelectToken("id");
 
-            Assert.AreEqual(messageStore, id);
+            Assert.AreEqual("2",id);
         }
 
         [Test]
@@ -147,10 +240,6 @@ namespace RingCentral.Test
         [Test]
         public void SendSms()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
 
@@ -162,33 +251,16 @@ namespace RingCentral.Test
         [Test]
         public void UpdateMessage()
         {
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
+            
 
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
-
-            Response messageResult = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
-
-            JToken messageToken = JObject.Parse(messageResult.GetBody());
-            var messageStore = (string) messageToken.SelectToken("id");
-
-            RingCentralClient.GetPlatform().SetJsonData("{\"readStatus\": \"Read\"}");
-
-            Response result = RingCentralClient.GetPlatform().PutRequest(ExtensionMessageEndPoint + messageStore);
+            Response result = RingCentralClient.GetPlatform().PutRequest(ExtensionMessageEndPoint +"/3");
 
             JToken token = JObject.Parse(result.GetBody());
 
             var availability = (string) token.SelectToken("availability");
-
-            if (availability.Equals("Purged"))
-            {
-                Assert.AreEqual("Purged", availability);
-            }
-            else
-            {
-                var readStatus = (string) token.SelectToken("readStatus");
-                Assert.AreEqual("Read", readStatus);
-            }
+            var readStatus = (string) token.SelectToken("readStatus");
+            Assert.AreEqual("Read", readStatus);
+            
         }
     }
 }
