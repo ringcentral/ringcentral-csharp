@@ -15,28 +15,7 @@ namespace RingCentral.Test
         private const string json = "{\"to\": {\"phoneNumber\": \"19999999999\"}," +
                                     "\"from\": {\"phoneNumber\": \"19999999999\"}," +
                                     "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
-        [TestFixtureSetUp]
-        public void SetUp()
-        {
-            mockResponseHandler.AddPostMockResponse(
-               new Uri(ApiEndPoint + RingOutEndPoint),
-               new HttpResponseMessage(HttpStatusCode.OK)
-               {
-                   Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\","+
-                    "\"id\": 255,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
-               });
-            mockResponseHandler.AddGetMockResponse(
-            new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
-            new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\"," +
-                 "\"id\": 1,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
-            });
-            //TODO: Correct response once API explore is working
-            mockResponseHandler.AddDeleteMockResponse(
-              new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
-              new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
-        }
+    
         //TODO: this doesn't work via the online API, need to investigate
         [Test]
         public void CancelRingOut()

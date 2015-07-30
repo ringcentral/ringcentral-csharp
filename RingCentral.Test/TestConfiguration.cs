@@ -61,15 +61,7 @@ namespace RingCentral.Test
             {
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
-            mockResponseHandler.AddPostMockResponse(
-               new Uri(ApiEndPoint + AuthenticateEndPoint),
-               new HttpResponseMessage(HttpStatusCode.OK)
-               {
-                   Content = new StringContent(
-                       "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," +
-                       "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\"," +
-                       "\"owner_id\": \"1\" }", Encoding.UTF8, "application/json")
-               });
+           
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
             Platform = RingCentralClient.GetPlatform();
             Platform.SetClient(new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });

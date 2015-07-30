@@ -14,17 +14,7 @@ namespace RingCentral.Test
         protected const string RefreshEndPoint = "/restapi/oauth/token";
         protected const string VersionEndPoint = "/restapi";
 
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-           
-            mockResponseHandler.AddGetMockResponse(
-                new Uri(ApiEndPoint + VersionEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }" ,Encoding.UTF8, "application/json")
-                });
-        }
+    
 
         [Test]
         public void TestAuthentication()
