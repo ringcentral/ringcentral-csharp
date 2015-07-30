@@ -32,7 +32,7 @@ namespace RingCentral.NET40.Test
             return tcs.Task;
         }
 
-        [Test]
+      
         public void SetPubNubSubscription()
         {
             RingCentralClient.GetPlatform().SetJsonData(JsonData);
