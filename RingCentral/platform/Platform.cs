@@ -30,6 +30,8 @@ namespace RingCentral
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
+            _client.DefaultRequestHeaders.Add("User-Agent","Infinity Interactive C# SDK");
+            _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C# SDK");
         }
 
         private string AppKey { get; set; }
