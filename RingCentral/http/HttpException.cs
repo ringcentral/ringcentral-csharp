@@ -8,12 +8,21 @@ namespace RingCentral.Http
     class HttpException : Exception
     {
 
-        protected Request Request;
         protected Response Response;
 
-        public HttpException(Request request, Response response, Exception previous) : base(response.GetError() ,previous)
+        public HttpException()
         {
+            
+        }
 
+        public HttpException(string message) : base(message)
+        {
+            
+        }
+
+        public HttpException(string message, Exception innerException) : base(message ,innerException)
+        {
+            
         }
 
         public Response GetResponse()
@@ -21,9 +30,5 @@ namespace RingCentral.Http
             return Response;
         }
 
-        public Request GetRequest()
-        {
-            return Request;
-        }
     }
 }

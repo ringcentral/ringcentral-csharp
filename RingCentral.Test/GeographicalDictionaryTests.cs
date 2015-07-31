@@ -24,7 +24,7 @@ namespace RingCentral.Test
         {
             Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var countryName = (string) token.SelectToken("records")[0].SelectToken("name");
 
@@ -37,7 +37,7 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(CountryEndPoint + "/3");
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var countryName = (string) token.SelectToken("name");
 
@@ -49,7 +49,7 @@ namespace RingCentral.Test
         {
             Response response = RingCentralClient.GetPlatform().GetRequest(LanguageEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var languageName = (string) token.SelectToken("records")[0].SelectToken("name");
 
@@ -63,7 +63,7 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(LanguageEndPoint + "/" + languageId);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var timeZoneName = (string) token.SelectToken("name");
 
@@ -77,7 +77,7 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(LocationEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var city = (string) token.SelectToken("records")[0].SelectToken("city");
 
@@ -91,7 +91,7 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(StateEndPoint + "/" + stateId);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var stateName = (string) token.SelectToken("name");
 
@@ -107,7 +107,7 @@ namespace RingCentral.Test
 
             Response response = RingCentralClient.GetPlatform().GetRequest(StateEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
 
@@ -120,7 +120,7 @@ namespace RingCentral.Test
             
             Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint + "/1");
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var timeZoneName = (string) token.SelectToken("name");
 
@@ -132,7 +132,7 @@ namespace RingCentral.Test
         {
             Response response = RingCentralClient.GetPlatform().GetRequest(TimeZoneEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
 

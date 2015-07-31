@@ -70,7 +70,7 @@ namespace RingCentral.Test
         {
 
             Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log/Abcdefg");
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
 
             var id = (string)token.SelectToken("id");
@@ -83,7 +83,7 @@ namespace RingCentral.Test
         {
 
             Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/Abcdefgh");
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var id = (string)token.SelectToken("id");
 

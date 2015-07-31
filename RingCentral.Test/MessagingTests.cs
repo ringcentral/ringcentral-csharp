@@ -86,7 +86,7 @@ namespace RingCentral.Test
         {
             Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint);
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
             var phoneNumber = (string) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
             Assert.AreEqual("+19999999999",phoneNumber);
@@ -98,7 +98,7 @@ namespace RingCentral.Test
             
             Response response = RingCentralClient.GetPlatform().GetRequest(ExtensionMessageEndPoint +"/2");
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var id = (string) token.SelectToken("id");
 
