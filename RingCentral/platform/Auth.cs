@@ -13,6 +13,9 @@ namespace RingCentral
         private long RefreshTokenExpiresIn { get; set; }
         private long RefreshTokenExpireTime { get; set; }
         private bool Remember { get; set; }
+        private string TokenType { get; set; }
+        private string OwnerId { get; set; }
+        private string Scope { get; set; }
 
 
         public void SetData(JToken jToken)
@@ -20,6 +23,21 @@ namespace RingCentral
             if (!String.IsNullOrEmpty((string)jToken.SelectToken("remember")))
             {
                 Remember = (bool)jToken.SelectToken("remember");
+            }
+
+            if (!String.IsNullOrEmpty((string)jToken.SelectToken("token_type")))
+            {
+                TokenType = (string)jToken.SelectToken("token_type");
+            }
+
+            if (!String.IsNullOrEmpty((string)jToken.SelectToken("owner_id")))
+            {
+                OwnerId = (string)jToken.SelectToken("owner_id");
+            }
+
+            if (!String.IsNullOrEmpty((string)jToken.SelectToken("scope")))
+            {
+                Scope = (string)jToken.SelectToken("scope");
             }
 
             if (!String.IsNullOrEmpty((string) jToken.SelectToken("access_token")))
@@ -37,13 +55,30 @@ namespace RingCentral
             if (!String.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
             {
                 AccessTokenExpiresIn = (long) jToken.SelectToken("expires_in");
-                AccessTokenExpireTime = ((AccessTokenExpiresIn*1000) + currentTimeInMilliseconds);
+
+                if (!String.IsNullOrEmpty((string) jToken.SelectToken("expire_time")))
+                {
+                    AccessTokenExpireTime = (long) jToken.SelectToken("expire_time");
+                }
+                else
+                {
+                    AccessTokenExpireTime = ((AccessTokenExpiresIn * 1000) + currentTimeInMilliseconds);
+                } 
             }
 
             if (!String.IsNullOrEmpty((string) jToken.SelectToken("refresh_token_expires_in")))
             {
                 RefreshTokenExpiresIn = (long) jToken.SelectToken("refresh_token_expires_in");
-                RefreshTokenExpireTime = ((RefreshTokenExpiresIn*1000) + currentTimeInMilliseconds);
+
+                if (!String.IsNullOrEmpty((string)jToken.SelectToken("expires_time")))
+                {
+                    RefreshTokenExpireTime = (long)jToken.SelectToken("refresh_token_expire_time");
+                }
+                else
+                {
+                    RefreshTokenExpireTime = ((RefreshTokenExpiresIn * 1000) + currentTimeInMilliseconds);
+                }
+                
             }
         }
 
@@ -51,11 +86,16 @@ namespace RingCentral
         {
             var authData = new Dictionary<string, string>
                            {
-                               {"access_token", GetAccessToken()},
-                               {"refresh_token", GetRefreshToken()},
-                               {"expires_in", GetAccessTokenExpiresIn()},
-                               {"refresh_token_expires_in", GetRefreshTokenExpiresIn()},
-                               {"remember", IsRemember().ToString()}
+                               {"remember", IsRemember().ToString()},
+                               {"token_type", TokenType},
+                               {"access_token", AccessToken},
+                               {"expires_in", AccessTokenExpiresIn.ToString()},
+                               {"expire_time", AccessTokenExpireTime.ToString()},
+                               {"refresh_token", RefreshToken},
+                               {"refresh_token_expires_in", RefreshTokenExpiresIn.ToString()},
+                               {"refresh_token_expire_time", RefreshTokenExpireTime.ToString()},
+                               {"scope",Scope},
+                               {"owner_id", OwnerId}
                            };
 
             return authData;
@@ -63,13 +103,20 @@ namespace RingCentral
 
         public void Reset()
         {
+            Remember = false;
+            TokenType = "";
+
             AccessToken = null;
-            RefreshToken = null;
             AccessTokenExpiresIn = 0;
             AccessTokenExpireTime = 0;
+
+            RefreshToken = null;
             RefreshTokenExpiresIn = 0;
             RefreshTokenExpireTime = 0;
-            Remember = false;
+            
+            Scope = "";
+            OwnerId = "";
+            
         }
 
         /// <summary>
@@ -122,14 +169,5 @@ namespace RingCentral
             Remember = isRemember;
         }
 
-        public string GetAccessTokenExpiresIn()
-        {
-            return AccessTokenExpiresIn.ToString();
-        }
-
-        public string GetRefreshTokenExpiresIn()
-        {
-            return RefreshTokenExpiresIn.ToString();
-        }
     }
 }
