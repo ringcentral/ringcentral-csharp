@@ -17,7 +17,7 @@ namespace RingCentral.Test
         public void GetContactFromAddressBook()
         {
             Response response = Platform.GetRequest(AddressBookEndPoint + "/1");
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
             var firstNameResponse = (string)token.SelectToken("firstName");
 
             Assert.AreEqual(firstNameResponse, "Delete");
@@ -26,7 +26,7 @@ namespace RingCentral.Test
         public void GetAddressBook()
         {
             Response response = Platform.GetRequest(AddressBookEndPoint);
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
             Assert.AreEqual("Delete", firstName);
@@ -40,7 +40,7 @@ namespace RingCentral.Test
         public void DeleteContactFromAddressBook()
         {
             Response response = Platform.DeleteRequest(AddressBookEndPoint + "/3");
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
         }
@@ -81,7 +81,7 @@ namespace RingCentral.Test
 
             Response response = Platform.PutRequest(AddressBookEndPoint + "/5");
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");
 
             Assert.AreEqual(street, "3 Marina Blvd");

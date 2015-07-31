@@ -31,7 +31,7 @@ namespace RingCentral.Test
             
             Response response = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/1");
 
-            JToken token = JObject.Parse(response.GetBody());
+            JToken token = response.GetJson();
 
             var message = (string) token.SelectToken("status").SelectToken("callStatus");
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -36,9 +37,10 @@ namespace RingCentral
         private string ApiEndpoint { get; set; }
 
         private List<KeyValuePair<string, string>> QueryParameters { get; set; }
-        private Dictionary<string, string> FormParameters { get; set; }
+        private Dictionary<string, string> Body { get; set; }
 
         private string JsonData { get; set; }
+
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -51,7 +53,7 @@ namespace RingCentral
         public string Authenticate(string userName, string password, string extension, bool isRemember)
         {
 
-            FormParameters = new Dictionary<string, string>
+            Body = new Dictionary<string, string>
                              {
                                  {"username", userName},
                                  {"password", Uri.EscapeUriString(password)},
@@ -76,7 +78,7 @@ namespace RingCentral
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
-            FormParameters = new Dictionary<string, string>
+            Body = new Dictionary<string, string>
                              {
                                  {"grant_type", "refresh_token"},
                                  {"refresh_token", Auth.GetRefreshToken()},
@@ -97,7 +99,7 @@ namespace RingCentral
         /// <returns>string response of Revoke result</returns>
         public string Revoke()
         {
-            FormParameters = new Dictionary<string, string>
+            Body = new Dictionary<string, string>
                              {
                                  {"token", Auth.GetAccessToken()}
                              };
@@ -285,12 +287,12 @@ namespace RingCentral
         /// <param name="formValue">The form value of the name/value pairing</param>
         public void AddFormParameter(string formName, string formValue)
         {
-            if (FormParameters == null)
+            if (Body == null)
             {
-                FormParameters = new Dictionary<string, string>();
+                Body = new Dictionary<string, string>();
             }
 
-            FormParameters.Add(formName, formValue);
+            Body.Add(formName, formValue);
         }
 
         /// <summary>
@@ -299,7 +301,7 @@ namespace RingCentral
         /// <returns>FormURLEncoded Form parameters</returns>
         public HttpContent GetFormParameters()
         {
-            List<KeyValuePair<string, string>> formBodyList = FormParameters.ToList();
+            List<KeyValuePair<string, string>> formBodyList = Body.ToList();
 
             return new FormUrlEncodedContent(formBodyList);
         }
@@ -309,7 +311,7 @@ namespace RingCentral
         /// </summary>
         public void ClearFormParameters()
         {
-            FormParameters = new Dictionary<string, string>();
+            Body = new Dictionary<string, string>();
         }
 
         /// <summary>
