@@ -23,7 +23,7 @@ namespace RingCentral.Test
         private readonly string[] _messageSentValues = {"Sent", "Queued"};
         
         
-        //TODO: need to find a valid conversationId to delete to pass this test
+      \
         [Test]
         public void DeleteConversationById()
         {
@@ -36,7 +36,7 @@ namespace RingCentral.Test
         [Test]
         public void DeleteMessage()
         {
-          //TODO:API explorer not deleting correctly. Ensure following correct responses
+          
             Response result = RingCentralClient.GetPlatform().DeleteRequest(ExtensionMessageEndPoint + "/123");
             Assert.AreEqual(204, result.GetStatus());
      

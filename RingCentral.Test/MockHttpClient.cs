@@ -562,7 +562,7 @@ namespace RingCentral.Test
                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\"," +
                  "\"id\": 1,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
             });
-            //TODO: Correct response once API explore is working
+       
             AddDeleteMockResponse(
               new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
               new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });

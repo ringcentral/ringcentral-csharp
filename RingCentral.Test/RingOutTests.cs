@@ -16,7 +16,7 @@ namespace RingCentral.Test
                                     "\"from\": {\"phoneNumber\": \"19999999999\"}," +
                                     "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
     
-        //TODO: this doesn't work via the online API, need to investigate
+   
         [Test]
         public void CancelRingOut()
         {

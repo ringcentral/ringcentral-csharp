@@ -24,7 +24,7 @@ namespace RingCentral.Test
  
         public void DeleteSubscription()
         {
-            //TODO: Get proper result once API explore is fixed
+          
             Response result = RingCentralClient.GetPlatform().DeleteRequest(SubscriptionEndPoint + "/1");
             Assert.AreEqual(204, result.GetStatus());
         }
