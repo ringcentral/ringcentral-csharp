@@ -384,6 +384,7 @@ namespace RingCentral.Test
         {
             string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
             string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
+            string FaxEndPoint = "/restapi/v1.0/account/~/extension/~/fax";
             AddDeleteMockResponse(
              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123123123"),
              new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
@@ -502,6 +503,17 @@ namespace RingCentral.Test
                     "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\"" +
                     " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} ]}", Encoding.UTF8, "application/json")
               });
+            AddPostMockResponse(
+                new Uri(ApiEndPoint + FaxEndPoint),
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                     "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/5\", \"id\": 5, \"to\": [{\"phoneNumber\": \"19999999999\"}]," +
+                     "\"type\": \"Fax\",\"creationTime\": \"2015-07-26T08:38:45.000Z\",\"readStatus\": \"Unread\",\"priority\": \"Normal\"," +
+                     "\"attachments\": [{\"id\": 1, \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/5/content/1\"," +
+                     "\"contentType\": \"image/tiff\"}],\"direction\": \"Outbound\",\"availability\": \"Alive\",\"messageStatus\": \"Queued\"," +
+                     "\"faxResolution\": \"High\",\"faxPageCount\": 0,\"lastModifiedTime\": \"2013-07-26T08:38:45.000Z\"}", Encoding.UTF8, "application/json")
+                });
         }
         public void AddPresenceResponses()
         {
