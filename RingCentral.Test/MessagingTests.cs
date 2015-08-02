@@ -18,6 +18,7 @@ namespace RingCentral.Test
         private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
         private const string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
         private const string FaxEndPoint = "/restapi/v1.0/account/~/extension/~/fax";
+        private const string PagerEndPoint = "/restapi/v1.0/account/~/extension/~/company-pager";
 
         private readonly string[] _messageSentValues = {"Sent", "Queued"};
         
@@ -118,7 +119,10 @@ namespace RingCentral.Test
         [Test]
         public void SendPagerMessage()
         {
-            //TODO: unimplemented
+            Response result = RingCentralClient.GetPlatform().PostRequest(PagerEndPoint);
+            JToken token = result.GetJson();
+            var id = (int)token.SelectToken("id");
+            Assert.AreEqual(8, id);
         }
 
         [Test]

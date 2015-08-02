@@ -385,6 +385,7 @@ namespace RingCentral.Test
             string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
             string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
             string FaxEndPoint = "/restapi/v1.0/account/~/extension/~/fax";
+            string PagerEndPoint = "/restapi/v1.0/account/~/extension/~/company-pager";
             AddDeleteMockResponse(
              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123123123"),
              new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
@@ -513,6 +514,19 @@ namespace RingCentral.Test
                      "\"attachments\": [{\"id\": 1, \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/5/content/1\"," +
                      "\"contentType\": \"image/tiff\"}],\"direction\": \"Outbound\",\"availability\": \"Alive\",\"messageStatus\": \"Queued\"," +
                      "\"faxResolution\": \"High\",\"faxPageCount\": 0,\"lastModifiedTime\": \"2013-07-26T08:38:45.000Z\"}", Encoding.UTF8, "application/json")
+                });
+            AddPostMockResponse(
+                new Uri(ApiEndPoint + PagerEndPoint),
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        "{\"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1346632010/extension/1346632010/message-store/315458412010\"," +
+                       "\"id\" : 8,\"to\" : [{\"extensionNumber\" : \"2\"},{\"extensionNumber\" : \"3\"} ]," +
+                       "\"from\" : { \"extensionNumber\" : \"1\"},\"type\" : \"Pager\",\"creationTime\" : \"2015-07-26T16:03:04.000Z\"," +
+                       "\"readStatus\" : \"Unread\",\"priority\" : \"Normal\",\"attachments\" : [ {\"id\" : 1," +
+                       "\"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/8/content/1\",\"contentType\" : \"text/plain\"} ]," +
+                       "\"direction\" : \"Outbound\",\"availability\" : \"Alive\",\"subject\" : \"Hello!\",\"messageStatus\" : \"Sent\"," +
+                       "\"conversationId\" : 1,\"lastModifiedTime\" : \"2015-07-26T16:03:04.000Z\"}", Encoding.UTF8, "application/json")
                 });
         }
         public void AddPresenceResponses()
