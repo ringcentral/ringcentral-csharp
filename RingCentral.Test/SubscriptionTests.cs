@@ -33,7 +33,7 @@ namespace RingCentral.Test
         [Test]
         public void CreateSubscription()
         {
-            RingCentralClient.GetPlatform().SetJsonData(JsonData);
+            RingCentralClient.GetPlatform().SetStringBody(JsonData);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
 
