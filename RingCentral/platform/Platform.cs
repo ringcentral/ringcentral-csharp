@@ -131,7 +131,7 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP POST request.  If StringBody is set via <c>SetJsonData</c> it will set the content type of application/json.
+        ///     A HTTP POST request.  If StringBody is set via <c>SetStringData</c> it will set the content type of application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the POST request targeted</param>
@@ -189,7 +189,7 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP PUT request.  If StringBody is set via <c>SetJsonData</c> it will set the content type of application/json.
+        ///     A HTTP PUT request.  If StringBody is set via <c>SetStringData</c> it will set the content type of application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the PUT request</param>
@@ -319,17 +319,17 @@ namespace RingCentral
         /// <summary>
         ///     Sets the json data based on a string input
         /// </summary>
-        /// <param name="jsonData">The json data</param>
-        public void SetJsonData(string jsonData)
+        /// <param name="stringBody">The string data</param>
+        public void SetStringBody(string stringBody)
         {
-            StringBody = jsonData;
+            StringBody = stringBody;
         }
 
         /// <summary>
-        ///     Gets the json data that was set
+        ///     Gets the string data that was set
         /// </summary>
-        /// <returns>json data</returns>
-        public string GetJsonData()
+        /// <returns>string data</returns>
+        public string GetStringBody()
         {
             return StringBody;
         }
@@ -338,7 +338,7 @@ namespace RingCentral
         /// <summary>
         ///     Clears the json data that was set
         /// </summary>
-        public void ClearJsonData()
+        public void ClearStringBody()
         {
             StringBody = null;
         }

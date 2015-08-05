@@ -41,7 +41,7 @@ namespace RingCentral.Test
         [Test]
         public void RingOut()
         {
-            RingCentralClient.GetPlatform().SetJsonData(json);
+            RingCentralClient.GetPlatform().SetStringBody(json);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
 

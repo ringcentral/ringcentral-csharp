@@ -56,7 +56,7 @@ namespace RingCentral.Test
                              "\"state\": \"CA\", " +
                              "\"zip\": \"94123\"}" +
                              "}";
-            Platform.SetJsonData(jsonData);
+            Platform.SetStringBody(jsonData);
             Response response = Platform.PostRequest(AddressBookEndPoint);
             JToken token = response.GetJson();
 
@@ -77,7 +77,7 @@ namespace RingCentral.Test
                               "\"state\": \"CA\", " +
                               "\"zip\": \"94123\"}" +
                               "}";
-            Platform.SetJsonData(jsonData);
+            Platform.SetStringBody(jsonData);
 
             Response response = Platform.PutRequest(AddressBookEndPoint + "/5");
 

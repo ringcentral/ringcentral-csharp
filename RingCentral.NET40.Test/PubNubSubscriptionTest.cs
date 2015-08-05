@@ -35,7 +35,7 @@ namespace RingCentral.NET40.Test
       
         public void SetPubNubSubscription()
         {
-            RingCentralClient.GetPlatform().SetJsonData(JsonData);
+            RingCentralClient.GetPlatform().SetStringBody(JsonData);
 
             Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
 
@@ -60,7 +60,7 @@ namespace RingCentral.NET40.Test
 
             string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            RingCentralClient.GetPlatform().SetJsonData(jsonObject);
+            RingCentralClient.GetPlatform().SetStringBody(jsonObject);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
 
