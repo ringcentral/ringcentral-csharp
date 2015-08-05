@@ -30,8 +30,8 @@ namespace RingCentral
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
-            _client.DefaultRequestHeaders.Add("User-Agent","Infinity Interactive C# SDK");
             _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C# SDK");
+            
         }
 
         private string AppKey { get; set; }
@@ -41,7 +41,7 @@ namespace RingCentral
         private List<KeyValuePair<string, string>> QueryParameters { get; set; }
         private Dictionary<string, string> Body { get; set; }
 
-        private string JsonData { get; set; }
+        private string StringBody { get; set; }
 
 
         /// <summary>
@@ -131,14 +131,14 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP POST request.  If JsonData is set via <c>SetJsonData</c> it will set the content type of application/json.
+        ///     A HTTP POST request.  If StringBody is set via <c>SetJsonData</c> it will set the content type of application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the POST request targeted</param>
         /// <returns>The string value of the POST request result</returns>
         public Response PostRequest(string endPoint)
         {
-            if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             HttpContent httpContent = GetHttpContent(_client);
 
@@ -157,7 +157,7 @@ namespace RingCentral
         /// <returns>string response of the GET request</returns>
         public Response GetRequest(string endPoint)
         {
-            if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -177,7 +177,7 @@ namespace RingCentral
         /// <returns>string response of the DELETE request</returns>
         public Response DeleteRequest(string endPoint)
         {
-            if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -189,14 +189,14 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP PUT request.  If JsonData is set via <c>SetJsonData</c> it will set the content type of application/json.
+        ///     A HTTP PUT request.  If StringBody is set via <c>SetJsonData</c> it will set the content type of application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the PUT request</param>
         /// <returns>string response of the PUT request</returns>
         public Response PutRequest(string endPoint)
         {
-            if (!Auth.IsAccessTokenValid()) throw new Exception("Access has Expired");
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             HttpContent httpContent = GetHttpContent(_client);
 
@@ -222,9 +222,9 @@ namespace RingCentral
         {
             HttpContent httpContent;
 
-            if (JsonData != null)
+            if (StringBody != null)
             {
-                httpContent = new StringContent(JsonData, Encoding.UTF8, "application/json");
+                httpContent = new StringContent(StringBody, Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
             }
             else
@@ -322,7 +322,7 @@ namespace RingCentral
         /// <param name="jsonData">The json data</param>
         public void SetJsonData(string jsonData)
         {
-            JsonData = jsonData;
+            StringBody = jsonData;
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace RingCentral
         /// <returns>json data</returns>
         public string GetJsonData()
         {
-            return JsonData;
+            return StringBody;
         }
 
 
@@ -340,7 +340,7 @@ namespace RingCentral
         /// </summary>
         public void ClearJsonData()
         {
-            JsonData = null;
+            StringBody = null;
         }
 
         private String GetApiKey()
@@ -357,6 +357,36 @@ namespace RingCentral
         public void SetClient(HttpClient client)
         {
             _client = client;
+        }
+
+        public void SetXhttpOverRideHeader(string method)
+        {
+            var allowedMethods = new List<string>(new[] {"GET", "POST", "PUT", "DELETE"});
+
+            if (method != null && allowedMethods.Contains(method.ToUpper()))
+            {
+                 _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
+            } 
+        }
+
+        public void SetUserAgentHeader(string header)
+        {
+            _client.DefaultRequestHeaders.Add("User-Agent", header);
+        }
+
+        public bool IsAccessValid()
+        {
+            if (Auth.IsAccessTokenValid())
+            {
+                return true;
+            }
+
+            if (Auth.IsRefreshTokenValid())
+            {
+                Refresh();
+                return true;
+            }
+            return false;
         }
     }
 }
