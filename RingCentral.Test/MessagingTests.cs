@@ -23,7 +23,7 @@ namespace RingCentral.Test
         private readonly string[] _messageSentValues = {"Sent", "Queued"};
         
         
-      \
+      
         [Test]
         public void DeleteConversationById()
         {
