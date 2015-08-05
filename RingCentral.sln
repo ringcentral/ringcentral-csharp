@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.NET40.Test", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.iOS", "RingCentral.iOS\RingCentral.iOS.csproj", "{FA9C8F8B-58C5-4BE7-B44E-A0BC0C57ACFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.iOS.Test", "RingCentral.iOS.Test\RingCentral.iOS.Test.csproj", "{F998CB89-F00B-456A-B148-A1C8C39683DE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Android", "RingCentral.Android\RingCentral.Android.csproj", "{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}"
 EndProject
 Global
@@ -46,10 +44,6 @@ Global
 		{FA9C8F8B-58C5-4BE7-B44E-A0BC0C57ACFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA9C8F8B-58C5-4BE7-B44E-A0BC0C57ACFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA9C8F8B-58C5-4BE7-B44E-A0BC0C57ACFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F998CB89-F00B-456A-B148-A1C8C39683DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F998CB89-F00B-456A-B148-A1C8C39683DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F998CB89-F00B-456A-B148-A1C8C39683DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F998CB89-F00B-456A-B148-A1C8C39683DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
