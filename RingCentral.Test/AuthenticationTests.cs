@@ -50,7 +50,8 @@ namespace RingCentral.Test
         [Test]
         public void TestVersion()
         {
-            Response response = Platform.GetRequest(VersionEndPoint);
+            Request request = new Request(VersionEndPoint);
+            Response response = Platform.GetRequest(request);
 
             JToken token = response.GetJson();
             var version = (string) token.SelectToken("apiVersions").SelectToken("uriString");

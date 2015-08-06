@@ -10,7 +10,7 @@ namespace RingCentral.Http
     {
         private readonly string _body;
         private readonly int _status;
-
+        private bool MultiPartResponse;
 
         public Response(int status, string body, HttpContentHeaders headers)
         {
@@ -20,7 +20,7 @@ namespace RingCentral.Http
             SetHeaders(headers);
         }
 
-        public bool IsMultiPartResponse { get; set; }
+        
 
         public bool CheckStatus()
         {
@@ -39,6 +39,11 @@ namespace RingCentral.Http
                 throw new Exception("Response is not JSON");
             }
             return JObject.Parse(_body);
+        }
+
+        public bool IsMultiPartResponse()
+        {
+            return IsMultiPart();
         }
 
         /// <summary>

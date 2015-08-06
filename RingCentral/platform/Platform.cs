@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -13,15 +11,14 @@ namespace RingCentral
 {
     public class Platform
     {
-        private const string ACCESS_TOKEN_TTL = "3600"; // 60 minutes
-        private const string REFRESH_TOKEN_TTL = "36000"; // 10 hours
-        private const string REFRESH_TOKEN_TTL_REMEMBER = "604800"; // 1 week
-        private const string TOKEN_ENDPOINT = "/restapi/oauth/token";
-        private const string REVOKE_ENDPOINT = "/restapi/oauth/revoke";
-        
-        protected Auth Auth;
-        
+        private const string AccessTokenTtl = "3600"; // 60 minutes
+        private const string RefreshTokenTtl = "36000"; // 10 hours
+        private const string RefreshTokenTtlRemember = "604800"; // 1 week
+        private const string TokenEndpoint = "/restapi/oauth/token";
+        private const string RevokeEndpoint = "/restapi/oauth/revoke";
+
         private HttpClient _client;
+        protected Auth Auth;
 
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
@@ -31,18 +28,11 @@ namespace RingCentral
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
             _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C# SDK");
-            
         }
 
         private string AppKey { get; set; }
         private string AppSecret { get; set; }
         private string ApiEndpoint { get; set; }
-
-        private List<KeyValuePair<string, string>> QueryParameters { get; set; }
-        private Dictionary<string, string> Body { get; set; }
-
-        private string StringBody { get; set; }
-
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -54,18 +44,19 @@ namespace RingCentral
         /// <returns>string response of Authenticate result.</returns>
         public string Authenticate(string userName, string password, string extension, bool isRemember)
         {
+            var body = new Dictionary<string, string>
+                       {
+                           {"username", userName},
+                           {"password", Uri.EscapeUriString(password)},
+                           {"extension", extension},
+                           {"grant_type", "password"},
+                           {"access_token_ttl", AccessTokenTtl},
+                           {"refresh_token_ttl", isRemember ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                       };
 
-            Body = new Dictionary<string, string>
-                             {
-                                 {"username", userName},
-                                 {"password", Uri.EscapeUriString(password)},
-                                 {"extension", extension },
-                                 {"grant_type", "password"},
-                                 {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", isRemember ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
-                             };
+            var request = new Request(TokenEndpoint, body);
+            var result = AuthPostRequest(request);
 
-            string result = AuthPostRequest(TOKEN_ENDPOINT);
             Auth.SetRemember(isRemember);
             Auth.SetData(JObject.Parse(result));
 
@@ -80,15 +71,16 @@ namespace RingCentral
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
-            Body = new Dictionary<string, string>
-                             {
-                                 {"grant_type", "refresh_token"},
-                                 {"refresh_token", Auth.GetRefreshToken()},
-                                 {"access_token_ttl", ACCESS_TOKEN_TTL},
-                                 {"refresh_token_ttl", Auth.IsRemember() ? REFRESH_TOKEN_TTL_REMEMBER : REFRESH_TOKEN_TTL}
-                             };
+            var body = new Dictionary<string, string>
+                       {
+                           {"grant_type", "refresh_token"},
+                           {"refresh_token", Auth.GetRefreshToken()},
+                           {"access_token_ttl", AccessTokenTtl},
+                           {"refresh_token_ttl", Auth.IsRemember() ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                       };
 
-            string result = AuthPostRequest(TOKEN_ENDPOINT);
+            var request = new Request(TokenEndpoint, body);
+            var result = AuthPostRequest(request);
 
             Auth.SetData(JObject.Parse(result));
 
@@ -101,14 +93,16 @@ namespace RingCentral
         /// <returns>string response of Revoke result</returns>
         public string Revoke()
         {
-            Body = new Dictionary<string, string>
-                             {
-                                 {"token", Auth.GetAccessToken()}
-                             };
+            var body = new Dictionary<string, string>
+                       {
+                           {"token", Auth.GetAccessToken()}
+                       };
 
             Auth.Reset();
 
-            return AuthPostRequest(REVOKE_ENDPOINT);
+            var request = new Request(RevokeEndpoint, body);
+
+            return AuthPostRequest(request);
         }
 
         /// <summary>
@@ -121,30 +115,29 @@ namespace RingCentral
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>string response of the AuthPostRequest</returns>
-        public string AuthPostRequest(string endPoint)
+        public string AuthPostRequest(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
-            HttpResponseMessage result = _client.PostAsync(endPoint, GetFormParameters()).Result;
+            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
             return result.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
-        ///     A HTTP POST request.  If StringBody is set via <c>SetStringData</c> it will set the content type of application/json.
+        ///     A HTTP POST request.  If StringBody is set via <c>SetStringData</c> it will set the content type of
+        ///     application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the POST request targeted</param>
         /// <returns>The string value of the POST request result</returns>
-        public Response PostRequest(string endPoint)
+        public Response PostRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
 
-            HttpContent httpContent = GetHttpContent(_client);
-
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            Task<HttpResponseMessage> postResult = _client.PostAsync(endPoint, httpContent);
+            var postResult = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
 
             return SetResponse(postResult);
         }
@@ -155,17 +148,13 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the GET request</param>
         /// <returns>string response of the GET request</returns>
-        public Response GetRequest(string endPoint)
+        public Response GetRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            endPoint += GetQuerystring();
-
-            Task<HttpResponseMessage> result = _client.GetAsync(endPoint);
-
-            ClearQueryParameters();
+            var result = _client.GetAsync(request.GetUrl());
 
             return SetResponse(result);
         }
@@ -175,177 +164,47 @@ namespace RingCentral
         /// </summary>
         /// <param name="endPoint">The Endpoint of the DELETE request</param>
         /// <returns>string response of the DELETE request</returns>
-        public Response DeleteRequest(string endPoint)
+        public Response DeleteRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            endPoint += GetQuerystring();
-
-            Task<HttpResponseMessage> deleteResult = _client.DeleteAsync(endPoint);
+            var deleteResult = _client.DeleteAsync(request.GetUrl());
 
             return SetResponse(deleteResult);
         }
 
         /// <summary>
-        ///     A HTTP PUT request.  If StringBody is set via <c>SetStringData</c> it will set the content type of application/json.
+        ///     A HTTP PUT request.  If StringBody is set via <c>SetStringData</c> it will set the content type of
+        ///     application/json.
         ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
         /// </summary>
         /// <param name="endPoint">The Endpoint of the PUT request</param>
         /// <returns>string response of the PUT request</returns>
-        public Response PutRequest(string endPoint)
+        public Response PutRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
 
-            HttpContent httpContent = GetHttpContent(_client);
-
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            endPoint += GetQuerystring();
-
-            Task<HttpResponseMessage> putResult = _client.PutAsync(endPoint, httpContent);
+            var putResult = _client.PutAsync(request.GetUrl(), request.GetHttpContent());
 
             return SetResponse(putResult);
         }
 
         private static Response SetResponse(Task<HttpResponseMessage> responseMessage)
         {
-            int statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
-            string body = responseMessage.Result.Content.ReadAsStringAsync().Result;
-            HttpContentHeaders headers = responseMessage.Result.Content.Headers;
+            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
+            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
+            var headers = responseMessage.Result.Content.Headers;
 
             return new Response(statusCode, body, headers);
         }
 
-        private HttpContent GetHttpContent(HttpClient client)
+        private string GetApiKey()
         {
-            HttpContent httpContent;
-
-            if (StringBody != null)
-            {
-                httpContent = new StringContent(StringBody, Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-            }
-            else
-            {
-                httpContent = GetFormParameters();
-            }
-
-            return httpContent;
-        }
-
-        /// <summary>
-        ///     Gets the query string after they were set by <c>AddQueryParameters</c>
-        /// </summary>
-        /// <returns>A query string</returns>
-        public string GetQuerystring()
-        {
-            if (QueryParameters == null || !QueryParameters.Any()) return "";
-
-            string querystring = "?";
-
-            KeyValuePair<string, string> last = QueryParameters.Last();
-
-            foreach (var parameter in QueryParameters)
-            {
-                querystring = querystring + (parameter.Key + "=" + parameter.Value);
-                if (!parameter.Equals(last))
-                {
-                    querystring += "&";
-                }
-            }
-
-            return querystring;
-        }
-
-        /// <summary>
-        ///     Clears the Query Parameters
-        /// </summary>
-        public void ClearQueryParameters()
-        {
-            QueryParameters = new List<KeyValuePair<string, string>>();
-        }
-
-        /// <summary>
-        ///     Adds a query parameter so that when an appropriate request is issued a query string can be formed
-        /// </summary>
-        /// <param name="queryField">the Field name of a query field/value pairing</param>
-        /// <param name="queryValue">the value of a query field/value pairing</param>
-        public void AddQueryParameters(string queryField, string queryValue)
-        {
-            if (QueryParameters == null)
-            {
-                QueryParameters = new List<KeyValuePair<string, string>>();
-            }
-
-            QueryParameters.Add(new KeyValuePair<string, string>(queryField, queryValue));
-        }
-
-        /// <summary>
-        ///     Adds a form parameter so that when necessary, form parameters can be populated for a HTTP request
-        /// </summary>
-        /// <param name="formName">The form name of the name/value pairing</param>
-        /// <param name="formValue">The form value of the name/value pairing</param>
-        public void AddFormParameter(string formName, string formValue)
-        {
-            if (Body == null)
-            {
-                Body = new Dictionary<string, string>();
-            }
-
-            Body.Add(formName, formValue);
-        }
-
-        /// <summary>
-        ///     Gets the form parameters
-        /// </summary>
-        /// <returns>FormURLEncoded Form parameters</returns>
-        public HttpContent GetFormParameters()
-        {
-            List<KeyValuePair<string, string>> formBodyList = Body.ToList();
-
-            return new FormUrlEncodedContent(formBodyList);
-        }
-
-        /// <summary>
-        ///     Clears the Form Parameters
-        /// </summary>
-        public void ClearFormParameters()
-        {
-            Body = new Dictionary<string, string>();
-        }
-
-        /// <summary>
-        ///     Sets the json data based on a string input
-        /// </summary>
-        /// <param name="stringBody">The string data</param>
-        public void SetStringBody(string stringBody)
-        {
-            StringBody = stringBody;
-        }
-
-        /// <summary>
-        ///     Gets the string data that was set
-        /// </summary>
-        /// <returns>string data</returns>
-        public string GetStringBody()
-        {
-            return StringBody;
-        }
-
-
-        /// <summary>
-        ///     Clears the json data that was set
-        /// </summary>
-        public void ClearStringBody()
-        {
-            StringBody = null;
-        }
-
-        private String GetApiKey()
-        {
-            byte[] byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
+            var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
         }
 
@@ -365,8 +224,8 @@ namespace RingCentral
 
             if (method != null && allowedMethods.Contains(method.ToUpper()))
             {
-                 _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
-            } 
+                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
+            }
         }
 
         public void SetUserAgentHeader(string header)
