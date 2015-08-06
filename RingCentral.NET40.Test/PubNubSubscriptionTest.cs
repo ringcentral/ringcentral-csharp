@@ -35,9 +35,9 @@ namespace RingCentral.NET40.Test
       
         public void SetPubNubSubscription()
         {
-            RingCentralClient.GetPlatform().SetStringBody(JsonData);
 
-            Response createResult = RingCentralClient.GetPlatform().PostRequest(SubscriptionEndPoint);
+            Request request = new Request(SubscriptionEndPoint,JsonData);
+            Response createResult = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = JObject.Parse(createResult.GetBody());
 
@@ -45,7 +45,8 @@ namespace RingCentral.NET40.Test
 
             Assert.IsNotNullOrEmpty(id);
 
-            Response response = RingCentralClient.GetPlatform().GetRequest(SubscriptionEndPoint + "/" + id);
+            request = new Request(SubscriptionEndPoint + "/" + id);
+            Response response = RingCentralClient.GetPlatform().GetRequest(request);
 
             var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
 
@@ -60,9 +61,8 @@ namespace RingCentral.NET40.Test
 
             string jsonObject = JsonConvert.SerializeObject(smsHelper);
 
-            RingCentralClient.GetPlatform().SetStringBody(jsonObject);
-
-            Response result = RingCentralClient.GetPlatform().PostRequest(SmsEndPoint);
+            request = new Request(SubscriptionEndPoint, jsonObject);
+            Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
             token = JObject.Parse(result.GetBody());
 

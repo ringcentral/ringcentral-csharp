@@ -18,8 +18,8 @@ namespace RingCentral.Test
         public void GetActiveCalls()
         {
 
-
-            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/active-calls");
+            Request request = new Request(CallLogEndPoint + "/active-calls");
+            Response result = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = JObject.Parse(result.GetBody());
 
             var uri = (string)token.SelectToken("uri");
@@ -31,8 +31,8 @@ namespace RingCentral.Test
         public void GetActiveCallsByExtension()
         {
 
-
-            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/active-calls");
+            Request request = new Request(CallLogEndPoint + "/extension/~/active-calls");
+            Response result = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = JObject.Parse(result.GetBody());
 
             var uri = (string)token.SelectToken("uri");
@@ -43,8 +43,8 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLog()
         {
-
-            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/");
+            Request request = new Request(CallLogEndPoint + "/call-log/");
+            Response result = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = JObject.Parse(result.GetBody());
 
             var uri = (string)token.SelectToken("uri");
@@ -56,8 +56,8 @@ namespace RingCentral.Test
         public void GetCallLogByExtension()
         {
 
-
-            Response result = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log");
+            Request request = new Request(CallLogEndPoint + "/extension/~/call-log");
+            Response result = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = JObject.Parse(result.GetBody());
 
             var uri = (string)token.SelectToken("uri");
@@ -68,8 +68,8 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLogByExtensionAndId()
         {
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/extension/~/call-log/Abcdefg");
+            Request request = new Request(CallLogEndPoint + "/extension/~/call-log/Abcdefg");
+            Response response = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = response.GetJson();
 
 
@@ -81,8 +81,8 @@ namespace RingCentral.Test
         [Test]
         public void GetCallLogById()
         {
-
-            Response response = RingCentralClient.GetPlatform().GetRequest(CallLogEndPoint + "/call-log/Abcdefgh");
+            Request request = new Request(CallLogEndPoint + "/call-log/Abcdefgh");
+            Response response = RingCentralClient.GetPlatform().GetRequest(request);
             JToken token = response.GetJson();
 
             var id = (string)token.SelectToken("id");

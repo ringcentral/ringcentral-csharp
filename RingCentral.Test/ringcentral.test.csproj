@@ -91,12 +91,15 @@
     <Compile Include="AccountAndExtensionInformationTests.cs" />
     <Compile Include="AddressBookTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
+    <Compile Include="AuthTest.cs" />
     <Compile Include="CallLogTests.cs" />
     <Compile Include="GeographicalDictionaryTests.cs" />
     <Compile Include="MessagingTests.cs" />
     <Compile Include="MockHttpClient.cs" />
+    <Compile Include="PlatformTest.cs" />
     <Compile Include="PresenceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseTest.cs" />
     <Compile Include="RingOutTests.cs" />
     <Compile Include="SubscriptionTests.cs" />
     <Compile Include="TestConfiguration.cs" />

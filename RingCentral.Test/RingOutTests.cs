@@ -20,16 +20,16 @@ namespace RingCentral.Test
         [Test]
         public void CancelRingOut()
         {
-
-            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(RingOutEndPoint + "/1");
+            Request request = new Request(RingOutEndPoint + "/1");
+            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(request);
             Assert.AreEqual(204, cancelResult.GetStatus());
         }
 
         [Test]
         public void GetRingOutStatus()
         {
-            
-            Response response = RingCentralClient.GetPlatform().GetRequest(RingOutEndPoint + "/1");
+            Request request = new Request(RingOutEndPoint + "/1");
+            Response response = RingCentralClient.GetPlatform().GetRequest(request);
 
             JToken token = response.GetJson();
 
@@ -41,9 +41,9 @@ namespace RingCentral.Test
         [Test]
         public void RingOut()
         {
-            RingCentralClient.GetPlatform().SetStringBody(json);
+            Request request = new Request(RingOutEndPoint,json);
 
-            Response result = RingCentralClient.GetPlatform().PostRequest(RingOutEndPoint);
+            Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = JObject.Parse(result.GetBody());
 

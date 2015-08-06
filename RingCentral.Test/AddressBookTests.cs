@@ -16,7 +16,8 @@ namespace RingCentral.Test
         [Test]
         public void GetContactFromAddressBook()
         {
-            Response response = Platform.GetRequest(AddressBookEndPoint + "/1");
+            Request request = new Request(AddressBookEndPoint + "/1");
+            Response response = Platform.GetRequest(request);
             JToken token = response.GetJson();
             var firstNameResponse = (string)token.SelectToken("firstName");
 
@@ -25,7 +26,8 @@ namespace RingCentral.Test
         [Test]
         public void GetAddressBook()
         {
-            Response response = Platform.GetRequest(AddressBookEndPoint);
+            Request request = new Request(AddressBookEndPoint);
+            Response response = Platform.GetRequest(request);
             JToken token = response.GetJson();
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
@@ -39,7 +41,8 @@ namespace RingCentral.Test
         [Test]
         public void DeleteContactFromAddressBook()
         {
-            Response response = Platform.DeleteRequest(AddressBookEndPoint + "/3");
+            Request request = new Request(AddressBookEndPoint + "/3");
+            Response response = Platform.DeleteRequest(request);
             JToken token = response.GetJson();
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
@@ -56,8 +59,10 @@ namespace RingCentral.Test
                              "\"state\": \"CA\", " +
                              "\"zip\": \"94123\"}" +
                              "}";
-            Platform.SetStringBody(jsonData);
-            Response response = Platform.PostRequest(AddressBookEndPoint);
+
+            Request request = new Request(AddressBookEndPoint,jsonData);
+
+            Response response = Platform.PostRequest(request);
             JToken token = response.GetJson();
 
             var firstName = (string)token.SelectToken("firstName");
@@ -77,9 +82,9 @@ namespace RingCentral.Test
                               "\"state\": \"CA\", " +
                               "\"zip\": \"94123\"}" +
                               "}";
-            Platform.SetStringBody(jsonData);
+            Request request = new Request(AddressBookEndPoint + "/5", jsonData);
 
-            Response response = Platform.PutRequest(AddressBookEndPoint + "/5");
+            Response response = Platform.PutRequest(request);
 
             JToken token = response.GetJson();
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");
