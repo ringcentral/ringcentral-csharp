@@ -14,6 +14,7 @@ namespace RingCentral.Test
     {
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
 
+        [Test]
         public void DeleteSubscription()
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
