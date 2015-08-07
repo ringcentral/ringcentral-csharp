@@ -20,17 +20,17 @@ namespace RingCentral.Test
         private const string FaxEndPoint = "/restapi/v1.0/account/~/extension/~/fax";
         private const string PagerEndPoint = "/restapi/v1.0/account/~/extension/~/company-pager";
 
-        private readonly string[] _messageSentValues = {"Sent", "Queued"};
-        
-        
-      
+        private readonly string[] _messageSentValues = { "Sent", "Queued" };
+
+
+
         [Test]
         public void DeleteConversationById()
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123123123");
             Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
             Assert.AreEqual(204, result.GetStatus());
-           
+
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/123");
             Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
             Assert.AreEqual(204, result.GetStatus());
-     
+
         }
 
 
@@ -58,31 +58,29 @@ namespace RingCentral.Test
         [Test]
         public void GetBatchMessage()
         {
-            var messages = new List<string> {"1", "2"};
+            var messages = new List<string> { "1", "2" };
             string batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
 
             Request request = new Request(ExtensionMessageEndPoint + "/" + batchMessages);
             Response response = RingCentralClient.GetPlatform().GetRequest(request);
+            Assert.IsTrue(response.IsMultiPartResponse());
+            List<string> multiPartResult = response.GetMultiPartResponses();
 
-            if (response.IsMultiPartResponse())
+            //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
+            JToken responseStatuses = JObject.Parse(multiPartResult[0]);
+            for (int i = 0; i < messages.Count; i++)
             {
-                List<string> multiPartResult = response.GetMultiPartResponses();
-
-                //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
-                JToken responseStatuses = JObject.Parse(multiPartResult[0]);
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    var status = (string)responseStatuses.SelectToken("response")[i].SelectToken("status");
-                    Assert.AreEqual(status, "200");
-                }
-
-                foreach (string res in multiPartResult.Skip(1))
-                {
-                    JToken token = JObject.Parse(res);
-                    var id = (string)token.SelectToken("id");
-                    Assert.IsNotNull(id);
-                }
+                var status = (string)responseStatuses.SelectToken("response")[i].SelectToken("status");
+                Assert.AreEqual(status, "200");
             }
+
+            foreach (string res in multiPartResult.Skip(1))
+            {
+                JToken token = JObject.Parse(res);
+                var id = (string)token.SelectToken("id");
+                Assert.IsNotNull(id);
+            }
+
         }
 
         [Test]
@@ -92,9 +90,9 @@ namespace RingCentral.Test
             Response response = RingCentralClient.GetPlatform().GetRequest(request);
 
             JToken token = response.GetJson();
-            var phoneNumber = (string) token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
+            var phoneNumber = (string)token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
-            Assert.AreEqual("+19999999999",phoneNumber);
+            Assert.AreEqual("+19999999999", phoneNumber);
         }
 
         [Test]
@@ -105,13 +103,13 @@ namespace RingCentral.Test
 
             JToken token = response.GetJson();
 
-            var id = (string) token.SelectToken("id");
+            var id = (string)token.SelectToken("id");
 
-            Assert.AreEqual("2",id);
+            Assert.AreEqual("2", id);
         }
 
-        //TODO: need to mock
-        //[Test]
+
+        [Test]
         public void SendFax()
         {
             const string text = "Hello world!";
@@ -124,51 +122,54 @@ namespace RingCentral.Test
 
             var attachments = new List<Attachment> { attachment, attachment2 };
 
-            Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
+            Request request = new Request(FaxEndPoint, json, attachments);
             Response response = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = response.GetJson();
             var availability = (string)token.SelectToken("availability");
-            
+
             Assert.AreEqual("Alive", availability);
         }
 
-        //TODO: need to add json body to reqeust message
-        //[Test]
+
+        [Test]
         public void SendPagerMessage()
         {
-            Request request = new Request(PagerEndPoint);
+            var jsonData = "{\"to\": [{\"extensionNumber\": \"102\"}, {\"extensionNumber\": \"103\"}]," +
+                            "\"from\": {\"extensionNumber\": \"101\"},\"text\": \"Hello!\"}";
+            Request request = new Request(PagerEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
             JToken token = result.GetJson();
             var id = (int)token.SelectToken("id");
             Assert.AreEqual(8, id);
         }
-        //TODO: need to add json body to reqeust message
-        //[Test]
+
+        [Test]
         public void SendSms()
         {
-            Request request = new Request(SmsEndPoint);
+            var jsonData = "{\"to\": [{\"phoneNumber\": \"19999999999\"}]," +
+                           "\"from\": {\"phoneNumber\": \"19999999999\"}," +
+                          "\"text\": \"Test SMS message\" }";
+            Request request = new Request(SmsEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = JObject.Parse(result.GetBody());
-            var messageStatus = (string) token.SelectToken("messageStatus");
+            var messageStatus = (string)token.SelectToken("messageStatus");
             Assert.Contains(messageStatus, _messageSentValues);
         }
 
-        //TODO: Need to actually update a message
-        //[Test]
+
+        [Test]
         public void UpdateMessage()
         {
-
-            Request request = new Request(ExtensionMessageEndPoint + "/3");
+            var jsonData = "{\"readStatus\": \"Read\"}";
+            Request request = new Request(ExtensionMessageEndPoint + "/3", jsonData);
             Response result = RingCentralClient.GetPlatform().PutRequest(request);
-
             JToken token = JObject.Parse(result.GetBody());
-
-            var availability = (string) token.SelectToken("availability");
-            var readStatus = (string) token.SelectToken("readStatus");
+            var availability = (string)token.SelectToken("availability");
+            var readStatus = (string)token.SelectToken("readStatus");
             Assert.AreEqual("Read", readStatus);
-            
+
         }
     }
 }

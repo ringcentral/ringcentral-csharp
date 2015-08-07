@@ -14,14 +14,6 @@ namespace RingCentral.Test
     {
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
 
-        private const string JsonData =
-            "{\"eventFilters\": " +
-            "[ \"/restapi/v1.0/account/~/extension/~/presence\", " +
-            "\"/restapi/v1.0/account/~/extension/~/message-store\" ], " +
-            "\"deliveryMode\": " +
-            "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
-
- 
         public void DeleteSubscription()
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
@@ -33,12 +25,17 @@ namespace RingCentral.Test
         [Test]
         public void CreateSubscription()
         {
-            Request request = new Request(SubscriptionEndPoint,JsonData);
+            var jsonData = "{\"eventFilters\": " +
+            "[ \"/restapi/v1.0/account/~/extension/~/presence\", " +
+            "\"/restapi/v1.0/account/~/extension/~/message-store\" ], " +
+            "\"deliveryMode\": " +
+            "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
+            Request request = new Request(SubscriptionEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = JObject.Parse(result.GetBody());
 
-            var status = (string) token.SelectToken("status");
+            var status = (string)token.SelectToken("status");
 
             Assert.AreEqual(status, "Active");
         }
@@ -60,15 +57,17 @@ namespace RingCentral.Test
             Assert.AreEqual(SubscriptionItem.Status, "Active");
         }
         //TODO: need to add json body
-        //[Test]
+        [Test]
         public void RenewSubscription()
         {
-            Request request = new Request(SubscriptionEndPoint + "/1");
+            var jsonData = "{\"eventFilters\": [\"/restapi/v1.0/account/~/extension/~/presence\"," +
+                "\"/restapi/v1.0/account/~/extension/~/message-store\" ]}";
+            Request request = new Request(SubscriptionEndPoint + "/1", jsonData);
             Response renewResult = RingCentralClient.GetPlatform().PutRequest(request);
 
             JToken token = renewResult.GetJson();
 
-            var getStatus = (string) token.SelectToken("status");
+            var getStatus = (string)token.SelectToken("status");
 
             Assert.AreEqual(getStatus, "Active");
         }

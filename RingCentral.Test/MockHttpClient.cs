@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -19,7 +20,7 @@ namespace RingCentral.Test
         private readonly Dictionary<Uri, HttpResponseMessage>
         _PutMockResponses = new Dictionary<Uri, HttpResponseMessage>();
         protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
-        
+
 
         public void AddGetMockResponse(Uri uri, HttpResponseMessage responseMessage)
         {
@@ -42,12 +43,14 @@ namespace RingCentral.Test
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
-            if(request.Method.Equals(HttpMethod.Get)){
-                if((_GetMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_GetMockResponses[request.RequestUri]);
+            if (request.Method.Equals(HttpMethod.Get))
+            {
+                if ((_GetMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_GetMockResponses[request.RequestUri]);
                 else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
             }
-            if(request.Method.Equals(HttpMethod.Post)){
-                 if((_PostMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_PostMockResponses[request.RequestUri]);
+            if (request.Method.Equals(HttpMethod.Post))
+            {
+                if ((_PostMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_PostMockResponses[request.RequestUri]);
                 else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
             }
             if (request.Method.Equals(HttpMethod.Delete))
@@ -144,23 +147,23 @@ namespace RingCentral.Test
                        "\"businessAddress\": { " + "\"street\": \"2 Marina Blvd\", " + "\"city\": \"San-Francisco\"," + "\"state\": \"CA\"," + "\"zip\": \"94123\" } }", Encoding.UTF8, "application/json")
 
                    });
-           AddGetMockResponse(
-                new Uri(ApiEndPoint + AddressBookEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact?sortBy=FirstName\"," +
-                     "\"records\": [ " + "{" + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/1\"," +
-                         "\"availability\": \"Alive\"," + "\"id\": 1," + "\"firstName\": \"Delete\"," + "\"lastName\": \"Me\"," + "\"businessAddress\": { " +
-                           "\"street\": \"2 Marina Blvd\", " + "\"city\": \"San-Francisco\"," + "\"state\": \"CA\", " + "\"zip\": \"94123\" " + "}" + "}," + "{" +
-                         "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/2/extension/2/address-book/contact/2\"," + "\"availability\": \"Alive\"," +
-                         "\"id\": 2," + "\"firstName\": \"Vanessa\", " + "\"lastName\": \"May\", " + "\"businessAddress\": " + "{ " +
-                             "\"street\": \"3 Marina Blvd\", " + "\"city\": \"San-Francisco\", " + "\"state\": \"CA\", " + "\"zip\": \"94123\"" + "}" + "}" +
-                       "], \"paging\" : { \"page\": 1, \"totalPages\": 1, \"perPage\": 100, \"totalElements\": 2, \"pageStart\": 0, \"pageEnd\": 1 }, " +
-                       "\"navigation\": {  \"firstPage\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/contact?sortBy=FirstName&page=1&perPage=100\" },  " +
-                       "\"lastPage\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/contact?sortBy=FirstName&page=1&perPage=100\" } }," +
-                       "\"groups\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/group\" } }"
-                      , Encoding.UTF8, "application/json")
-                });
+            AddGetMockResponse(
+                 new Uri(ApiEndPoint + AddressBookEndPoint),
+                 new HttpResponseMessage(HttpStatusCode.OK)
+                 {
+                     Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact?sortBy=FirstName\"," +
+                      "\"records\": [ " + "{" + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/1\"," +
+                          "\"availability\": \"Alive\"," + "\"id\": 1," + "\"firstName\": \"Delete\"," + "\"lastName\": \"Me\"," + "\"businessAddress\": { " +
+                            "\"street\": \"2 Marina Blvd\", " + "\"city\": \"San-Francisco\"," + "\"state\": \"CA\", " + "\"zip\": \"94123\" " + "}" + "}," + "{" +
+                          "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/2/extension/2/address-book/contact/2\"," + "\"availability\": \"Alive\"," +
+                          "\"id\": 2," + "\"firstName\": \"Vanessa\", " + "\"lastName\": \"May\", " + "\"businessAddress\": " + "{ " +
+                              "\"street\": \"3 Marina Blvd\", " + "\"city\": \"San-Francisco\", " + "\"state\": \"CA\", " + "\"zip\": \"94123\"" + "}" + "}" +
+                        "], \"paging\" : { \"page\": 1, \"totalPages\": 1, \"perPage\": 100, \"totalElements\": 2, \"pageStart\": 0, \"pageEnd\": 1 }, " +
+                        "\"navigation\": {  \"firstPage\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/contact?sortBy=FirstName&page=1&perPage=100\" },  " +
+                        "\"lastPage\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/contact?sortBy=FirstName&page=1&perPage=100\" } }," +
+                        "\"groups\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/group\" } }"
+                       , Encoding.UTF8, "application/json")
+                 });
             AddDeleteMockResponse(
                    new Uri(ApiEndPoint + AddressBookEndPoint + "/3"),
                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ \"message\": \"Deleted\" }", Encoding.UTF8, "application/json") });
@@ -184,13 +187,13 @@ namespace RingCentral.Test
         }
         public void AddAuthenticationResponses()
         {
-           string RefreshEndPoint = "/restapi/oauth/token";
+            string RefreshEndPoint = "/restapi/oauth/token";
             string VersionEndPoint = "/restapi";
             AddGetMockResponse(
                 new Uri(ApiEndPoint + VersionEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }" ,Encoding.UTF8, "application/json")
+                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }", Encoding.UTF8, "application/json")
                 });
             AddPostMockResponse(
               new Uri(ApiEndPoint + RefreshEndPoint),
@@ -272,11 +275,11 @@ namespace RingCentral.Test
         }
         public void AddGeographicalDicitonaryResponses()
         {
-             string DictionaryEndPoint = "/restapi/v1.0/dictionary";
-             string CountryEndPoint = DictionaryEndPoint + "/country";
-             string StateEndPoint = DictionaryEndPoint + "/state";
-             string LocationEndPoint = DictionaryEndPoint + "/location";
-             string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
+            string DictionaryEndPoint = "/restapi/v1.0/dictionary";
+            string CountryEndPoint = DictionaryEndPoint + "/country";
+            string StateEndPoint = DictionaryEndPoint + "/state";
+            string LocationEndPoint = DictionaryEndPoint + "/location";
+            string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
             string LanguageEndPoint = DictionaryEndPoint + "/language";
             AddGetMockResponse(
                new Uri(ApiEndPoint + CountryEndPoint),
@@ -399,7 +402,7 @@ namespace RingCentral.Test
               new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/1,2,"),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
-                  Content = new StringContent("--Boundary_0 Content-Type: application/json {" +
+                  Content = new StringContent("boundary=Boundary_0 --Boundary_0 Content-Type: application/json {" +
                   "\"response\" : [ {\"href\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\"," +
                   "\"status\" : 200, \"responseDescription\" : \"OK\" }, {" +
                    "\"href\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/2\",\"status\" : 200," +
@@ -425,7 +428,8 @@ namespace RingCentral.Test
                    "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\"," +
                    "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1," +
                    "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\"" +
-                   " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} --Boundary_0")
+                   " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} --Boundary_0"
+                   , Encoding.UTF8, "multipart/mixed")
               });
             AddGetMockResponse(
                   new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/2"),
@@ -441,7 +445,8 @@ namespace RingCentral.Test
                        "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\"," +
                        "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 2, \"conversationId\": 2," +
                        "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/2\",\"id\": \"2\"" +
-                       " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json")
+                       " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json"),
+
                   });
             AddPostMockResponse(
              new Uri(ApiEndPoint + SmsEndPoint),
@@ -479,6 +484,7 @@ namespace RingCentral.Test
               new Uri(ApiEndPoint + ExtensionMessageEndPoint),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
+
                   Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store?availability=Alive&dateFrom=2015-07-23T00:00:00.000Z&page=1&perPage=100\"," +
                    "\"records\": [ " +
                    "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/1\"," +
@@ -502,7 +508,8 @@ namespace RingCentral.Test
                     "\"direction\": \"Outbound\",\"availability\": \"Alive\",\"subject\": \"This is a test from the Debug Console for RingCentral\"," +
                     "\"messageStatus\": \"Sent\",\"smsSendingAttemptsCount\": 1, \"conversationId\": 1," +
                     "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/1035491849837189700\",\"id\": \"1\"" +
-                    " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} ]}", Encoding.UTF8, "application/json")
+                    " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} ]}", Encoding.UTF8, "application/json"),
+
               });
             AddPostMockResponse(
                 new Uri(ApiEndPoint + FaxEndPoint),
@@ -562,7 +569,7 @@ namespace RingCentral.Test
                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\"," +
                  "\"id\": 1,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
             });
-       
+
             AddDeleteMockResponse(
               new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
               new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
@@ -606,6 +613,7 @@ namespace RingCentral.Test
                     "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
                     "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
               });
-        }        
+        }
     }
 }
+
