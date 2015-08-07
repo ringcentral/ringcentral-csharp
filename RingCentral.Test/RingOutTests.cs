@@ -12,11 +12,7 @@ namespace RingCentral.Test
     public class RingOutTests : TestConfiguration
     {
         private const string RingOutEndPoint = "/restapi/v1.0/account/~/extension/~/ringout";
-        private const string json = "{\"to\": {\"phoneNumber\": \"19999999999\"}," +
-                                    "\"from\": {\"phoneNumber\": \"19999999999\"}," +
-                                    "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
-    
-   
+
         [Test]
         public void CancelRingOut()
         {
@@ -33,7 +29,7 @@ namespace RingCentral.Test
 
             JToken token = response.GetJson();
 
-            var message = (string) token.SelectToken("status").SelectToken("callStatus");
+            var message = (string)token.SelectToken("status").SelectToken("callStatus");
 
             Assert.AreEqual(message, "InProgress");
         }
@@ -41,13 +37,16 @@ namespace RingCentral.Test
         [Test]
         public void RingOut()
         {
-            Request request = new Request(RingOutEndPoint,json);
+            var jsonData = "{\"to\": {\"phoneNumber\": \"19999999999\"}," +
+                                    "\"from\": {\"phoneNumber\": \"19999999999\"}," +
+                                    "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
+            Request request = new Request(RingOutEndPoint, jsonData);
 
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
             JToken token = JObject.Parse(result.GetBody());
 
-            var callStatus = (string) token.SelectToken("status").SelectToken("callStatus");
+            var callStatus = (string)token.SelectToken("status").SelectToken("callStatus");
 
             Assert.AreEqual(callStatus, "InProgress");
         }
