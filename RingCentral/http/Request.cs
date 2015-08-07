@@ -96,8 +96,6 @@ namespace RingCentral.Http
                 foreach (var attachment in Attachments)
                 {
                     var fileContent = new ByteArrayContent(attachment.GetByteArrayContent());
-
-                    //fileContent.Headers.ContentType.CharSet = "";
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
                     {
                         FileName = attachment.GetFileName()
@@ -105,16 +103,6 @@ namespace RingCentral.Http
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.GetContentType());
                     multiPartContent.Add(fileContent); 
                 }
-
-                //var stringContent = new StringContent("Hello World!!", Encoding.UTF8, _contentType); //"text/plain"
-                
-                //stringContent.Headers.ContentType.CharSet = "";
-                //stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                //                                           {
-                //                                               FileName = _fileName
-                //                                           };
-
-                //multiPartContent.Add(stringContent);
 
                 return multiPartContent;
             }
