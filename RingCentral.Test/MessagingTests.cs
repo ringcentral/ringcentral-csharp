@@ -110,15 +110,27 @@ namespace RingCentral.Test
             Assert.AreEqual("2",id);
         }
 
-        //TODO: need to add json body to reqeust message
+        //TODO: need to mock
         //[Test]
         public void SendFax()
         {
-            Request request = new Request(FaxEndPoint);
-            Response result = RingCentralClient.GetPlatform().PostRequest(request);
-            JToken token = result.GetJson();
-            var id = (int)token.SelectToken("id");
-            Assert.AreEqual(5, id);
+            const string text = "Hello world!";
+            const string json = "{\"to\":[{\"phoneNumber\":\"" + ToPhone + "\"}],\"faxResolution\":\"High\"}";
+
+            var byteArrayText = Encoding.UTF8.GetBytes(text);
+
+            var attachment = new Attachment("test.txt", "application/octet-stream", byteArrayText);
+            var attachment2 = new Attachment("test2.txt", "text/plain", byteArrayText);
+
+            var attachments = new List<Attachment> { attachment, attachment2 };
+
+            Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
+            Response response = RingCentralClient.GetPlatform().PostRequest(request);
+
+            JToken token = response.GetJson();
+            var availability = (string)token.SelectToken("availability");
+            
+            Assert.AreEqual("Alive", availability);
         }
 
         //TODO: need to add json body to reqeust message

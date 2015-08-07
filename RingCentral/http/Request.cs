@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using RingCentral.Helper;
 
 namespace RingCentral.Http
 {
@@ -17,6 +18,10 @@ namespace RingCentral.Http
         private readonly List<KeyValuePair<string, string>> _queryValues;
         private readonly string _requestType;
         private readonly string _url;
+
+        private readonly string _contentType;
+        private readonly string _fileName;
+        private List<Attachment> Attachments; 
 
         public Request(string url)
         {
@@ -41,6 +46,15 @@ namespace RingCentral.Http
             _url = url;
             _formBody = formBody;
             _requestType = UrlEncodedContentType;
+        }
+
+        public Request(string url, string jsonBody, List<Attachment> attachments )
+        {
+            _url = url;
+            _jsonBody = jsonBody;
+            _requestType = MultipartContentType;
+            Attachments = attachments;
+
         }
 
         public string GetUrl()
@@ -70,25 +84,37 @@ namespace RingCentral.Http
             if (_requestType.Equals(MultipartContentType))
             {
                 var multiPartContent = new MultipartFormDataContent("Boundary_1_14413901_1361871080888");
-                var json =
-                    "{\"to\":[{\"phoneNumber\":\"***REMOVED***\"}],\"faxResolution\":\"High\",\"sendTime\":\"2013-02-26T09:31:20.882Z\"}";
-
+                
+                //removes content type of multipart form data
                 multiPartContent.Headers.Remove("Content-Type");
-                multiPartContent.Headers.TryAddWithoutValidation("Content-Type",
-                    "multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
-                multiPartContent.Add(new StringContent(json, Encoding.UTF8, "application/json"));
+                
+                //need to set content type to multipart/mixed
+                multiPartContent.Headers.TryAddWithoutValidation("Content-Type","multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
+                multiPartContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
 
-                var stringContent = new StringContent("Hello World!!", Encoding.UTF8, "text/plain");
-                stringContent.Headers.ContentType.CharSet = "";
-                stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                                                           {
-                                                               FileName
-                                                                   =
-                                                                   "myfile.csv"
-                                                           };
 
-                multiPartContent.Add(stringContent);
-                Debug.WriteLine("returning multipart content");
+                foreach (var attachment in Attachments)
+                {
+                    var fileContent = new ByteArrayContent(attachment.GetByteArrayContent());
+
+                    //fileContent.Headers.ContentType.CharSet = "";
+                    fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                    {
+                        FileName = attachment.GetFileName()
+                    };
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.GetContentType());
+                    multiPartContent.Add(fileContent); 
+                }
+
+                //var stringContent = new StringContent("Hello World!!", Encoding.UTF8, _contentType); //"text/plain"
+                
+                //stringContent.Headers.ContentType.CharSet = "";
+                //stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                //                                           {
+                //                                               FileName = _fileName
+                //                                           };
+
+                //multiPartContent.Add(stringContent);
 
                 return multiPartContent;
             }
