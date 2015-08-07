@@ -80,6 +80,8 @@ namespace RingCentral.Test
             AddPresenceResponses();
             AddRingOutResponses();
             AddSubscriptionResponses();
+            AddResponseTestResponses();
+            
         }
 
         public void AddAccountAndExtensionResponses()
@@ -613,6 +615,18 @@ namespace RingCentral.Test
                     "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
                     "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
               });
+        }
+
+        public void AddResponseTestResponses()
+        {
+            string AccountInformationEndPoint = "/restapi/v1.0/account/";
+            AddGetMockResponse(new Uri(ApiEndPoint + AccountInformationEndPoint + "5" ),
+                new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+              Content = new StringContent("{\"errorCode\": \"CMN-201\",\"message\": \"Service Temporary Unavailable\","+
+                                         "\"errors\": [{\"errorCode\": \"CMN-201\"," + 
+                                         "\"message\": \"Service Temporary Unavailable\" }]}",Encoding.UTF8,"application/json")  
+            });
         }
     }
 }
