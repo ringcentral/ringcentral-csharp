@@ -94,7 +94,7 @@ namespace RingCentral.Test
                 {
                     Content = new StringContent(
                         "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1\"," + "\"id\": 1," + "\"serviceInfo\": {" +
-                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/service-info\"," + "\"brand\": {" +
+                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/service-info\"," + "\"brand\": {" +
                                    "\"id\": \"1\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"1\"," +
                                    "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
                                  "\"servicePlan\": {" + "\"id\": \"1\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
@@ -191,6 +191,14 @@ namespace RingCentral.Test
         {
             string RefreshEndPoint = "/restapi/oauth/token";
             string VersionEndPoint = "/restapi";
+            string RevokeEndPOint = "/restapi/oauth/revoke";
+            AddPostMockResponse(
+                new Uri(ApiEndPoint + RevokeEndPOint),
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("")
+                }
+                );
             AddGetMockResponse(
                 new Uri(ApiEndPoint + VersionEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
@@ -620,6 +628,8 @@ namespace RingCentral.Test
         public void AddResponseTestResponses()
         {
             string AccountInformationEndPoint = "/restapi/v1.0/account/";
+            string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
+
             AddGetMockResponse(new Uri(ApiEndPoint + AccountInformationEndPoint + "5" ),
                 new HttpResponseMessage(HttpStatusCode.BadRequest)
             {
@@ -627,6 +637,21 @@ namespace RingCentral.Test
                                          "\"errors\": [{\"errorCode\": \"CMN-201\"," + 
                                          "\"message\": \"Service Temporary Unavailable\" }]}",Encoding.UTF8,"application/json")  
             });
+            AddGetMockResponse(
+               new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/6"),
+               new HttpResponseMessage(HttpStatusCode.OK) 
+               {
+                   Content = new StringContent(
+                       "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/6\"," + "\"id\": 6," + "\"serviceInfo\": {" +
+                                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/6/service-info\"," + "\"brand\": {" +
+                                  "\"id\": \"6\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"6\"," +
+                                  "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
+                                "\"servicePlan\": {" + "\"id\": \"6\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
+                                "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
+                                  "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
+                              "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 6," +
+                                "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}",Encoding.UTF8,"text/plain")});
+
         }
     }
 }

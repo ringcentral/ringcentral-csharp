@@ -13,6 +13,7 @@ namespace RingCentral.Test
     {
         protected const string RefreshEndPoint = "/restapi/oauth/token";
         protected const string VersionEndPoint = "/restapi";
+        protected const string RevokeEndPoint = "/restapi/oauth/revoke";
 
     
 
@@ -57,6 +58,13 @@ namespace RingCentral.Test
             var version = (string) token.SelectToken("apiVersions").SelectToken("uriString");
 
             Assert.AreEqual(version, "v1.0");
+        }
+
+        [Test]
+        public void RevokeAuthorization()
+        {
+            string revokeResult = Platform.Revoke();
+            Assert.IsFalse(Platform.IsAccessValid());
         }
     }
 }
