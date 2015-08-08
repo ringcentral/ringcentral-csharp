@@ -117,6 +117,8 @@ namespace RingCentral
         /// <returns>string response of the AuthPostRequest</returns>
         public string AuthPostRequest(Request request)
         {
+            SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
             var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
@@ -133,12 +135,7 @@ namespace RingCentral
         /// <returns>The string value of the POST request result</returns>
         public Response PostRequest(Request request)
         {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
-
-            if (!string.IsNullOrEmpty(request.GetXhttpOverRideHeader()))
-            {
-                SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
-            }
+            CheckAccessAndOverRideHeaders(request);
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -155,7 +152,7 @@ namespace RingCentral
         /// <returns>string response of the GET request</returns>
         public Response GetRequest(Request request)
         {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
+            CheckAccessAndOverRideHeaders(request);
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -223,9 +220,23 @@ namespace RingCentral
             _client = client;
         }
 
+        private void CheckAccessAndOverRideHeaders(Request request)
+        {
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
+
+            SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
+        }
+
         private void SetXhttpOverRideHeader(string method)
         {
-            _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
+            if (!string.IsNullOrEmpty(method))
+            {
+                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper()); 
+            }
+            if (method == null && _client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
+            {
+                _client.DefaultRequestHeaders.Remove("X-HTTP-Method-Override");
+            }
         }
 
         public void SetUserAgentHeader(string header)

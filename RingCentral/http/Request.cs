@@ -145,6 +145,7 @@ namespace RingCentral.Http
 
             if (method != null && allowedMethods.Contains(method.ToUpper()))
             {
+                Debug.WriteLine("Setting x-http-override-method to: " + method);
                 _xHttpOverrideHeader = method;
             }
         }
