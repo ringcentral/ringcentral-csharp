@@ -135,8 +135,10 @@ namespace RingCentral.Test
         [Test]
         public void SendPagerMessage()
         {
-            var jsonData = "{\"to\": [{\"extensionNumber\": \"102\"}, {\"extensionNumber\": \"103\"}]," +
-                            "\"from\": {\"extensionNumber\": \"101\"},\"text\": \"Hello!\"}";
+            List<string> pagerToList = new List<string> {"102", "103"};
+            PagerHelper pagerHelper = new PagerHelper(pagerToList,"101","Hello");
+            var jsonData = "{\"to\": [{\"extensionNumber\": \""+ pagerHelper.to[0] + "\"}, {\"extensionNumber\": \"" + pagerHelper.to[1] + "\"}]," +
+                            "\"from\": {\"extensionNumber\": \""+ pagerHelper.from +"\"},\"text\": \""+ pagerHelper.text +"\"}";
             Request request = new Request(PagerEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
             JToken token = result.GetJson();
