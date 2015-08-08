@@ -18,10 +18,8 @@ namespace RingCentral.Http
         private readonly List<KeyValuePair<string, string>> _queryValues;
         private readonly string _requestType;
         private readonly string _url;
-
-        private readonly string _contentType;
-        private readonly string _fileName;
-        private List<Attachment> Attachments; 
+        private readonly List<Attachment> _attachments;
+        private string _xHttpOverrideHeader;
 
         public Request(string url)
         {
@@ -53,7 +51,7 @@ namespace RingCentral.Http
             _url = url;
             _jsonBody = jsonBody;
             _requestType = MultipartContentType;
-            Attachments = attachments;
+            _attachments = attachments;
 
         }
 
@@ -69,6 +67,8 @@ namespace RingCentral.Http
 
         public HttpContent GetHttpContent()
         {
+            if (string.IsNullOrEmpty(_requestType)) return null;
+
             if (_requestType.Equals(JsonContentType))
             {
                 return new StringContent(_jsonBody, Encoding.UTF8, "application/json");
@@ -80,32 +80,33 @@ namespace RingCentral.Http
 
                 return new FormUrlEncodedContent(formBodyList);
             }
-            //TODO: need to configure this to work dynamically with faxes
             if (_requestType.Equals(MultipartContentType))
             {
                 var multiPartContent = new MultipartFormDataContent("Boundary_1_14413901_1361871080888");
-                
+
                 //removes content type of multipart form data
                 multiPartContent.Headers.Remove("Content-Type");
-                
+
                 //need to set content type to multipart/mixed
-                multiPartContent.Headers.TryAddWithoutValidation("Content-Type","multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
+                multiPartContent.Headers.TryAddWithoutValidation("Content-Type", "multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
                 multiPartContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
 
 
-                foreach (var attachment in Attachments)
+                foreach (var attachment in _attachments)
                 {
                     var fileContent = new ByteArrayContent(attachment.GetByteArrayContent());
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                    {
-                        FileName = attachment.GetFileName()
-                    };
+                                                             {
+                                                                 FileName = attachment.GetFileName()
+                                                             };
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.GetContentType());
-                    multiPartContent.Add(fileContent); 
+                    multiPartContent.Add(fileContent);
                 }
 
                 return multiPartContent;
             }
+
+
             return null;
         }
 
@@ -131,6 +132,21 @@ namespace RingCentral.Http
             }
 
             return querystring;
+        }
+
+        public string GetXhttpOverRideHeader()
+        {
+            return _xHttpOverrideHeader;
+        }
+
+        public void SetXhttpOverRideHeader(string method)
+        {
+            var allowedMethods = new List<string>(new[] { "GET", "POST", "PUT", "DELETE" });
+
+            if (method != null && allowedMethods.Contains(method.ToUpper()))
+            {
+                _xHttpOverrideHeader = method;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,7 +17,6 @@ namespace RingCentral
         private const string RefreshTokenTtlRemember = "604800"; // 1 week
         private const string TokenEndpoint = "/restapi/oauth/token";
         private const string RevokeEndpoint = "/restapi/oauth/revoke";
-
         private HttpClient _client;
         protected Auth Auth;
 
@@ -135,6 +135,11 @@ namespace RingCentral
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
 
+            if (!string.IsNullOrEmpty(request.GetXhttpOverRideHeader()))
+            {
+                SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
+            }
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
             var postResult = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
@@ -218,14 +223,9 @@ namespace RingCentral
             _client = client;
         }
 
-        public void SetXhttpOverRideHeader(string method)
+        private void SetXhttpOverRideHeader(string method)
         {
-            var allowedMethods = new List<string>(new[] {"GET", "POST", "PUT", "DELETE"});
-
-            if (method != null && allowedMethods.Contains(method.ToUpper()))
-            {
-                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
-            }
+            _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper());
         }
 
         public void SetUserAgentHeader(string header)
