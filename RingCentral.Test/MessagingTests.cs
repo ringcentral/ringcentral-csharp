@@ -149,9 +149,10 @@ namespace RingCentral.Test
         [Test]
         public void SendSms()
         {
-            var jsonData = "{\"to\": [{\"phoneNumber\": \"19999999999\"}]," +
-                           "\"from\": {\"phoneNumber\": \"19999999999\"}," +
-                          "\"text\": \"Test SMS message\" }";
+            SmsHelper smsHelper= new SmsHelper("19999999999", "19999999999","Test SMS message");
+            var jsonData = "{\"to\": [{\"phoneNumber\": \""  +smsHelper.to + "\"}]," +
+                           "\"from\": {\"phoneNumber\": \"" + smsHelper.from + "\"}," +
+                          "\"text\": \"" + smsHelper.text + "\" }";
             Request request = new Request(SmsEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
