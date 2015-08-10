@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
 using System.Text;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
@@ -24,14 +25,14 @@ namespace RingCentral.Test
 
         protected const string SmsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
 
-        protected const string ToPhone = "***REMOVED***";
+        protected string ToPhone = "";
 
-        protected string AuthResult;
+        protected Response AuthResult;
 
         protected Platform Platform;
 
         protected RingCentralClient RingCentralClient;
-        protected MockHttpClient mockResponseHandler = new MockHttpClient();
+        protected MockHttpClient MockResponseHandler = new MockHttpClient();
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -41,30 +42,31 @@ namespace RingCentral.Test
             var appSecret = "";
             var password = "";
 
-            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_KEY")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_KEY")))
             {
 
                 appKey = Environment.GetEnvironmentVariable("APP_KEY");
             }
 
-            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_SECRET")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_SECRET")))
             {
                 appSecret = Environment.GetEnvironmentVariable("APP_SECRET");
             }
 
-            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("USER_NAME")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("USER_NAME")))
             {
                 UserName = Environment.GetEnvironmentVariable("USER_NAME");
+                ToPhone = UserName;
             }
 
-            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PASSWORD")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PASSWORD")))
             {
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
            
             RingCentralClient = new RingCentralClient(appKey, appSecret, ApiEndPoint);
             Platform = RingCentralClient.GetPlatform();
-            Platform.SetClient(new HttpClient(mockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });
+            Platform.SetClient(new HttpClient(MockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) });
             AuthResult = Platform.Authenticate(UserName, password, Extension, true);
         }
 

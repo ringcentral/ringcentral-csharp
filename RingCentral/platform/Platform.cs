@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using RingCentral.Http;
 
 namespace RingCentral
@@ -42,7 +40,7 @@ namespace RingCentral
         /// <param name="extension">Optional: Extension number to login</param>
         /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public string Authenticate(string userName, string password, string extension, bool isRemember)
+        public Response Authenticate(string userName, string password, string extension, bool isRemember)
         {
             var body = new Dictionary<string, string>
                        {
@@ -58,7 +56,7 @@ namespace RingCentral
             var result = AuthPostRequest(request);
 
             Auth.SetRemember(isRemember);
-            Auth.SetData(JObject.Parse(result));
+            Auth.SetData(result.GetJson());
 
             return result;
         }
@@ -67,7 +65,7 @@ namespace RingCentral
         ///     Refreshes expired Access token during valid lifetime of Refresh Token
         /// </summary>
         /// <returns>string response of Refresh result</returns>
-        public string Refresh()
+        public Response Refresh()
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
@@ -82,7 +80,7 @@ namespace RingCentral
             var request = new Request(TokenEndpoint, body);
             var result = AuthPostRequest(request);
 
-            Auth.SetData(JObject.Parse(result));
+            Auth.SetData(result.GetJson());
 
             return result;
         }
@@ -91,7 +89,7 @@ namespace RingCentral
         ///     Revokes the already granted access to stop application activity
         /// </summary>
         /// <returns>string response of Revoke result</returns>
-        public string Revoke()
+        public Response Revoke()
         {
             var body = new Dictionary<string, string>
                        {
@@ -115,15 +113,13 @@ namespace RingCentral
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>string response of the AuthPostRequest</returns>
-        public string AuthPostRequest(Request request)
+        public Response AuthPostRequest(Request request)
         {
-            SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
-
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
-            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
+            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
 
-            return result.Content.ReadAsStringAsync().Result;
+            return SetResponse(result);
         }
 
         /// <summary>
@@ -152,7 +148,7 @@ namespace RingCentral
         /// <returns>string response of the GET request</returns>
         public Response GetRequest(Request request)
         {
-            CheckAccessAndOverRideHeaders(request);
+            if (!IsAccessValid()) throw new Exception("Access has Expired");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -195,11 +191,13 @@ namespace RingCentral
             return SetResponse(putResult);
         }
 
-        private static Response SetResponse(Task<HttpResponseMessage> responseMessage)
+        private Response SetResponse(Task<HttpResponseMessage> responseMessage)
         {
             var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
             var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
             var headers = responseMessage.Result.Content.Headers;
+
+            ClearXhttpOverRideHeader();
 
             return new Response(statusCode, body, headers);
         }
@@ -227,13 +225,21 @@ namespace RingCentral
             SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
         }
 
-        private void SetXhttpOverRideHeader(string method)
+        private void SetXhttpOverRideHeader(string overrideMethod)
         {
-            if (!string.IsNullOrEmpty(method))
+            if (!string.IsNullOrEmpty(overrideMethod))
             {
-                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", method.ToUpper()); 
+                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", overrideMethod.ToUpper());
             }
-            if (method == null && _client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
+            if (overrideMethod == null && _client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
+            {
+                _client.DefaultRequestHeaders.Remove("X-HTTP-Method-Override");
+            }
+        }
+
+        private void ClearXhttpOverRideHeader()
+        {
+            if (_client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
             {
                 _client.DefaultRequestHeaders.Remove("X-HTTP-Method-Override");
             }

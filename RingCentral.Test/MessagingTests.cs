@@ -113,7 +113,7 @@ namespace RingCentral.Test
         public void SendFax()
         {
             const string text = "Hello world!";
-            const string json = "{\"to\":[{\"phoneNumber\":\"" + ToPhone + "\"}],\"faxResolution\":\"High\"}";
+            var json = "{\"to\":[{\"phoneNumber\":\"" + ToPhone + "\"}],\"faxResolution\":\"High\"}";
 
             var byteArrayText = Encoding.UTF8.GetBytes(text);
 

@@ -23,7 +23,7 @@ namespace RingCentral.Test
             AuthResult = Platform.Authenticate("username", "password", "101", true);
             Assert.NotNull(AuthResult);
 
-            JToken token = JObject.Parse(AuthResult);
+            JToken token = JObject.Parse(AuthResult.GetBody());
             var accessToken = (string) token.SelectToken("access_token");
             var refreshToken = (string) token.SelectToken("refresh_token");
 
@@ -35,11 +35,11 @@ namespace RingCentral.Test
         public void TestRefresh()
         {
             
-            string refreshResult = Platform.Refresh();
+            Response refreshResult = Platform.Refresh();
 
             Assert.NotNull(refreshResult);
 
-            JToken token = JObject.Parse(refreshResult);
+            JToken token = JObject.Parse(refreshResult.GetBody());
             var accessTokenAfterRefresh = (string) token.SelectToken("access_token");
             var refreshTokenAfterFresh = (string) token.SelectToken("refresh_token");
 
@@ -63,7 +63,7 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            string revokeResult = Platform.Revoke();
+            Response revokeResult = Platform.Revoke();
             Assert.IsFalse(Platform.IsAccessValid());
         }
     }
