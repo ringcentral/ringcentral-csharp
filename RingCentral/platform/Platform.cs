@@ -231,10 +231,6 @@ namespace RingCentral
             {
                 _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", overrideMethod.ToUpper());
             }
-            if (overrideMethod == null && _client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
-            {
-                _client.DefaultRequestHeaders.Remove("X-HTTP-Method-Override");
-            }
         }
 
         private void ClearXhttpOverRideHeader()
