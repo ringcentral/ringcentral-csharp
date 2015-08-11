@@ -8,6 +8,7 @@ using Foundation;
 using NUnit.Framework;
 using RingCentral.Subscription;
 using ObjCRuntime;
+using RingCentral.Http;
 using UIKit;
 
 namespace RingCentral.iOS.Test
@@ -28,7 +29,7 @@ namespace RingCentral.iOS.Test
 
         protected const string ToPhone = "***REMOVED***";
 
-        protected string AuthResult;
+        protected Response AuthResult;
 
         protected Platform Platform;
 

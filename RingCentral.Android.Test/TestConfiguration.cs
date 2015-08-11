@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using NUnit.Framework;
+using RingCentral.Http;
 using Environment = System.Environment;
 
 namespace RingCentral.Android.Test
@@ -33,7 +34,7 @@ namespace RingCentral.Android.Test
 
         protected const string ToPhone = "***REMOVED***";
 
-        protected string AuthResult;
+        protected Response AuthResult;
 
         protected Platform Platform;
 
