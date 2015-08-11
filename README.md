@@ -1,5 +1,5 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/8m9is2hg8ma8f0ob?svg=true)](https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp)
-[![Coverage Status](https://coveralls.io/repos/iinteractive/ringcentral-csharp/badge.svg?branch=develop&service=github&t=hWGUkw)](https://coveralls.io/github/iinteractive/ringcentral-csharp?branch=develop)
+[![Build status](https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true)](https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp)
+[![Coverage Status](https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github)](https://coveralls.io/github/ringcentral/ringcentral-csharp?branch=develop)
 # RingCentral SDK for C&#35;
 
 # Installation
