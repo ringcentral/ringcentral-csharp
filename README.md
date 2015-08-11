@@ -18,6 +18,8 @@ using RingCentral;
 var ringCentral = new RingCentralClient("your appKey", "your appSecret", "Ring Central apiEndPoint").GetPlatform();
 ```
 
+
+## Recipes
 ### Set User Agent Header
 ```
 ringCentral.SetUserAgentHeader("<YOUR USER AGENT HEADER>");
@@ -69,6 +71,43 @@ Response response = ringCentral.PostRequest(request);
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
 Response response = ringCentral.PostRequest(request);
+```
+
+### Get Address Book
+```
+Request request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
+Response response = ringCentral.GetRequest(request);
+```
+
+### Get Message Store
+```
+Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
+Response response = ringCentral.GetRequest(request);
+```
+
+### Get the First id in the Message Store
+```
+var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
+```
+
+### Update Message Status
+```
+var messageStatusJson = "{\"readStatus\": \"Read\"}";
+Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+Response response = ringCentral.PutRequest(request);
+```
+
+### Update Message Status via x-http-ovverride-header
+```
+Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+request.SetXhttpOverRideHeader("PUT");
+Response response = ringCentral.PostRequest(request);
+```
+
+### Delete Message
+```
+Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
+Response response = ringCentral.DeleteRequest(request);
 ```
 
 
