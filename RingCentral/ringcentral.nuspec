@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Infinity Interactive</authors>
+    <owners>Infinity Interactive</owners>
+    <!-- <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl> -->
+    <projectUrl>https://github.com/ringcentral/ringcentral-csharp</projectUrl>
+    <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Ring Central C# SDK</description>
+    <releaseNotes>Version 1.0 of the Ring Central C# SDK</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>RingCentral Ring Central C# SDK</tags>
+  </metadata>
+</package>
