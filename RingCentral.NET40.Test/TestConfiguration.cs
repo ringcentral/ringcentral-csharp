@@ -1,10 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using NUnit.Framework;
-using RingCentral.Subscription;
-using RingCentral.Test;
+﻿using NUnit.Framework;
 
 namespace RingCentral.NET40.Test
 {

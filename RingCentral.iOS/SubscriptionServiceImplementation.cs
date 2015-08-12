@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-
-using Foundation;
 using PubNubMessaging.Core;
-using UIKit;
 
 namespace RingCentral.Subscription
 {
