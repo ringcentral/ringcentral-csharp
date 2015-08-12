@@ -133,7 +133,7 @@ namespace RingCentral.Test
                 "\"name\": \"Alice Keys\",\"type\": \"User\",\"status\": \"NotActivated\",\"permissions\": { \"admin\": {\"enabled\": false }," +
                 "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/profile-image\"}}" +
                 "],\"paging\": {\"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1, \"pageStart\": 0,\"pageEnd\": 0},\"navigation\": {\"firstPage\": {" +
-                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension?page=1&perPage=100\"}}}"
+                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\"}}}"
                  , Encoding.UTF8, "application/json")
              });
         }
@@ -246,7 +246,7 @@ namespace RingCentral.Test
                   "\"sessionId\": \"1\",\"startTime\": \"2015-07-29T02:19:05.000Z\",\"duration\": 31,\"type\": \"Voice\",\"direction\": \"Inbound\"," +
                   "\"action\": \"Phone Call\",\"result\": \"Missed\", \"to\": { \"phoneNumber\": \"+19999999999\"}, \"from\": {" +
                     "\"phoneNumber\": \"+19999999999\" }},{" +
-                  "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/call-log/Abcd?view=Simple\",\"id\": \"Abcd\", " +
+                  "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/call-log/Abcd?view=Simple\",\"id\": \"Abcd\", " +
                   "\"sessionId\": \"1\",\"startTime\": \"2015-07-29T02:19:05.000Z\",\"duration\": 31,\"type\": \"Voice\",\"direction\": \"Inbound\"," +
                   "\"action\": \"Phone Call\",\"result\": \"Missed\",\"to\": {\"phoneNumber\": \"+19999999999\" },\"from\": {\"phoneNumber\": \"+19999999999\"}}]}", Encoding.UTF8, "application/json")
           });
@@ -255,11 +255,11 @@ namespace RingCentral.Test
         new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/call-log?view=Simple&dateFrom=2015-07-22T00:00:00.000Z&page=1&perPage=100\"," +
-         "\"records\": [{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension/130076004/call-log/Abcdef?view=Simple\"," +
+         "\"records\": [{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/call-log/Abcdef?view=Simple\"," +
           "\"id\": \"Abcdef\",\"sessionId\": \"1\",\"startTime\": \"2015-07-29T02:19:04.000Z\",\"duration\": 32, \"type\": \"Voice\"," +
           "\"direction\": \"Outbound\", \"action\": \"RingOut Web\",\"result\": \"Call connected\",\"to\": {\"phoneNumber\": \"+199999999999\"," +
            "\"name\": \"John Doe\",\"location\": \"Los Angeles, CA\"},\"from\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\"} }," +
-           "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/130076004/extension/130076004/call-log/Abcdefg?view=Simple\"," +
+           "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/call-log/Abcdefg?view=Simple\"," +
            "\"id\": \"Abcdefg\", \"sessionId\": \"1\",\"startTime\": \"2015-07-29T02:19:04.000Z\",\"duration\": 32,\"type\": \"Voice\"," +
            "\"direction\": \"Outbound\",\"action\": \"RingOut Web\",\"result\": \"Call connected\",\"to\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\"," +
             "\"location\": \"Los Angeles, CA\"},\"from\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\" } }]}", Encoding.UTF8, "application/json")
@@ -555,7 +555,7 @@ namespace RingCentral.Test
                {
                    Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/presence\"," +
                     "\"extension\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," +
-                    "\"id\": 130076004,\"extensionNumber\": \"101\"}," +
+                    "\"id\": 1,\"extensionNumber\": \"101\"}," +
                     "\"presenceStatus\": \"Available\",\"telephonyStatus\": \"NoCall\",\"userStatus\": \"Available\"," +
                     "\"dndStatus\": \"TakeAllCalls\",\"allowSeeMyPresence\": true,\"ringOnMonitoredCall\": false,\"pickUpCallsOnHold\": false}"
                     , Encoding.UTF8, "application/json")
@@ -593,9 +593,9 @@ namespace RingCentral.Test
             {
                 Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
                   "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                  "\"/restapi/v1.0/account/1/extension/130076004/message-store\", \"/restapi/v1.0/account/1/extension/130076004/presence\" ]," +
+                  "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
                   "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
-                  "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
+                  "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"RCNETSDK-TEST\"," +
                   "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
             });
             AddGetMockResponse(
@@ -604,7 +604,7 @@ namespace RingCentral.Test
              {
                  Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
                    "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                   "\"/restapi/v1.0/account/1/extension/130076004/message-store\", \"/restapi/v1.0/account/1/extension/130076004/presence\" ]," +
+                   "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
                    "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
                    "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
                    "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
@@ -618,7 +618,7 @@ namespace RingCentral.Test
               {
                   Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
                     "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                    "\"/restapi/v1.0/account/1/extension/130076004/message-store\", \"/restapi/v1.0/account/1/extension/130076004/presence\" ]," +
+                    "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
                     "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
                     "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
                     "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")

@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="PubNubSubscriptionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubscriptionServiceMock.cs" />
     <Compile Include="TestConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
