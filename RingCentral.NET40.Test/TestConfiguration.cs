@@ -17,8 +17,8 @@ namespace RingCentral.NET40.Test
         [TestFixtureSetUp]
         public void SetUp()
         {
-            
-            _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36");
+
+            _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
         }
     }
 }
