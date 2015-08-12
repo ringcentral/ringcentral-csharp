@@ -6,6 +6,7 @@ namespace RingCentral.Test
 {
     public class PlatformTest : TestConfiguration
     {
+        private const string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
         [Test]
         public void GetHttpCleint()
         {
@@ -21,18 +22,27 @@ namespace RingCentral.Test
             Assert.Contains("Chrome/44.0.2403.125", userAgentHeader);
         }
 
+
         [Test]
-        public void SetXHttpOverRideHeader()
+        public void CheckPlatformXHttpOverRideHeader()
         {
-            //TODO: can we mock response this
-            const string xHttpOverRideHeader = "GET";
+            string jsonData = "{\"firstName\": \"Vanessa\", " +
+                               "\"lastName\": \"May\", " +
+                               "\"businessAddress\": " +
+                               "{ " +
+                               "\"street\": \"5 Marina Blvd\", " +
+                               "\"city\": \"San-Francisco\", " +
+                               "\"state\": \"CA\", " +
+                               "\"zip\": \"94123\"}" +
+                               "}";
 
-            var request = new Request("/restapi/v1.0/account/~");
-            request.SetXhttpOverRideHeader(xHttpOverRideHeader);
+            Request request = new Request(AddressBookEndPoint, jsonData);
+            request.SetXhttpOverRideHeader("POST");
+            Assert.AreEqual("POST", request.GetXhttpOverRideHeader());
+            Platform.PostRequest(request);
+            Assert.IsFalse(Platform.GetClient().DefaultRequestHeaders.Contains("X-HTTP-Method-Override"));
 
-            var requestHeader = request.GetXhttpOverRideHeader();
 
-            Assert.AreEqual(requestHeader, xHttpOverRideHeader);
         }
     }
 }

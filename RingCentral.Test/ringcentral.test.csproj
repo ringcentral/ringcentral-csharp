@@ -107,7 +107,6 @@
     <Compile Include="AccountAndExtensionInformationTests.cs" />
     <Compile Include="AddressBookTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
-    <Compile Include="AuthTest.cs" />
     <Compile Include="CallLogTests.cs" />
     <Compile Include="GeographicalDictionaryTests.cs" />
     <Compile Include="HeaderTests.cs" />
