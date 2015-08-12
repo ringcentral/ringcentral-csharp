@@ -43,7 +43,6 @@
     <Compile Include="Helper\PagerHelper.cs" />
     <Compile Include="Helper\SmsHelper.cs" />
     <Compile Include="Http\Headers.cs" />
-    <Compile Include="Http\HttpException.cs" />
     <Compile Include="Http\Request.cs" />
     <Compile Include="Http\Response.cs" />
     <Compile Include="Platform\Auth.cs" />
