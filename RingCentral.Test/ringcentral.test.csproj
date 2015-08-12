@@ -110,6 +110,7 @@
     <Compile Include="AuthTest.cs" />
     <Compile Include="CallLogTests.cs" />
     <Compile Include="GeographicalDictionaryTests.cs" />
+    <Compile Include="HeaderTests.cs" />
     <Compile Include="MessagingTests.cs" />
     <Compile Include="MockHttpClient.cs" />
     <Compile Include="PlatformTest.cs" />
