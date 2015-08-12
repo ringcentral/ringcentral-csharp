@@ -17,20 +17,6 @@ namespace RingCentral.NET40.Test
         public List<object> Message;
         public PubnubClientError Error;
 
-        public SubscriptionServiceMock(string publishKey, string subscribeKey)
-          
-        {
-            _pubnub = new Pubnub(publishKey, subscribeKey);
-            _pubnub.GrantAccess<string>("RCNETSDK-TEST", true, true, 20, SubscribeConnectStatusMessage, ErrorMessage);
-        }
-
-        public SubscriptionServiceMock(string publishKey, string subscribeKey, string secretKey)
-            
-        {
-            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey);
-            _pubnub.GrantAccess<string>("RCNETSDK-TEST", true, true, 20, SubscribeConnectStatusMessage, ErrorMessage);
-        }
-
         public SubscriptionServiceMock(string publishKey, string subscribeKey, string secretKey, string cipherKey, bool sslOn)
             
         {
