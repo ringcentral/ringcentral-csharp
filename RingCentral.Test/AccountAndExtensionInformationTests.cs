@@ -11,8 +11,8 @@ namespace RingCentral.Test
     [TestFixture]
     public class AccountAndExtensionInformationTests : TestConfiguration
     {
-        protected const string AccountInformationEndPoint = "/restapi/v1.0/account/~";
-        protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
+        protected const string AccountInformationEndPoint = "/restapi/v1.0/account/";
+        protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
        
 
 

@@ -86,8 +86,8 @@ namespace RingCentral.Test
 
         public void AddAccountAndExtensionResponses()
         {
-            string AccountInformationEndPoint = "/restapi/v1.0/account/~";
-            string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
+            string AccountInformationEndPoint = "/restapi/v1.0/account/";
+            string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
             AddGetMockResponse(
                 new Uri(ApiEndPoint + AccountExtensionInformationEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
