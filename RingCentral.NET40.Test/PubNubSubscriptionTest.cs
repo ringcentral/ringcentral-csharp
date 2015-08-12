@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.SymbolStore;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -8,69 +10,73 @@ using RingCentral.Helper;
 using RingCentral.Http;
 using RingCentral.Subscription;
 
+
 namespace RingCentral.NET40.Test
 {
     [TestFixture]
     public class PubNubSubscriptionTest : TestConfiguration
     {
-        private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
+        
+        private const string Channel = "RCNETSDK-TEST";
 
-        private const string JsonData =
-            "{\"eventFilters\": " +
-            "[ \"/restapi/v1.0/account/~/extension/~/presence\", " +
-            "\"/restapi/v1.0/account/~/extension/~/message-store\" ], " +
-            "\"deliveryMode\": " +
-            "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
-
-        private const string SmsEndPoint = "/restapi/v1.0/account/~/extension/~/sms";
-
-
-        public Task Wait(int milliseconds)
+        [Test]
+        public void SubsricptionPubNubTest()
         {
-            var tcs = new TaskCompletionSource<object>();
-            new Timer(_ => tcs.SetResult(null)).Change(milliseconds, -1);
-            return tcs.Task;
+            _subscriptionServiceMock.Subscribe(Channel, "", _subscriptionServiceMock.SetMessage,_subscriptionServiceMock.SubscribeConnectStatusMessage, _subscriptionServiceMock.ErrorMessage);        
+            Thread.Sleep(1000);
+            if (_subscriptionServiceMock.Message.Count == 3)
+            {
+                Assert.AreEqual("Connected", _subscriptionServiceMock.Message[1]);
+                Assert.AreEqual(Channel,_subscriptionServiceMock.Message[2]);
+            }
+            else if (_subscriptionServiceMock.Message.Count == 2)
+            {
+                Assert.AreEqual(Channel, _subscriptionServiceMock.Message[1]);
+                var success = _subscriptionServiceMock.Message[0].ToString().Split(',');
+                Assert.AreEqual("{\r\n  \"status\": 200", success[0]);
+            }
+            else
+            {
+                Assert.Fail("Returned unrecognized result on PubNub Subscription");
+            }
+        
         }
 
-      
-        public void SetPubNubSubscription()
+        [Test]
+        public void UnsubscribePubNubTest()
         {
-
-            Request request = new Request(SubscriptionEndPoint,JsonData);
-            Response createResult = RingCentralClient.GetPlatform().PostRequest(request);
-
-            JToken token = JObject.Parse(createResult.GetBody());
-
-            var id = (string) token.SelectToken("id");
-
-            Assert.IsNotNullOrEmpty(id);
-
-            request = new Request(SubscriptionEndPoint + "/" + id);
-            Response response = RingCentralClient.GetPlatform().GetRequest(request);
-
-            var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
-
-            Assert.IsNotNull(SubscriptionItem.DeliveryMode.Address);
-
-            SubscriptionServiceImplementation = new SubscriptionServiceImplementation("",
-                SubscriptionItem.DeliveryMode.SubscriberKey);
-
-            SubscriptionServiceImplementation.Subscribe(SubscriptionItem.DeliveryMode.Address, "", null, null, null);
-
-            var smsHelper = new SmsHelper(ToPhone, UserName, SmsText);
-
-            string jsonObject = JsonConvert.SerializeObject(smsHelper);
-
-            request = new Request(SubscriptionEndPoint, jsonObject);
-            Response result = RingCentralClient.GetPlatform().PostRequest(request);
-
-            token = JObject.Parse(result.GetBody());
-
-            var messageStatus = (string) token.SelectToken("messageStatus");
-
-            Assert.AreEqual(messageStatus, "Sent");
-
-            Wait(15000).ContinueWith(_ => Debug.WriteLine("Done"));
+            _subscriptionServiceMock.Subscribe(Channel+"2", "", null, null, null);  
+            Thread.Sleep(1000);
+           
+            _subscriptionServiceMock.Unsubscribe(Channel+"2","",null,null,null,null);
+            Thread.Sleep(1000);
+           
+            Assert.AreEqual("Channel Unsubscribed from RCNETSDK-TEST2",_subscriptionServiceMock.Message[1]);
         }
+
+        [Test]
+        public void ErrorMessagePubNubTest()
+        {
+            _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
+            Thread.Sleep(1000);
+            _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
+            Thread.Sleep(1000);
+            Assert.AreEqual("Channel Already Subscribed. Duplicate channel subscription not allowed",_subscriptionServiceMock.Error.Description);
+            Assert.AreEqual(112,_subscriptionServiceMock.Error.StatusCode);
+
+        }
+
+        [Test]
+        public void SendMessagePubNubTest()
+        {
+            _subscriptionServiceMock.Subscribe(Channel + "4","",null,null,null);
+            Thread.Sleep(1000);
+            _subscriptionServiceMock.PublishMessage("This is a test of the RingCentral C# SDK");
+            Thread.Sleep(1000);
+            Assert.AreEqual("This is a test of the RingCentral C# SDK", _subscriptionServiceMock.Message[0]);
+
+        }
+
+
     }
 }

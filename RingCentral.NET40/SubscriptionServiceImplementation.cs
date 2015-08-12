@@ -14,18 +14,28 @@ namespace RingCentral.Subscription
             _pubnub = new Pubnub(publishKey, subscribeKey);
         }
 
-        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
-            Action<object> connectCallback, Action<SubscriptionError> errorCallback)
+        public SubscriptionServiceImplementation(string publishKey, string subscribeKey, string secretKey)
         {
-            _pubnub.Subscribe<string>(channel, channelGroup, DisplaySubscribeReturnMessage,
-                DisplaySubscribeConnectStatusMessage, DisplayErrorMessage);
+            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey);
+        }
+
+        public SubscriptionServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey,bool sslOn)
+        {
+            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey, cipherKey, sslOn);
+        }
+
+        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
+            Action<object> connectCallback, Action<object> errorCallback)
+        {
+            _pubnub.Subscribe<string>(channel, channelGroup, userCallback,
+                connectCallback, errorCallback);
         }
 
         public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
-            Action<object> connectCallback, Action<object> disconnectCallback, Action<SubscriptionError> errorCallback)
+            Action<object> connectCallback, Action<object> disconnectCallback, Action<object> errorCallback)
         {
-            _pubnub.Unsubscribe(channel, DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage,
-                DisplayDisconnectMessage, DisplayErrorMessage);
+            _pubnub.Unsubscribe(channel, userCallback, connectCallback,
+                disconnectCallback, errorCallback);
         }
 
         public void DisplaySubscribeReturnMessage(object message)

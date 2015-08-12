@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
-namespace RingCentral.Subscription
+namespace RingCentral.Subscription 
 {
     public class SubscriptionError
     {
