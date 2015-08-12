@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Foundation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
 using RingCentral.Http;
 using RingCentral.Subscription;
-using UIKit;
 
 namespace RingCentral.iOS.Test
 {

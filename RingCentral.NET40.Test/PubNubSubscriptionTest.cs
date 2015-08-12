@@ -1,15 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.SymbolStore;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System.Threading;
 using NUnit.Framework;
-using RingCentral.Helper;
-using RingCentral.Http;
-using RingCentral.Subscription;
-
 
 namespace RingCentral.NET40.Test
 {

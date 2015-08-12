@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using NUnit.Framework;
 using System.Net.Http;
-using System.Net;
-using System.Text;
+using NUnit.Framework;
 using RingCentral.Http;
 
 namespace RingCentral.Test

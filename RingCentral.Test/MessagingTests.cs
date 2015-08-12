@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
 using RingCentral.Http;
-using System;
-using System.Net.Http;
-using System.Net;
-using System.Text;
 
 namespace RingCentral.Test
 {
