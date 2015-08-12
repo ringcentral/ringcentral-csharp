@@ -41,12 +41,6 @@
     <Compile Include="SubscriptionServiceImplementation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RingCentral\RingCentral.csproj">
-      <Project>{67cbcaaf-36e8-424b-8d49-28f43ae7793f}</Project>
-      <Name>RingCentral</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -94,6 +88,12 @@
     <ImageAsset Include="Resources/SubscriptionServiceImplementation.xcassets/LaunchImages.launchimage/Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RingCentral\RingCentral.csproj">
+      <Project>{67CBCAAF-36E8-424B-8D49-28F43AE7793F}</Project>
+      <Name>RingCentral</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
