@@ -76,6 +76,7 @@ namespace RingCentral.NET40.Test
             Assert.AreEqual("This is a test of the RingCentral C# SDK", _subscriptionServiceMock.Message[0]);
 
         }
+ 
 
 
     }
