@@ -105,14 +105,13 @@ namespace RingCentral
 
         /// <summary>
         ///     Authentication, Refresh and Revoke requests all require an Authentication Header Value of "Basic".  This is a
-        ///     special
-        ///     method to handle those requests.
+        ///     special method to handle those requests.
         /// </summary>
-        /// <param name="endPoint">
-        ///     This endpoint will be the value passed in depending on the request issued (<c>Authenticate</c>,
+        /// <param name="request">
+        ///     A Request object with a url and a dictionary of key value pairs (<c>Authenticate</c>,
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
-        /// <returns>string response of the AuthPostRequest</returns>
+        /// <returns>Response object</returns>
         public Response AuthPostRequest(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
@@ -123,12 +122,11 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP POST request.  If StringBody is set via <c>SetStringData</c> it will set the content type of
-        ///     application/json.
-        ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
+        ///     A HTTP POST request.
+        ///     Http Content is set by using the proper constructor in the Request Object per endpoint needs
         /// </summary>
-        /// <param name="endPoint">The Endpoint of the POST request targeted</param>
-        /// <returns>The string value of the POST request result</returns>
+        /// <param name="request">A fully formed request object</param>
+        /// <returns>A Response object</returns>
         public Response PostRequest(Request request)
         {
             CheckAccessAndOverRideHeaders(request);
@@ -141,11 +139,10 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP GET request.  If query parameters are set via <c>AddQueryParameters</c> then they will be included in the
-        ///     GET request
+        ///     A HTTP GET request.  Query parameters can be set via the appropriate constructor in the Request object.
         /// </summary>
-        /// <param name="endPoint">The Endpoint of the GET request</param>
-        /// <returns>string response of the GET request</returns>
+        /// <param name="request">A fully formed request object</param>
+        /// <returns>A Response object</returns>
         public Response GetRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
@@ -160,8 +157,8 @@ namespace RingCentral
         /// <summary>
         ///     A HTTP DELETE request.
         /// </summary>
-        /// <param name="endPoint">The Endpoint of the DELETE request</param>
-        /// <returns>string response of the DELETE request</returns>
+        /// <param name="request">A fully formed request object</param>
+        /// <returns>A Response object</returns>
         public Response DeleteRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
@@ -174,12 +171,11 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     A HTTP PUT request.  If StringBody is set via <c>SetStringData</c> it will set the content type of
-        ///     application/json.
-        ///     If form paramaters are set via <c>AddFormParameter</c> then it will post those values
+        ///     A HTTP PUT request.
+        ///     Http Content is set by using the proper constructor in the Request Object per endpoint needs
         /// </summary>
-        /// <param name="endPoint">The Endpoint of the PUT request</param>
-        /// <returns>string response of the PUT request</returns>
+        /// <param name="request">A fully formed request object</param>
+        /// <returns>A Response object</returns>
         public Response PutRequest(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
@@ -191,6 +187,11 @@ namespace RingCentral
             return SetResponse(putResult);
         }
 
+        /// <summary>
+        ///     Creates a Response object based on the result of any of the HTTP methods called
+        /// </summary>
+        /// <param name="responseMessage">The passed in response message from the HTTP Methods</param>
+        /// <returns>A Response object</returns>
         private Response SetResponse(Task<HttpResponseMessage> responseMessage)
         {
             var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
@@ -202,22 +203,38 @@ namespace RingCentral
             return new Response(statusCode, body, headers);
         }
 
+        /// <summary>
+        ///     Gets the API key by encoding the AppKey and AppSecret with Encoding.UTF8.GetBytes
+        /// </summary>
+        /// <returns>The Api Key</returns>
         private string GetApiKey()
         {
             var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
         }
 
+        /// <summary>
+        ///     Gets the HttpClient
+        /// </summary>
+        /// <returns>HttpClient</returns>
         public HttpClient GetClient()
         {
             return _client;
         }
 
+        /// <summary>
+        ///     Sets the HttpClient
+        /// </summary>
+        /// <param name="client">the Client to be set</param>
         public void SetClient(HttpClient client)
         {
             _client = client;
         }
 
+        /// <summary>
+        ///     Checks authorization Access and calls the SetXhttpOverRideHeader method
+        /// </summary>
+        /// <param name="request">A fully formed request object</param>
         private void CheckAccessAndOverRideHeaders(Request request)
         {
             if (!IsAccessValid()) throw new Exception("Access has Expired");
@@ -225,6 +242,10 @@ namespace RingCentral
             SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
         }
 
+        /// <summary>
+        ///     Sets the X-HTTP-Method-Override to the method specified
+        /// </summary>
+        /// <param name="overrideMethod">The method that will override</param>
         private void SetXhttpOverRideHeader(string overrideMethod)
         {
             if (!string.IsNullOrEmpty(overrideMethod))
@@ -233,6 +254,9 @@ namespace RingCentral
             }
         }
 
+        /// <summary>
+        ///     Removes the X-HTTP-Method-Override from the client
+        /// </summary>
         private void ClearXhttpOverRideHeader()
         {
             if (_client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
@@ -241,11 +265,20 @@ namespace RingCentral
             }
         }
 
+        /// <summary>
+        ///     Sets the user-agent header that will be passed with each request
+        /// </summary>
+        /// <param name="header">The value of the User-Agent header</param>
         public void SetUserAgentHeader(string header)
         {
             _client.DefaultRequestHeaders.Add("User-Agent", header);
         }
 
+        /// <summary>
+        ///     Determines if Access is valid and returns the boolean result.  If access is not valid but refresh token is valid
+        ///     then a refresh is issued.
+        /// </summary>
+        /// <returns>boolean value of access authorization</returns>
         public bool IsAccessValid()
         {
             if (Auth.IsAccessTokenValid())

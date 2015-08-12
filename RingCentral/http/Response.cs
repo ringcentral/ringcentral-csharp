@@ -10,8 +10,13 @@ namespace RingCentral.Http
     {
         private readonly string _body;
         private readonly int _status;
-        private bool MultiPartResponse;
 
+        /// <summary>
+        ///     Creates a Response Object
+        /// </summary>
+        /// <param name="status">The status of the response message</param>
+        /// <param name="body">The body of the response message</param>
+        /// <param name="headers">HttpContentHeaders of the response message</param>
         public Response(int status, string body, HttpContentHeaders headers)
         {
             _body = body;
@@ -20,18 +25,28 @@ namespace RingCentral.Http
             SetHeaders(headers);
         }
 
-        
-
+        /// <summary>
+        ///     Checks to be sure the status code is greater than or equal to 200 and less than 300
+        /// </summary>
+        /// <returns>bool value if status code is successful</returns>
         public bool CheckStatus()
         {
             return _status >= 200 && _status < 300;
         }
 
+        /// <summary>
+        ///     returns raw http response body
+        /// </summary>
+        /// <returns>string http response body</returns>
         public string GetBody()
         {
             return _body;
         }
 
+        /// <summary>
+        ///     If header content is JSON it will return full formed and parsed json
+        /// </summary>
+        /// <returns>A JObject parsed body</returns>
         public JObject GetJson()
         {
             if (!IsJson())
@@ -41,6 +56,10 @@ namespace RingCentral.Http
             return JObject.Parse(_body);
         }
 
+        /// <summary>
+        ///     Determines if the response is multipart
+        /// </summary>
+        /// <returns>boolean value based on response being multipart</returns>
         public bool IsMultiPartResponse()
         {
             return IsMultiPart();
@@ -49,22 +68,21 @@ namespace RingCentral.Http
         /// <summary>
         ///     Parses a multipart response into List of responses that can be accessed by index.
         /// </summary>
-        /// <param name="multiResult">The multipart response that needs to be broken up into a list of responses</param>
         /// <returns>A List of responses from a multipart response</returns>
         public List<string> GetMultiPartResponses()
         {
-            string[] output = Regex.Split(_body, "--Boundary([^;]+)");
+            var output = Regex.Split(_body, "--Boundary([^;]+)");
 
-            string[] splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
+            var splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
 
             var responses = new List<string>();
 
             //We Can convert this to linq but for the sake of readability we'll leave it like this.
-            foreach (string s in splitString)
+            foreach (var s in splitString)
             {
                 if (s.Contains("{"))
                 {
-                    string json = s.Substring(s.IndexOf('{'));
+                    var json = s.Substring(s.IndexOf('{'));
 
                     JToken token = JObject.Parse(json);
 
@@ -75,11 +93,19 @@ namespace RingCentral.Http
             return responses;
         }
 
+        /// <summary>
+        ///     Gets the repsonse status
+        /// </summary>
+        /// <returns>response status code</returns>
         public int GetStatus()
         {
             return _status;
         }
 
+        /// <summary>
+        ///     Gets error if status code is outside the range of values checked in <c>CheckStatus()</c>
+        /// </summary>
+        /// <returns></returns>
         public string GetError()
         {
             if (CheckStatus())
@@ -87,9 +113,9 @@ namespace RingCentral.Http
                 return null;
             }
 
-            string message = GetStatus().ToString();
+            var message = GetStatus().ToString();
 
-            JObject data = GetJson();
+            var data = GetJson();
 
             if (!string.IsNullOrEmpty((string) (data["message"])))
             {
