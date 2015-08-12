@@ -24,15 +24,14 @@ namespace RingCentral.Subscription
             _pubnub = new Pubnub(publishKey, subscribeKey);
         }
 
-        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
-            Action<object> connectCallback, Action<SubscriptionError> errorCallback)
+        public void Subscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
             _pubnub.Subscribe<string>(channel, channelGroup, DisplaySubscribeReturnMessage,
                 DisplaySubscribeConnectStatusMessage, DisplayErrorMessage);
         }
 
-        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
-            Action<object> connectCallback, Action<object> disconnectCallback, Action<SubscriptionError> errorCallback)
+        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback,
+            Action<object> disconnectCallback, Action<object> errorCallback)
         {
             _pubnub.Unsubscribe(channel, DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage,
                 DisplayDisconnectMessage, DisplayErrorMessage);
@@ -57,5 +56,7 @@ namespace RingCentral.Subscription
         {
             Log.Debug(Tag, "Disconnect Message: " + message);
         }
+
+        
     }
 }
