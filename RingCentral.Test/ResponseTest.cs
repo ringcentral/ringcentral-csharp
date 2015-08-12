@@ -14,15 +14,25 @@ namespace RingCentral.Test
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/";
         protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
         [Test]
-        public void GetErrorMessage()
+        public void GetResponseErrorMessage()
         {
 
             Request request = new Request(AccountInformationEndPoint + "5");
             Response result = RingCentralClient.GetPlatform().GetRequest(request);
             var errorResult =  result.GetError();
             Assert.IsNotNull(errorResult);
+            Assert.AreEqual("Service Temporary Unavailable", errorResult);
+       
         }
-
+        [Test]
+        public void GetResponseErrorBadGrantType()
+        {
+            Request request = new Request(AccountExtensionInformationEndPoint + "/7");
+            Response result = RingCentralClient.GetPlatform().GetRequest(request);
+            var errorResult = result.GetError();
+            Assert.IsNotNull(errorResult);
+            Assert.AreEqual("Unsupported grant type",errorResult);
+        }
         [Test, ExpectedException(typeof(Exception), ExpectedMessage = @"Response is not JSON")]
         public void GetResponseNonJson()
         {
@@ -30,6 +40,14 @@ namespace RingCentral.Test
             Response result = RingCentralClient.GetPlatform().GetRequest(request);
             var jsonResult =  result.GetJson();
             
+        }
+
+        [Test]
+        public void GetErrorGoodCheckStatus()
+        {
+           Request request = new Request(AccountInformationEndPoint);
+           Response result = RingCentralClient.GetPlatform().GetRequest(request);
+           Assert.IsNull(result.GetError());
         }
     }
 }
