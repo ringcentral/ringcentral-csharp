@@ -120,16 +120,15 @@ namespace RingCentral.Http
             if (!string.IsNullOrEmpty((string) (data["message"])))
             {
                 message = (string) (data["message"]);
-            }
-            if (!string.IsNullOrEmpty((string) (data["error_description"])))
+            }            
+            if (!string.IsNullOrEmpty((string)(data["error_description"])))
             {
-                message = (string) (data["error_description"]);
+                message = (string)(data["error_description"]);
             }
-            if (!string.IsNullOrEmpty((string) (data["description"])))
+            if (!string.IsNullOrEmpty((string)(data["description"])))
             {
-                message = (string) (data["description"]);
+                message = (string)(data["description"]);
             }
-
             return message;
         }
     }

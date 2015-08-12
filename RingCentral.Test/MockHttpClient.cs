@@ -651,7 +651,12 @@ namespace RingCentral.Test
                                   "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
                               "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 6," +
                                 "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}",Encoding.UTF8,"text/plain")});
-
+            AddGetMockResponse(new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/7"),
+                new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("{ \"error\": \"invalid_request\", \"error_description\": \"Unsupported grant type\" }", Encoding.UTF8, "application/json")
+                });
+         
         }
     }
 }
