@@ -110,6 +110,11 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store
 Response response = ringCentral.DeleteRequest(request);
 ```
 
+### Create Subscription
+```
+var jsonData = "{\"eventFilters\": [ \"/restapi/v1.0/account/~/extension/~/presence\",\"/restapi/v1.0/account/~/extension/~/message-store\" ], \"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
+Request request = new Request("/restapi/v1.0/subscription" jsonData);
+```
 
 
 
