@@ -4,6 +4,20 @@
 
 # Installation
 
+## .NET40+
+
+Via NuGet
+
+```
+Install-Package <Package Name will go here>
+```
+
+This will download the Ring Central Portable Class Library into your project as well as the [Pubnub](https://github.com/pubnub/c-sharp "PubNub") dependencies
+
+## Xamarin iOS
+
+## Xamarin Android
+
 # Basic Usage
 
 ## Initialization

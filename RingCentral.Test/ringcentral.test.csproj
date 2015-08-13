@@ -66,6 +66,10 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RingCentral, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RingCentralSDK.0.0.6\lib\net40\RingCentral.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -119,12 +123,6 @@
     <Compile Include="RingOutTests.cs" />
     <Compile Include="SubscriptionTests.cs" />
     <Compile Include="TestConfiguration.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RingCentral\RingCentral.csproj">
-      <Project>{67cbcaaf-36e8-424b-8d49-28f43ae7793f}</Project>
-      <Name>RingCentral</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
