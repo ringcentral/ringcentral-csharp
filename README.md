@@ -126,7 +126,7 @@ Response response = ringCentral.DeleteRequest(request);
 ```
 var jsonData = "{\"eventFilters\": [ \"/restapi/v1.0/account/~/extension/~/presence\",\"/restapi/v1.0/account/~/extension/~/message-store\" ], \"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 Request request = new Request("/restapi/v1.0/subscription" jsonData);
-Response result = RingCentralClient.GetPlatform().PostRequest(request);
+Response result = ringCentral.PostRequest(request);
 ```
 
 
