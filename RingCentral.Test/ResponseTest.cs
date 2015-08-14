@@ -48,7 +48,7 @@ namespace RingCentral.Test
         [Test]
         public void SetRequestXHttpOverrideHeader()
         {
-            //TODO: can we mock response this
+
             const string xHttpOverRideHeader = "GET";
 
             var request = new Request("/restapi/v1.0/account/~");

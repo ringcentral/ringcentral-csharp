@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
 
+
 namespace RingCentral.Test
 {
     [TestFixture]
@@ -25,8 +26,8 @@ namespace RingCentral.Test
             var jsonData = "{\"eventFilters\": " +
             "[ \"/restapi/v1.0/account/~/extension/~/presence\", " +
             "\"/restapi/v1.0/account/~/extension/~/message-store\" ], " +
-            "\"deliveryMode\": " +
-            "{ \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
+            "\"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
+
             Request request = new Request(SubscriptionEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().PostRequest(request);
 
@@ -43,22 +44,23 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint + "/1");
             Response response = RingCentralClient.GetPlatform().GetRequest(request);
 
-            var SubscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
+            var subscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
 
-            Assert.AreEqual(SubscriptionItem.DeliveryMode.TransportType, "PubNub");
+            Assert.AreEqual(subscriptionItem.DeliveryMode.TransportType, "PubNub");
 
-            Assert.AreEqual(SubscriptionItem.DeliveryMode.Encryption, true);
+            Assert.AreEqual(subscriptionItem.DeliveryMode.Encryption, true);
 
-            Assert.IsNotEmpty(SubscriptionItem.EventFilters);
+            Assert.IsNotEmpty(subscriptionItem.EventFilters);
 
-            Assert.AreEqual(SubscriptionItem.Status, "Active");
+            Assert.AreEqual(subscriptionItem.Status, "Active");
         }
-        //TODO: need to add json body
+
         [Test]
         public void RenewSubscription()
         {
             var jsonData = "{\"eventFilters\": [\"/restapi/v1.0/account/~/extension/~/presence\"," +
-                "\"/restapi/v1.0/account/~/extension/~/message-store\" ]}";
+                           "\"/restapi/v1.0/account/~/extension/~/message-store\" ]}";
+
             Request request = new Request(SubscriptionEndPoint + "/1", jsonData);
             Response renewResult = RingCentralClient.GetPlatform().PutRequest(request);
 

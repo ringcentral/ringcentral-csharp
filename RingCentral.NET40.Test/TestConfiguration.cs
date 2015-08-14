@@ -4,7 +4,7 @@ namespace RingCentral.NET40.Test
 {
     
     [TestFixture]
-    public class TestConfiguration : RingCentral.Test.TestConfiguration
+    public class TestConfiguration 
     {
         protected SubscriptionServiceMock _subscriptionServiceMock;
 
