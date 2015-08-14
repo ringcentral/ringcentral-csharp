@@ -139,29 +139,49 @@ Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
 ```
 SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key");
 subscriptionServiceImplementation.Subscribe("Channel Name","Channel Group", DisplaySubscribeReturnMessage,DisplaySubscribeConnectStatusMessage,DisplayErrorMessage)
+
 public void DisplaySubscribeReturnMessage(object message)
 {
-Debug.WriteLine("Subscribe Message: " + message);
+	Debug.WriteLine("Subscribe Message: " + message);
 }
+
 public void DisplaySubscribeConnectStatusMessage(object message)
- {
-Debug.WriteLine("Connect Message: " + message);
+{
+	Debug.WriteLine("Connect Message: " + message);
 }
+
 public void DisplayErrorMessage(object message)
 {
-Debug.WriteLine("Error Message: " + message);
-}
-public void DisplayDisconnectMessage(object message)
-{
-Debug.WriteLine("Disconnect Message: " + message);
+	Debug.WriteLine("Error Message: " + message);
 }
 ```
 
 Note: Channel Name and Subscriber key are both provided from Subscription result. Channel Name is the field "address" in the DeliveryMode of Subscription result.  
 
+###Unsubscribe from Pubnub 
+```
+subscriptionServiceImplementation.Unsubscribe("Channel Name","Channel Group",DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage,DisplayDisconnectMessage, DisplayErrorMessage)
 
+public void DisplayDisconnectMessage(object message)
+{
+	Debug.WriteLine("Disconnect Message: " + message);
+}
 
+public void DisplaySubscribeReturnMessage(object message)
+{
+	Debug.WriteLine("Subscribe Message: " + message);
+}
 
+public void DisplaySubscribeConnectStatusMessage(object message)
+{
+	Debug.WriteLine("Connect Message: " + message);
+}
+
+public void DisplayErrorMessage(object message)
+{
+	Debug.WriteLine("Error Message: " + message);
+}
+```
 
 
 
