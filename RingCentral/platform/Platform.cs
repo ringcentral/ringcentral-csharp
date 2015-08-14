@@ -122,6 +122,17 @@ namespace RingCentral
         }
 
         /// <summary>
+        ///     Gets the auth data set on authorization
+        /// </summary>
+        /// <returns>Dictionary of auth data</returns>
+
+        public Dictionary<string, string> GetAuthData()
+        {
+            return Auth.GetAuthData();
+        }
+
+
+        /// <summary>
         ///     A HTTP POST request.
         ///     Http Content is set by using the proper constructor in the Request Object per endpoint needs
         /// </summary>
