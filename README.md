@@ -129,6 +129,36 @@ Request request = new Request("/restapi/v1.0/subscription" jsonData);
 Response result = ringCentral.PostRequest(request);
 ```
 
+### Delete Subscription
+```
+Request request = new Request("/restapi/v1.0/subscription{subscriptionId}");
+Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
+```
+
+### Subscribing for server events through Pubnub
+```
+SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key");
+subscriptionServiceImplementation.Subscribe("Channel Name","Channel Group", DisplaySubscribeReturnMessage,DisplaySubscribeConnectStatusMessage,DisplayErrorMessage)
+public void DisplaySubscribeReturnMessage(object message)
+{
+Debug.WriteLine("Subscribe Message: " + message);
+}
+public void DisplaySubscribeConnectStatusMessage(object message)
+ {
+Debug.WriteLine("Connect Message: " + message);
+}
+public void DisplayErrorMessage(object message)
+{
+Debug.WriteLine("Error Message: " + message);
+}
+public void DisplayDisconnectMessage(object message)
+{
+Debug.WriteLine("Disconnect Message: " + message);
+}
+```
+
+Note: Channel Name and Subscriber key are both provided from Subscription result. Channel Name is the field "address" in the DeliveryMode of Subscription result.  
+
 
 
 
