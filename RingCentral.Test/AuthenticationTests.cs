@@ -62,5 +62,21 @@ namespace RingCentral.Test
             Response revokeResult = Platform.Revoke();
             Assert.IsFalse(Platform.IsAccessValid());
         }
+
+        [Test]
+        public void GetAuthData()
+        {
+            AuthResult = Platform.Authenticate("username", "password", "101", true);
+            var authData = Platform.GetAuthData();
+           
+            JToken token = AuthResult.GetJson();
+
+            Assert.AreEqual((string)token.SelectToken("access_token"),authData["access_token"]);
+            Assert.AreEqual((string)token.SelectToken("refresh_token"),authData["refresh_token"]);
+
+
+
+
+        }
     }
 }
