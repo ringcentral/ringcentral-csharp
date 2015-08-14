@@ -138,7 +138,7 @@ Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
 ### Subscribing for server events through Pubnub
 ```
 SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key");
-subscriptionServiceImplementation.Subscribe("Channel Name","Channel Group", DisplaySubscribeReturnMessage,DisplaySubscribeConnectStatusMessage,DisplayErrorMessage)
+subscriptionServiceImplementation.Subscribe("Channel Name", "Channel Group", DisplaySubscribeReturnMessage,  DisplaySubscribeConnectStatusMessage, DisplayErrorMessage)
 
 public void DisplaySubscribeReturnMessage(object message)
 {
@@ -160,7 +160,7 @@ Note: Channel Name and Subscriber key are both provided from Subscription result
 
 ###Unsubscribe from Pubnub 
 ```
-subscriptionServiceImplementation.Unsubscribe("Channel Name","Channel Group",DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage,DisplayDisconnectMessage, DisplayErrorMessage)
+subscriptionServiceImplementation.Unsubscribe("Channel Name", "Channel Group", DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage, DisplayDisconnectMessage, DisplayErrorMessage)
 
 public void DisplayDisconnectMessage(object message)
 {
