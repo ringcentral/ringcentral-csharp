@@ -18,6 +18,8 @@ namespace RingCentral
         private HttpClient _client;
         protected Auth Auth;
 
+        private Object thisLock = new Object();
+
         public Platform(string appKey, string appSecret, string apiEndPoint)
         {
             AppKey = appKey;
@@ -125,12 +127,10 @@ namespace RingCentral
         ///     Gets the auth data set on authorization
         /// </summary>
         /// <returns>Dictionary of auth data</returns>
-
         public Dictionary<string, string> GetAuthData()
         {
             return Auth.GetAuthData();
         }
-
 
         /// <summary>
         ///     A HTTP POST request.
@@ -299,9 +299,14 @@ namespace RingCentral
 
             if (Auth.IsRefreshTokenValid())
             {
-                Refresh();
-                return true;
+                //obtain a mutual-exclusion lock for the thisLock object, execute statement and then release the lock.
+                lock (thisLock)
+                {
+                    Refresh();
+                    return true;
+                }
             }
+
             return false;
         }
     }
