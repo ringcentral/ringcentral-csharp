@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <title>Ring Central SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>Infinity Interactive</owners>
@@ -14,12 +14,12 @@
     <copyright>Copyright 2015</copyright>
     <tags>RingCentral Ring Central C# SDK</tags>
 	<dependencies>
+	
       <group targetFramework="net40">
         <dependency id="Microsoft.Bcl" version="1.1.10"  />
 		<dependency id="Microsoft.Bcl.Build" version="1.0.14"  />
 		<dependency id="Microsoft.Net.Http" version="2.2.29"  />
 		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
-		<dependency id="Pubnub" version="3.7.0.0" />
       </group>
 	  
 	  <group targetFramework="portable-net40">
