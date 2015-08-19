@@ -42,7 +42,7 @@ namespace RingCentral
         /// <param name="extension">Optional: Extension number to login</param>
         /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public Response Authenticate(string userName, string password, string extension, bool isRemember)
+        public Response Authorize(string userName, string extension, string password, bool isRemember)
         {
             var body = new Dictionary<string, string>
                        {

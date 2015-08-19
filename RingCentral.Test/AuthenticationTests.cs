@@ -16,7 +16,7 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            AuthResult = Platform.Authenticate("username", "password", "101", true);
+            AuthResult = Platform.Authorize("username", "101", "password", true);
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult.GetBody());
@@ -66,7 +66,7 @@ namespace RingCentral.Test
         [Test]
         public void GetAuthData()
         {
-            AuthResult = Platform.Authenticate("username", "password", "101", true);
+            AuthResult = Platform.Authorize("username", "101", "password", true);
             var authData = Platform.GetAuthData();
            
             JToken token = AuthResult.GetJson();
