@@ -37,9 +37,9 @@ var ringCentral = new RingCentralClient("your appKey", "your appSecret", "Ring C
 ringCentral.SetUserAgentHeader("<YOUR USER AGENT HEADER>");
 ```
 
-### Authenticate
+### Authorize
 ```
-Response response = ringCentral.Authenticate(userName, password, extension, true);
+Response response = ringCentral.Authorize(userName, extension, password, true);
 ````
 
 ### Refresh
