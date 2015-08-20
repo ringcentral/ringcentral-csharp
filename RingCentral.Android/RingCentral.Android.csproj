@@ -57,8 +57,8 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PubNubMessaging">
-      <HintPath>..\pubnub-dlls\android\PubNubMessaging.dll</HintPath>
+    <Reference Include="RingCentral">
+      <HintPath>..\RingCentral\bin\Debug\RingCentral.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -88,12 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Values\Strings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RingCentral\RingCentral.csproj">
-      <Project>{67CBCAAF-36E8-424B-8D49-28F43AE7793F}</Project>
-      <Name>RingCentral</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
