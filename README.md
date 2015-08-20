@@ -49,7 +49,7 @@ Response response = ringCentral.Refresh();
 
 ### Logout
 ```
-ringCentral.Revoke();
+ringCentral.Logout();
 ```
 
 ### x-http-method-override
@@ -62,12 +62,13 @@ Response overRideResponse = ringCentral.PostRequest(overRiderequest);
 ### Get Account Information
 ```
 Request request = new Request("/restapi/v1.0/account/~");
-Response response = ringCentral.GetRequest(request);
+Response response = ringCentral.Get(request);
 ```
 
 ### Send Fax
 ```
 const string text = "Hello world!";
+
 var byteArrayText = System.Text.Encoding.UTF8.GetBytes(text);
 var attachment = new Attachment("test.txt", "application/octet-stream", byteArrayText);
 var attachment2 = new Attachment("test2.txt", "text/plain", byteArrayText);
@@ -75,26 +76,27 @@ var pdfFile = File.ReadAllBytes("<PATH TO YOUR PDF>");
 var attachment3 = new Attachment("<NAME OF YOUR PDF.pdf", "application/pdf", pdfFile);
 var attachments = new List<Attachment> { attachment,attachment2, attachment3 };
 var json = "{\"to\":[{\"phoneNumber\":\"<YOUR TARGET NUMBER>\"}],\"faxResolution\":\"High\"}";
+
 Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
-Response response = ringCentral.PostRequest(request);
+Response response = ringCentral.Post(request);
 ```
 
 ### Send SMS
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
-Response response = ringCentral.PostRequest(request);
+Response response = ringCentral.Post(request);
 ```
 
 ### Get Address Book
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
-Response response = ringCentral.GetRequest(request);
+Response response = ringCentral.Get(request);
 ```
 
 ### Get Message Store
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
-Response response = ringCentral.GetRequest(request);
+Response response = ringCentral.Get(request);
 ```
 
 ### Get the First id in the Message Store
@@ -106,33 +108,33 @@ var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
 ```
 var messageStatusJson = "{\"readStatus\": \"Read\"}";
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-Response response = ringCentral.PutRequest(request);
+Response response = ringCentral.Put(request);
 ```
 
 ### Update Message Status via x-http-ovverride-header
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 request.SetXhttpOverRideHeader("PUT");
-Response response = ringCentral.PostRequest(request);
+Response response = ringCentral.Post(request);
 ```
 
 ### Delete Message
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
-Response response = ringCentral.DeleteRequest(request);
+Response response = ringCentral.Delete(request);
 ```
 
 ### Create Subscription
 ```
 var jsonData = "{\"eventFilters\": [ \"/restapi/v1.0/account/~/extension/~/presence\",\"/restapi/v1.0/account/~/extension/~/message-store\" ], \"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 Request request = new Request("/restapi/v1.0/subscription" jsonData);
-Response result = ringCentral.PostRequest(request);
+Response result = ringCentral.Post(request);
 ```
 
 ### Delete Subscription
 ```
 Request request = new Request("/restapi/v1.0/subscription{subscriptionId}");
-Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
+Response result = RingCentralClient.GetPlatform().Delete(request);
 ```
 
 ### Subscribing for server events through PubNub
