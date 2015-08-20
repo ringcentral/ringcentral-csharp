@@ -48,7 +48,7 @@
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RingCentralClient.cs" />
+    <Compile Include="SDK.cs" />
     <Compile Include="Subscription\ISubscriptionService.cs" />
     <Compile Include="Subscription\Subscription.cs" />
     <Compile Include="Subscription\SubscriptionError.cs" />

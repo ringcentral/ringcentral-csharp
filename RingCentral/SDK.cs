@@ -1,6 +1,6 @@
-﻿namespace RingCentral
+﻿namespace RingCentral.SDK
 {
-    public class RingCentralClient
+    public class SDK
     {
         private string AppKey { get; set; }
         private string AppSecret { get; set; }
@@ -14,7 +14,7 @@
         /// <param name="appKey">RingCentral Application Key</param>
         /// <param name="appSecret">RingCentral Application Secret</param>
         /// <param name="apiEndPoint">RingCentral API Endpoint</param>
-        public RingCentralClient(string appKey, string appSecret, string apiEndPoint)
+        public SDK(string appKey, string appSecret, string apiEndPoint)
         {
             AppKey = appKey;
             AppSecret = appSecret;
