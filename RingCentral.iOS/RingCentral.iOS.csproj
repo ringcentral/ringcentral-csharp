@@ -61,8 +61,8 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PubnubMessaging">
-      <HintPath>..\pubnub-dlls\iOS\PubnubMessaging.dll</HintPath>
+    <Reference Include="RingCentral">
+      <HintPath>..\RingCentral\bin\Debug\RingCentral.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
@@ -89,12 +89,6 @@
     <ImageAsset Include="Resources/SubscriptionServiceImplementation.xcassets/LaunchImages.launchimage/Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RingCentral\RingCentral.csproj">
-      <Project>{67CBCAAF-36E8-424B-8D49-28F43AE7793F}</Project>
-      <Name>RingCentral</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
