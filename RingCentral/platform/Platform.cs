@@ -115,7 +115,7 @@ namespace RingCentral
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>Response object</returns>
-        public Response AuthCall(Request request)
+        private Response AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
