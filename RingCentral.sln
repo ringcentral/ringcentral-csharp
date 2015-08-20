@@ -23,10 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3FCE9F
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.iOS.Test", "RingCentral.iOS.Test\RingCentral.iOS.Test.csproj", "{910362D1-8BBF-4BCE-9051-EB9915E609FD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Android.Test", "RingCentral.Android.Test\RingCentral.Android.Test.csproj", "{A034AC0C-1D75-42CC-A9CB-032B77234662}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +49,6 @@ Global
 		{FA9C8F8B-58C5-4BE7-B44E-A0BC0C57ACFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A712F2C7-A3CB-4E16-802C-A3A1F6666A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{910362D1-8BBF-4BCE-9051-EB9915E609FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{910362D1-8BBF-4BCE-9051-EB9915E609FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A034AC0C-1D75-42CC-A9CB-032B77234662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A034AC0C-1D75-42CC-A9CB-032B77234662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
