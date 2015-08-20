@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.0.9</version>
+    <version>0.0.18</version>
     <title>Ring Central SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>Infinity Interactive</owners>
@@ -29,39 +29,31 @@
 		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
       </group>
 	  
-	  <group targetFramework="monoandroid">
+	  <group targetFramework="portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1">
         <dependency id="Microsoft.Bcl" version="1.1.10"  />
 		<dependency id="Microsoft.Bcl.Build" version="1.0.14"  />
 		<dependency id="Microsoft.Net.Http" version="2.2.29"  />
 		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
       </group>
 	  
-	  <group targetFramework="monotouch">
-        <dependency id="Microsoft.Bcl" version="1.1.10"  />
-		<dependency id="Microsoft.Bcl.Build" version="1.0.14"  />
-		<dependency id="Microsoft.Net.Http" version="2.2.29"  />
-		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
-      </group>
-	  
-	  <group targetFramework="Xamarin.iOS">
-        <dependency id="Microsoft.Bcl" version="1.1.10"  />
-		<dependency id="Microsoft.Bcl.Build" version="1.0.14"  />
-		<dependency id="Microsoft.Net.Http" version="2.2.29"  />
-		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
-      </group>
-	 
     </dependencies>
-  </metadata>
-    <files>                
-        <file src="RingCentral\bin\Release\RingCentral.dll" target="lib\portable-net40" />
-		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib\portable-net40" />
-		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib\monoandroid" />
-		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib\monotouch" />
-		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib\Xamarin.iOS" />
-		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib\net40" />
-		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib\net40" />
-        <file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\monotouch" />
-		<file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\Xamarin.iOS" />
-        <file src="RingCentral.Android\bin\Release\RingCentral.Android.dll" target="lib\monoandroid" />
+  </metadata>          
+    <files>
+
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/portable-net40" />			
+        <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net40" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net45" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/sl5" />
+		
+		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8" />
+		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net40" />
+		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/net40" />
+		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/net45" />
+		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/sl5" />
+		
+        <file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\MonoTouch1" />
+		<file src="RingCentral.Android\bin\Release\RingCentral.Android.dll" target="lib\MonoAndroid1" />
+
     </files>
 </package>
