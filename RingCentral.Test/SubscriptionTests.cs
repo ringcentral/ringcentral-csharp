@@ -15,7 +15,7 @@ namespace RingCentral.Test
         public void DeleteSubscription()
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
-            Response result = RingCentralClient.GetPlatform().DeleteRequest(request);
+            Response result = RingCentralClient.GetPlatform().Delete(request);
             Assert.AreEqual(204, result.GetStatus());
         }
 
@@ -29,7 +29,7 @@ namespace RingCentral.Test
             "\"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 
             Request request = new Request(SubscriptionEndPoint, jsonData);
-            Response result = RingCentralClient.GetPlatform().PostRequest(request);
+            Response result = RingCentralClient.GetPlatform().Post(request);
 
             JToken token = JObject.Parse(result.GetBody());
 
@@ -42,7 +42,7 @@ namespace RingCentral.Test
         public void GetSubscription()
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
-            Response response = RingCentralClient.GetPlatform().GetRequest(request);
+            Response response = RingCentralClient.GetPlatform().Get(request);
 
             var subscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
 
@@ -62,7 +62,7 @@ namespace RingCentral.Test
                            "\"/restapi/v1.0/account/~/extension/~/message-store\" ]}";
 
             Request request = new Request(SubscriptionEndPoint + "/1", jsonData);
-            Response renewResult = RingCentralClient.GetPlatform().PutRequest(request);
+            Response renewResult = RingCentralClient.GetPlatform().Put(request);
 
             JToken token = renewResult.GetJson();
 

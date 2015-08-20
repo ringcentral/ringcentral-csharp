@@ -13,7 +13,7 @@ namespace RingCentral.Test
         {
 
             Request request = new Request(AccountInformationEndPoint + "5");
-            Response result = RingCentralClient.GetPlatform().GetRequest(request);
+            Response result = RingCentralClient.GetPlatform().Get(request);
             var errorResult =  result.GetError();
             Assert.IsNotNull(errorResult);
             Assert.AreEqual("Service Temporary Unavailable", errorResult);
@@ -23,7 +23,7 @@ namespace RingCentral.Test
         public void GetResponseErrorBadGrantType()
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/7");
-            Response result = RingCentralClient.GetPlatform().GetRequest(request);
+            Response result = RingCentralClient.GetPlatform().Get(request);
             var errorResult = result.GetError();
             Assert.IsNotNull(errorResult);
             Assert.AreEqual("Unsupported grant type",errorResult);
@@ -32,7 +32,7 @@ namespace RingCentral.Test
         public void GetResponseNonJson()
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/6");
-            Response result = RingCentralClient.GetPlatform().GetRequest(request);
+            Response result = RingCentralClient.GetPlatform().Get(request);
             var jsonResult =  result.GetJson();
             
         }
@@ -41,20 +41,20 @@ namespace RingCentral.Test
         public void GetErrorGoodCheckStatus()
         {
            Request request = new Request(AccountInformationEndPoint);
-           Response result = RingCentralClient.GetPlatform().GetRequest(request);
+           Response result = RingCentralClient.GetPlatform().Get(request);
            Assert.IsNull(result.GetError());
         }
 
-        [Test]
-        public void SetRequestXHttpOverrideHeader()
-        {
+        //[Test]
+        //public void SetRequestXHttpOverrideHeader()
+        //{
 
-            const string xHttpOverRideHeader = "GET";
+        //    const string xHttpOverRideHeader = "GET";
 
-            var request = new Request("/restapi/v1.0/account/~");
-            request.SetXhttpOverRideHeader(xHttpOverRideHeader);
-            var requestHeader = request.GetXhttpOverRideHeader();
-            Assert.AreEqual(requestHeader, xHttpOverRideHeader);
-        }
+        //    var request = new Request("/restapi/v1.0/account/~");
+        //    request.SetXhttpOverRideHeader(xHttpOverRideHeader);
+        //    var requestHeader = request.GetXhttpOverRideHeader();
+        //    Assert.AreEqual(requestHeader, xHttpOverRideHeader);
+        //}
     }
 }

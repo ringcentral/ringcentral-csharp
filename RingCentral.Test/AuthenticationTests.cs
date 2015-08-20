@@ -48,7 +48,7 @@ namespace RingCentral.Test
         public void TestVersion()
         {
             Request request = new Request(VersionEndPoint);
-            Response response = Platform.GetRequest(request);
+            Response response = Platform.Get(request);
 
             JToken token = response.GetJson();
             var version = (string) token.SelectToken("apiVersions").SelectToken("uriString");
@@ -59,8 +59,8 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            Response revokeResult = Platform.Revoke();
-            Assert.IsFalse(Platform.IsAccessValid());
+            Response revokeResult = Platform.Logout();
+            Assert.IsFalse(Platform.IsAuthorized());
         }
 
         [Test]

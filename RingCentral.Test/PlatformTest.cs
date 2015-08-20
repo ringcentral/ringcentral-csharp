@@ -23,26 +23,26 @@ namespace RingCentral.Test
         }
 
 
-        [Test]
-        public void CheckPlatformXHttpOverRideHeader()
-        {
-            string jsonData = "{\"firstName\": \"Vanessa\", " +
-                               "\"lastName\": \"May\", " +
-                               "\"businessAddress\": " +
-                               "{ " +
-                               "\"street\": \"5 Marina Blvd\", " +
-                               "\"city\": \"San-Francisco\", " +
-                               "\"state\": \"CA\", " +
-                               "\"zip\": \"94123\"}" +
-                               "}";
+        //[Test]
+        //public void CheckPlatformXHttpOverRideHeader()
+        //{
+        //    string jsonData = "{\"firstName\": \"Vanessa\", " +
+        //                       "\"lastName\": \"May\", " +
+        //                       "\"businessAddress\": " +
+        //                       "{ " +
+        //                       "\"street\": \"5 Marina Blvd\", " +
+        //                       "\"city\": \"San-Francisco\", " +
+        //                       "\"state\": \"CA\", " +
+        //                       "\"zip\": \"94123\"}" +
+        //                       "}";
 
-            Request request = new Request(AddressBookEndPoint, jsonData);
-            request.SetXhttpOverRideHeader("POST");
-            Assert.AreEqual("POST", request.GetXhttpOverRideHeader());
-            Platform.PostRequest(request);
-            Assert.IsFalse(Platform.GetClient().DefaultRequestHeaders.Contains("X-HTTP-Method-Override"));
+        //    Request request = new Request(AddressBookEndPoint, jsonData);
+        //    request.SetXhttpOverRideHeader("POST");
+        //    Assert.AreEqual("POST", request.GetXhttpOverRideHeader());
+        //    Platform.Post(request);
+        //    Assert.IsFalse(Platform.GetClient().DefaultRequestHeaders.Contains("X-HTTP-Method-Override"));
 
 
-        }
+        //}
     }
 }
