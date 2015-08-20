@@ -15,6 +15,7 @@ namespace RingCentral
         private const string RefreshTokenTtlRemember = "604800"; // 1 week
         private const string TokenEndpoint = "/restapi/oauth/token";
         private const string RevokeEndpoint = "/restapi/oauth/revoke";
+
         private HttpClient _client;
         protected Auth Auth;
 
@@ -55,7 +56,7 @@ namespace RingCentral
                        };
 
             var request = new Request(TokenEndpoint, body);
-            var result = AuthPostRequest(request);
+            var result = AuthCall(request);
 
             Auth.SetRemember(isRemember);
             Auth.SetData(result.GetJson());
@@ -80,7 +81,7 @@ namespace RingCentral
                        };
 
             var request = new Request(TokenEndpoint, body);
-            var result = AuthPostRequest(request);
+            var result = AuthCall(request);
 
             Auth.SetData(result.GetJson());
 
@@ -91,7 +92,7 @@ namespace RingCentral
         ///     Revokes the already granted access to stop application activity
         /// </summary>
         /// <returns>string response of Revoke result</returns>
-        public Response Revoke()
+        public Response Logout()
         {
             var body = new Dictionary<string, string>
                        {
@@ -102,7 +103,7 @@ namespace RingCentral
 
             var request = new Request(RevokeEndpoint, body);
 
-            return AuthPostRequest(request);
+            return AuthCall(request);
         }
 
         /// <summary>
@@ -114,13 +115,13 @@ namespace RingCentral
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>Response object</returns>
-        public Response AuthPostRequest(Request request)
+        public Response AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
             var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
 
-            return SetResponse(result);
+            return new Response(result);
         }
 
         /// <summary>
@@ -132,87 +133,42 @@ namespace RingCentral
             return Auth.GetAuthData();
         }
 
-        /// <summary>
-        ///     A HTTP POST request.
-        ///     Http Content is set by using the proper constructor in the Request Object per endpoint needs
-        /// </summary>
-        /// <param name="request">A fully formed request object</param>
-        /// <returns>A Response object</returns>
-        public Response PostRequest(Request request)
+        public Response Get(Request request)
         {
-            CheckAccessAndOverRideHeaders(request);
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-
-            var postResult = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
-
-            return SetResponse(postResult);
+            return ApiCall("GET", request);
         }
 
-        /// <summary>
-        ///     A HTTP GET request.  Query parameters can be set via the appropriate constructor in the Request object.
-        /// </summary>
-        /// <param name="request">A fully formed request object</param>
-        /// <returns>A Response object</returns>
-        public Response GetRequest(Request request)
+        public Response Post(Request request)
         {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-
-            var result = _client.GetAsync(request.GetUrl());
-
-            return SetResponse(result);
+            return ApiCall("POST", request);
         }
 
-        /// <summary>
-        ///     A HTTP DELETE request.
-        /// </summary>
-        /// <param name="request">A fully formed request object</param>
-        /// <returns>A Response object</returns>
-        public Response DeleteRequest(Request request)
+        public Response Delete(Request request)
         {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-
-            var deleteResult = _client.DeleteAsync(request.GetUrl());
-
-            return SetResponse(deleteResult);
+            return ApiCall("DELETE", request);
         }
 
-        /// <summary>
-        ///     A HTTP PUT request.
-        ///     Http Content is set by using the proper constructor in the Request Object per endpoint needs
-        /// </summary>
-        /// <param name="request">A fully formed request object</param>
-        /// <returns>A Response object</returns>
-        public Response PutRequest(Request request)
+        public Response Put(Request request)
         {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-
-            var putResult = _client.PutAsync(request.GetUrl(), request.GetHttpContent());
-
-            return SetResponse(putResult);
+            return ApiCall("PUT", request);
         }
 
-        /// <summary>
-        ///     Creates a Response object based on the result of any of the HTTP methods called
-        /// </summary>
-        /// <param name="responseMessage">The passed in response message from the HTTP Methods</param>
-        /// <returns>A Response object</returns>
-        private Response SetResponse(Task<HttpResponseMessage> responseMessage)
+        private Response ApiCall(string method, Request request)
         {
-            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
-            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Result.Content.Headers;
+            if (!IsAuthorized()) throw new Exception("Access has Expired");
 
-            ClearXhttpOverRideHeader();
+            HttpRequestMessage requestMessage = new HttpRequestMessage();
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
-            return new Response(statusCode, body, headers);
+            requestMessage.Content = request.GetHttpContent();
+            requestMessage.Method = request.GetHttpMethod(method);
+            requestMessage.RequestUri = request.GetUri();
+            
+            request.GetXhttpOverRideHeader(requestMessage);
+
+            return new Response(_client.SendAsync(requestMessage));
         }
+
 
         /// <summary>
         ///     Gets the API key by encoding the AppKey and AppSecret with Encoding.UTF8.GetBytes
@@ -243,40 +199,6 @@ namespace RingCentral
         }
 
         /// <summary>
-        ///     Checks authorization Access and calls the SetXhttpOverRideHeader method
-        /// </summary>
-        /// <param name="request">A fully formed request object</param>
-        private void CheckAccessAndOverRideHeaders(Request request)
-        {
-            if (!IsAccessValid()) throw new Exception("Access has Expired");
-
-            SetXhttpOverRideHeader(request.GetXhttpOverRideHeader());
-        }
-
-        /// <summary>
-        ///     Sets the X-HTTP-Method-Override to the method specified
-        /// </summary>
-        /// <param name="overrideMethod">The method that will override</param>
-        private void SetXhttpOverRideHeader(string overrideMethod)
-        {
-            if (!string.IsNullOrEmpty(overrideMethod))
-            {
-                _client.DefaultRequestHeaders.Add("X-HTTP-Method-Override", overrideMethod.ToUpper());
-            }
-        }
-
-        /// <summary>
-        ///     Removes the X-HTTP-Method-Override from the client
-        /// </summary>
-        private void ClearXhttpOverRideHeader()
-        {
-            if (_client.DefaultRequestHeaders.Contains("X-HTTP-Method-Override"))
-            {
-                _client.DefaultRequestHeaders.Remove("X-HTTP-Method-Override");
-            }
-        }
-
-        /// <summary>
         ///     Sets the user-agent header that will be passed with each request
         /// </summary>
         /// <param name="header">The value of the User-Agent header</param>
@@ -290,7 +212,7 @@ namespace RingCentral
         ///     then a refresh is issued.
         /// </summary>
         /// <returns>boolean value of access authorization</returns>
-        public bool IsAccessValid()
+        public bool IsAuthorized()
         {
             if (Auth.IsAccessTokenValid())
             {

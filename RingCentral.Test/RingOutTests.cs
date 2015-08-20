@@ -13,7 +13,7 @@ namespace RingCentral.Test
         public void CancelRingOut()
         {
             Request request = new Request(RingOutEndPoint + "/1");
-            Response cancelResult = RingCentralClient.GetPlatform().DeleteRequest(request);
+            Response cancelResult = RingCentralClient.GetPlatform().Delete(request);
             Assert.AreEqual(204, cancelResult.GetStatus());
         }
 
@@ -21,7 +21,7 @@ namespace RingCentral.Test
         public void GetRingOutStatus()
         {
             Request request = new Request(RingOutEndPoint + "/1");
-            Response response = RingCentralClient.GetPlatform().GetRequest(request);
+            Response response = RingCentralClient.GetPlatform().Get(request);
 
             JToken token = response.GetJson();
 
@@ -38,7 +38,7 @@ namespace RingCentral.Test
                                     "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
             Request request = new Request(RingOutEndPoint, jsonData);
 
-            Response result = RingCentralClient.GetPlatform().PostRequest(request);
+            Response result = RingCentralClient.GetPlatform().Post(request);
 
             JToken token = JObject.Parse(result.GetBody());
 

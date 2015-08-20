@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -87,6 +88,36 @@ namespace RingCentral.Http
             return _url + GetQuerystring();
         }
 
+        public Uri GetUri()
+        {
+            return new Uri(_url + GetQuerystring(),UriKind.Relative);
+        }
+
+        public HttpMethod GetHttpMethod(string method)
+        {
+            if (method.Equals("GET"))
+            {
+                return HttpMethod.Get;
+            }
+
+            if (method.Equals("POST"))
+            {
+                return HttpMethod.Post;
+            }
+
+            if (method.Equals("PUT"))
+            {
+                return HttpMethod.Put;
+            }
+
+            if (method.Equals("DELETE"))
+            {
+                return HttpMethod.Delete;
+            }
+
+            return null;
+        }
+
         /// <summary>
         ///     Gets the list of query values
         /// </summary>
@@ -170,13 +201,20 @@ namespace RingCentral.Http
             return querystring;
         }
 
-        /// <summary>
-        ///     Gets the X-HTTP-Method-Override-Header
-        /// </summary>
-        /// <returns>String value of the X-HTTP-Method-Override-Header</returns>
-        public string GetXhttpOverRideHeader()
+        public void GetXhttpOverRideHeader(HttpRequestMessage requestMessage)
         {
-            return _xHttpOverrideHeader;
+
+            if (_xHttpOverrideHeader == "PUT")
+            {
+                requestMessage.Method = HttpMethod.Post;
+                requestMessage.Headers.Add("X-HTTP-Method-Override", "PUT");
+            }
+            if (_xHttpOverrideHeader == "DELETE")
+            {
+                requestMessage.Method = HttpMethod.Post;
+                requestMessage.Headers.Add("X-HTTP-Method-Override", "DELETE");
+            }
+
         }
 
         /// <summary>

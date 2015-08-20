@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace RingCentral.Http
@@ -22,6 +24,17 @@ namespace RingCentral.Http
             _body = body;
             _status = status;
 
+            SetHeaders(headers);
+        }
+
+        public Response(Task<HttpResponseMessage> responseMessage)
+        {
+            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
+            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
+            var headers = responseMessage.Result.Content.Headers;
+
+            _body = body;
+            _status = statusCode;
             SetHeaders(headers);
         }
 
