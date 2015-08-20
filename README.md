@@ -56,7 +56,7 @@ ringCentral.Logout();
 ```
 Request overRiderequest = new Request("/restapi/v1.0/account/~");
 overRiderequest.SetXhttpOverRideHeader("GET");
-Response overRideResponse = ringCentral.PostRequest(overRiderequest);
+Response overRideResponse = ringCentral.Post(overRiderequest);
 ```
 
 ### Get Account Information
