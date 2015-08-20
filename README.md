@@ -27,7 +27,7 @@ using RingCentral;
 
 ```
 //Initialze Ring Central Client
-var ringCentral = new RingCentralClient("your appKey", "your appSecret", "Ring Central apiEndPoint").GetPlatform();
+var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint").GetPlatform();
 ```
 
 
