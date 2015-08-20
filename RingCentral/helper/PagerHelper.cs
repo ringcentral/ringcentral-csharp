@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace RingCentral.Helper
+namespace RingCentral.SDK.Helper
 {
     public class PagerHelper
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using NUnit.Framework;
-using RingCentral.Http;
+using RingCentral.SDK.Http;
 using RingCentral.SDK;
 
 namespace RingCentral.Test

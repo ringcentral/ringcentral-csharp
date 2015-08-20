@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.Helper;
-using RingCentral.Http;
+using RingCentral.SDK.Helper;
+using RingCentral.SDK.Http;
 
 namespace RingCentral.Test
 {
