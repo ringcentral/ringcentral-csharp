@@ -51,7 +51,6 @@
     <Compile Include="SDK.cs" />
     <Compile Include="Subscription\ISubscriptionService.cs" />
     <Compile Include="Subscription\Subscription.cs" />
-    <Compile Include="Subscription\SubscriptionError.cs" />
     <Compile Include="Subscription\SubscriptionServiceLocator.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace RingCentral
+namespace RingCentral.SDK
 {
     public class Auth
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using RingCentral.Helper;
+using RingCentral.SDK.Helper;
 
-namespace RingCentral.Http
+namespace RingCentral.SDK.Http
 {
     public class Request : Headers
     {

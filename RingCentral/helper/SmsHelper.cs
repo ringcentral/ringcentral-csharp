@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RingCentral.Helper
+namespace RingCentral.SDK.Helper
 {
     public class SmsHelper
     {

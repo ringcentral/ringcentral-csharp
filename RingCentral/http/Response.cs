@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace RingCentral.Http
+namespace RingCentral.SDK.Http
 {
     public class Response : Headers
     {
