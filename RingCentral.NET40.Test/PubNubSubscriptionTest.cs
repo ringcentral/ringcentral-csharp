@@ -45,9 +45,10 @@ namespace RingCentral.NET40.Test
 
         [Test]
         public void SendMessagePubNubTest()
-        {
-            _subscriptionServiceMock.Subscribe(Channel + "4","",null,null,null);
+        { 
             Thread.Sleep(2500);
+            _subscriptionServiceMock.Subscribe(Channel + "4","",null,null,null);
+           Thread.Sleep(2500);
             _subscriptionServiceMock.PublishMessage("This is a test of the RingCentral C# SDK");
             Thread.Sleep(1500);
             Assert.AreEqual("This is a test of the RingCentral C# SDK", _subscriptionServiceMock.Message[0]);
