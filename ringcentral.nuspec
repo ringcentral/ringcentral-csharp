@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.0.22</version>
+    <version>0.0.24</version>
     <title>Ring Central SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>Infinity Interactive</owners>
@@ -45,6 +45,8 @@
         <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net40" />
 		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net45" />
 		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/sl5" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoTouch1" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoAndroid1" />
 		
 		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8" />
 		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net40" />
