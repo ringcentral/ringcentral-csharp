@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.0.25</version>
+    <version>0.0.27</version>
     <title>Ring Central SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>Infinity Interactive</owners>
@@ -30,9 +30,6 @@
       </group>
 	  
 	  <group targetFramework="portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1">
-        <dependency id="Microsoft.Bcl" version="1.1.10"  />
-		<dependency id="Microsoft.Bcl.Build" version="1.0.14"  />
-		<dependency id="Microsoft.Net.Http" version="2.2.29"  />
 		<dependency id="Newtonsoft.Json" version="7.0.1" /> 
       </group>
 	  
@@ -48,6 +45,7 @@
 		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoTouch1" />
 		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoAndroid1" />
 		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoMac" />
+		<file src="RingCentral\bin\Release\RingCentral.dll" target="lib/Xamarin.Mac" />
 		
 		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8" />
 		<file src="RingCentral.NET40\bin\Release\RingCentral.NET40.dll" target="lib/portable-net40" />
@@ -57,6 +55,7 @@
 		
         <file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\MonoTouch1" />
 		<file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\MonoMac" />
+		<file src="RingCentral.iOS\bin\iPhone\Release\RingCentral.iOS.dll" target="lib\Xamarin.Mac" />
 		<file src="RingCentral.Android\bin\Release\RingCentral.Android.dll" target="lib\MonoAndroid1" />
 
     </files>
