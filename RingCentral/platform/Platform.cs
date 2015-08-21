@@ -16,7 +16,7 @@ namespace RingCentral.SDK
         private const string TokenEndpoint = "/restapi/oauth/token";
         private const string RevokeEndpoint = "/restapi/oauth/revoke";
 
-        public HttpClient _client { get;  set; }
+        public HttpClient _client {  private get;  set; }
         protected Auth Auth;
 
         private Object thisLock = new Object();
