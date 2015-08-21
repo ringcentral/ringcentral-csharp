@@ -10,7 +10,7 @@ namespace RingCentral.Test
         [Test]
         public void GetHttpCleint()
         {
-            var httpClient = Platform.GetClient();
+            var httpClient = Platform._client;
             Assert.IsNotNull(httpClient);
         }
 
@@ -18,7 +18,7 @@ namespace RingCentral.Test
         public void SetUserAgentHeader()
         {
             Platform.SetUserAgentHeader("Chrome/44.0.2403.125");
-            var userAgentHeader = Platform.GetClient().DefaultRequestHeaders.GetValues("User-Agent").ToList();
+            var userAgentHeader = Platform._client.DefaultRequestHeaders.GetValues("User-Agent").ToList();
             Assert.Contains("Chrome/44.0.2403.125", userAgentHeader);
         }
 

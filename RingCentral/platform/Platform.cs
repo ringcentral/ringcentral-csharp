@@ -16,7 +16,7 @@ namespace RingCentral.SDK
         private const string TokenEndpoint = "/restapi/oauth/token";
         private const string RevokeEndpoint = "/restapi/oauth/revoke";
 
-        private HttpClient _client;
+        public HttpClient _client { get;  set; }
         protected Auth Auth;
 
         private Object thisLock = new Object();
@@ -178,24 +178,6 @@ namespace RingCentral.SDK
         {
             var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
             return Convert.ToBase64String(byteArray);
-        }
-
-        /// <summary>
-        ///     Gets the HttpClient
-        /// </summary>
-        /// <returns>HttpClient</returns>
-        public HttpClient GetClient()
-        {
-            return _client;
-        }
-
-        /// <summary>
-        ///     Sets the HttpClient
-        /// </summary>
-        /// <param name="client">the Client to be set</param>
-        public void SetClient(HttpClient client)
-        {
-            _client = client;
         }
 
         /// <summary>
