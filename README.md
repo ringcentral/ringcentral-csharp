@@ -10,11 +10,11 @@ Via NuGet
 Install-Package RingCentralSDK 
 ```
 
-This will download the Ring Central Portable Class Library into your project as well as the [Pubnub](https://github.com/pubnub/c-sharp "PubNub") dependencies
+This will download the Ring Central Portable Class Library into your project as well as the [PubNub](https://github.com/pubnub/c-sharp "PubNub") dependencies
 
 ## Additional Instructions for PubNub
 
-PubNub will need to manually be installed in your project.  Find the platform you are targeting at [Pubnub](https://github.com/pubnub/c-sharp "PubNub") and follow the instructions to include the library in your project.
+PubNub will need to manually be installed in your project.  Find the platform you are targeting at [PubNub](https://github.com/pubnub/c-sharp "PubNub") and follow the instructions to include the library in your project.
 
 # Basic Usage
 
