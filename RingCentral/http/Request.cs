@@ -119,15 +119,6 @@ namespace RingCentral.SDK.Http
         }
 
         /// <summary>
-        ///     Gets the list of query values
-        /// </summary>
-        /// <returns>List of query values</returns>
-        public List<KeyValuePair<string, string>> GetQueryValues()
-        {
-            return _queryValues;
-        }
-
-        /// <summary>
         ///     Returns HTTP content based on Content Type
         /// </summary>
         /// <returns>HttpContent based on Content Type</returns>
