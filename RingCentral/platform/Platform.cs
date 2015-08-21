@@ -13,8 +13,8 @@ namespace RingCentral.SDK
         private const string AccessTokenTtl = "3600"; // 60 minutes
         private const string RefreshTokenTtl = "36000"; // 10 hours
         private const string RefreshTokenTtlRemember = "604800"; // 1 week
-        private const string TokenEndpoint = "/restapi/oauth/token";
-        private const string RevokeEndpoint = "/restapi/oauth/revoke";
+        private const string TokenEndpoint = "restapi/oauth/token";
+        private const string RevokeEndpoint = "restapi/oauth/revoke";
 
         public HttpClient _client {  private get;  set; }
         protected Auth Auth;
