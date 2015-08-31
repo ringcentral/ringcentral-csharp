@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RingCentral.SDK.Http;
 
@@ -28,7 +29,7 @@ namespace RingCentral.SDK
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
-            _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C# SDK");
+            _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C Sharp SDK");
         }
 
         private string AppKey { get; set; }
@@ -181,12 +182,24 @@ namespace RingCentral.SDK
         }
 
         /// <summary>
-        ///     Sets the user-agent header that will be passed with each request
+        ///     You also may supply custom AppName:AppVersion in the form of a header with your application codename and version. These parameters
+        ///     are optional but they will help a lot to identify your application in API logs and speed up any potential troubleshooting.
+        ///     Allowed characters for AppName:AppVersion are- letters, digits, hyphen, dot and underscore.
         /// </summary>
         /// <param name="header">The value of the User-Agent header</param>
         public void SetUserAgentHeader(string header)
         {
-            _client.DefaultRequestHeaders.Add("User-Agent", header);
+
+            if (!String.IsNullOrEmpty(header))
+            {
+                Regex r = new Regex("(?:[^a-z0-9-_. ]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                var ua = r.Replace(header, String.Empty);
+
+                _client.DefaultRequestHeaders.Add("User-Agent", ua);
+                _client.DefaultRequestHeaders.Add("RC-User-Agent", ua); 
+            }
+
+            
         }
 
         /// <summary>
