@@ -129,6 +129,7 @@ Response response = ringCentral.Delete(request);
 var jsonData = "{\"eventFilters\": [ \"/restapi/v1.0/account/~/extension/~/presence\",\"/restapi/v1.0/account/~/extension/~/message-store\" ], \"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
 Request request = new Request("/restapi/v1.0/subscription" jsonData);
 Response result = ringCentral.Post(request);
+var subscriptionResult = JsonConvert.DeserializeObject<Subscription>(result.GetBody());
 ```
 
 ### Delete Subscription
@@ -139,53 +140,27 @@ Response result = RingCentralClient.GetPlatform().Delete(request);
 
 ### Subscribing for server events through PubNub
 ```
-SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key");
+SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key","","Encryption Key", false);
 
-subscriptionServiceImplementation.Subscribe("Channel Name", "Channel Group", DisplaySubscribeReturnMessage,  DisplaySubscribeConnectStatusMessage, DisplayErrorMessage)
+subscriptionServiceImplementation.Subscribe("Channel Name", "Channel Group",subscriptionServiceImplementation.NotificationReturnMessage,subscriptionServiceImplementation.SubscribeConnectStatusMessage,subscriptionServiceImplementation.ErrorMessage)
 
-public void DisplaySubscribeReturnMessage(object message)
-{
-	Debug.WriteLine("Subscribe Message: " + message);
-}
-
-public void DisplaySubscribeConnectStatusMessage(object message)
-{
-	Debug.WriteLine("Connect Message: " + message);
-}
-
-public void DisplayErrorMessage(object message)
-{
-	Debug.WriteLine("Error Message: " + message);
-}
 ```
 
-Note: Channel Name and Subscriber key are both provided from Subscription result. Channel Name is the field "address" in the DeliveryMode of Subscription result.  
+Note: Channel Name, Subscriber key and Encrypytion key are  from Subscription result. Channel Name is the field "address" in the DeliveryMode of Subscription result. Encryption key is the field "encryptionKey" in the DeliveryMode of Subscription result.  
 
-###Unsubscribe from PubNub 
+### Unsubscribe from PubNub 
 ```
-subscriptionServiceImplementation.Unsubscribe("Channel Name", "Channel Group", DisplaySubscribeReturnMessage, DisplaySubscribeConnectStatusMessage, DisplayDisconnectMessage, DisplayErrorMessage)
+subscriptionServiceImplementation.Unsubscribe("Channel Name", "Channel Group", subscriptionServiceImplementation.NotificationReturnMessage,subscriptionServiceImplementation.SubscribeConnectStatusMessage,subscriptionServiceImplementation.ErrorMessage)
 
-public void DisplayDisconnectMessage(object message)
-{
-	Debug.WriteLine("Disconnect Message: " + message);
-}
-
-public void DisplaySubscribeReturnMessage(object message)
-{
-	Debug.WriteLine("Subscribe Message: " + message);
-}
-
-public void DisplaySubscribeConnectStatusMessage(object message)
-{
-	Debug.WriteLine("Connect Message: " + message);
-}
-
-public void DisplayErrorMessage(object message)
-{
-	Debug.WriteLine("Error Message: " + message);
-}
 ```
 
+### Access PubNub message from subscription
+```
+var notificationMessage = subscriptionServiceImplementation.ReturnMessage("notification");
+var connectMessage = subscriptionServiceImplementation.ReturnMessage("connectMessage");
+var disconnectMessage = subscriptionServiceImplementation.ReturnMessage("disconnectMessage");
+var errorMessage = subscriptionServiceImplementation.ReturnMessage("errorMessage");
+```
 
 
 

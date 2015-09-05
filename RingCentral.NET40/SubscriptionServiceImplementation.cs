@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json;
 using PubNubMessaging.Core;
 
 namespace RingCentral.Subscription
@@ -7,7 +11,17 @@ namespace RingCentral.Subscription
     public class SubscriptionServiceImplementation : ISubscriptionService
     {
         private readonly Pubnub _pubnub;
+        private bool _encrypted;
+        private ICryptoTransform _decrypto;
 
+        private Dictionary<string, object> _events = new Dictionary<string, object>
+        {
+            {"notification",""},
+            {"errorMessage",""},
+            {"connectMessage", ""},
+            {"disconnectMessage",""}
+
+        };
 
         public SubscriptionServiceImplementation(string publishKey, string subscribeKey)
         {
@@ -21,7 +35,10 @@ namespace RingCentral.Subscription
 
         public SubscriptionServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey,bool sslOn)
         {
-            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey, cipherKey, sslOn);
+            _pubnub = new Pubnub(publishKey,subscribeKey);
+            _encrypted = true;
+            var aes = new AesManaged {Key = Convert.FromBase64String(cipherKey), Mode = CipherMode.ECB, Padding = PaddingMode.PKCS7};
+            _decrypto = aes.CreateDecryptor();
         }
 
         public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
@@ -38,24 +55,44 @@ namespace RingCentral.Subscription
                 disconnectCallback, errorCallback);
         }
 
-        public void DisplaySubscribeReturnMessage(object message)
+        public void NotificationReturnMessage(object message)
         {
+            if (_encrypted) _events["notification"] = DecryptMessage(message);
+            else _events["notification"] = message;
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
-        public void DisplaySubscribeConnectStatusMessage(object message)
+        public void SubscribeConnectStatusMessage(object message)
         {
+            _events["connectMessage"] = message;
             Debug.WriteLine("Connect Message: " + message);
         }
 
-        public void DisplayErrorMessage(object message)
+        public void ErrorMessage(object message)
         {
+            _events["errorMessage"] = message;
             Debug.WriteLine("Error Message: " + message);
         }
 
-        public void DisplayDisconnectMessage(object message)
+        public void DisconnectMessage(object message)
         {
+            _events["disconnectMessage"] = message;
             Debug.WriteLine("Disconnect Message: " + message);
         }
+
+        public object ReturnMessage(string requestedMessage)
+        {
+            if (_events.ContainsKey(requestedMessage)) return _events[requestedMessage];
+            return "Error: Message not found";
+        }
+
+        public string DecryptMessage(object message)
+        {
+            var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
+            byte[] decoded64Message = Convert.FromBase64String(deserializedMessage[0]);
+            byte[] decryptedMessage = _decrypto.TransformFinalBlock(decoded64Message, 0, decoded64Message.Length);
+            return Encoding.UTF8.GetString(decryptedMessage);
+        }
+
     }
 }
