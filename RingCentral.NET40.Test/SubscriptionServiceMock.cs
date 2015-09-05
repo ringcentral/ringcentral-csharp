@@ -9,9 +9,13 @@ namespace RingCentral.NET40.Test
     public class SubscriptionServiceMock : ISubscriptionService
     {
         private readonly Pubnub _pubnub;
-        public string Channel,ChannelGroup;
-        public List<object> Message;
-        public PubnubClientError Error;
+        private Dictionary<string, object> Events = new Dictionary<string, object>
+        {
+            {"notification",""},
+            {"errorMessage",""},
+            {"connectMessage", ""},
+            {"disconnectMessage",""}
+        };
 
         public SubscriptionServiceMock(string publishKey, string subscribeKey, string secretKey, string cipherKey, bool sslOn)
             
@@ -23,54 +27,52 @@ namespace RingCentral.NET40.Test
         public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
             Action<object> connectCallback, Action<object> errorCallback)
         {
-            Channel = channel;
-            ChannelGroup = channelGroup;
-            _pubnub.Subscribe<string>(channel, channelGroup, SetMessage,
+                       _pubnub.Subscribe<string>(channel, channelGroup, NotificationMessage,
                 SubscribeConnectStatusMessage, ErrorMessage);
         }
 
         public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
             Action<object> connectCallback, Action<object> disconnectCallback, Action<object> errorCallback)
         {
-            _pubnub.Unsubscribe<string>(channel, SubscribeReturnMessage, SubscribeConnectStatusMessage,
+            _pubnub.Unsubscribe<string>(channel, NotificationMessage, SubscribeConnectStatusMessage,
                 DisconnectMessage, ErrorMessage);
         }
 
         public void PublishMessage(object message)
         {
-            _pubnub.Publish<string>(Channel, message, true, SetMessage, ErrorMessage);
+            _pubnub.Publish<string>("RCNETSDK-TEST", message, true, NotificationMessage, ErrorMessage);
         }
 
-        public void SetMessage(object message)
+ 
+        public void NotificationMessage(object message)
         {
-            Message = _pubnub.JsonPluggableLibrary.DeserializeToListOfObject((string)message);
-        }
-
-        public void SubscribeReturnMessage(object message)
-        {
-            
-            Message = _pubnub.JsonPluggableLibrary.DeserializeToListOfObject((string)message);
+            Events["notification"] = message;
             Debug.WriteLine("Subscribe Message: " + message);
-        }
-
-        public void ErrorMessage(object message)
-        {
-
-            Error = (PubnubClientError)message;
-            Debug.WriteLine("Error Message: " + message);
         }
 
         public void SubscribeConnectStatusMessage(object message)
         {
-            Message = _pubnub.JsonPluggableLibrary.DeserializeToListOfObject((string)message);
+            Events["connectMessage"] = message;
             Debug.WriteLine("Connect Message: " + message);
         }
+
+        public void ErrorMessage(object message)
+        {
+            Events["errorMessage"] = message;
+            Debug.WriteLine("Error Message: " + message);
+        }
+
         public void DisconnectMessage(object message)
         {
-            Message = _pubnub.JsonPluggableLibrary.DeserializeToListOfObject((string)message);
+            Events["disconnectMessage"] = message;
             Debug.WriteLine("Disconnect Message: " + message);
         }
 
+        public object ReturnMessage(string requestedMessage)
+        {
+            if (Events.ContainsKey(requestedMessage)) return Events[requestedMessage];
+            else return "Error: Message not found";
+        }
 
     }
 }
