@@ -19,13 +19,15 @@ namespace RingCentral.SDK.Http
         /// <param name="status">The status of the response message</param>
         /// <param name="body">The body of the response message</param>
         /// <param name="headers">HttpContentHeaders of the response message</param>
-        public Response(int status, string body, HttpContentHeaders headers)
-        {
-            _body = body;
-            _status = status;
+        //public Response(int status, string body, HttpContentHeaders headers)
+        //{
+        //    _body = body;
+        //    _status = status;
 
-            SetHeaders(headers);
-        }
+        //    SetHeaders(headers);
+
+            
+        //}
 
         public Response(Task<HttpResponseMessage> responseMessage)
         {
@@ -36,6 +38,11 @@ namespace RingCentral.SDK.Http
             _body = body;
             _status = statusCode;
             SetHeaders(headers);
+            
+            if (!CheckStatus())
+            {
+                throw new Exception(GetError());
+            }
         }
 
         /// <summary>
@@ -66,6 +73,7 @@ namespace RingCentral.SDK.Http
             {
                 throw new Exception("Response is not JSON");
             }
+
             return JObject.Parse(_body);
         }
 
@@ -126,7 +134,7 @@ namespace RingCentral.SDK.Http
                 return null;
             }
 
-            var message = GetStatus().ToString();
+            var message = "Unknown Error";
 
             var data = GetJson();
 
