@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 using PubNubMessaging.Core;
+using Newtonsoft.Json.Linq;
 
 namespace RingCentral.Subscription
 {
@@ -58,7 +59,7 @@ namespace RingCentral.Subscription
         public void NotificationReturnMessage(object message)
         {
             if (_encrypted) _events["notification"] = DecryptMessage(message);
-            else _events["notification"] = message;
+            else _events["notification"] = JObject.Parse(JsonConvert.DeserializeObject<List<string>>(message.ToString())[0]);
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
@@ -86,12 +87,14 @@ namespace RingCentral.Subscription
             return "Error: Message not found";
         }
 
-        public string DecryptMessage(object message)
+        public JObject DecryptMessage(object message)
         {
+
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
             byte[] decoded64Message = Convert.FromBase64String(deserializedMessage[0]);
             byte[] decryptedMessage = _decrypto.TransformFinalBlock(decoded64Message, 0, decoded64Message.Length);
-            return Encoding.UTF8.GetString(decryptedMessage);
+            deserializedMessage[0] = Encoding.UTF8.GetString(decryptedMessage);
+            return JObject.Parse(deserializedMessage[0]);
         }
 
     }
