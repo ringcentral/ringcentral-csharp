@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RingCentral.SDK.Http;
+using System.Diagnostics;
 
 namespace RingCentral.SDK
 {
@@ -30,6 +31,7 @@ namespace RingCentral.SDK
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
             _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C Sharp SDK");
+
         }
 
         private string AppKey { get; set; }
@@ -62,6 +64,8 @@ namespace RingCentral.SDK
             Auth.SetRemember(isRemember);
             Auth.SetData(result.GetJson());
 
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+
             return result;
         }
 
@@ -85,6 +89,8 @@ namespace RingCentral.SDK
             var result = AuthCall(request);
 
             Auth.SetData(result.GetJson());
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
             return result;
         }
@@ -119,7 +125,7 @@ namespace RingCentral.SDK
         private Response AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
-
+           
             var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
 
             return new Response(result);
@@ -159,8 +165,8 @@ namespace RingCentral.SDK
             if (!IsAuthorized()) throw new Exception("Access has Expired");
 
             HttpRequestMessage requestMessage = new HttpRequestMessage();
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-
+            //requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            //Debug.WriteLine("Headers : " + requestMessage.Headers.Authorization.ToString());
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = request.GetHttpMethod(method);
             requestMessage.RequestUri = request.GetUri();
