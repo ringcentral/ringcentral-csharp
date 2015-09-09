@@ -110,8 +110,6 @@ namespace RingCentral.SDK
 
             var request = new Request(RevokeEndpoint, body);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
-
             return AuthCall(request);
         }
 
