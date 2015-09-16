@@ -23,15 +23,23 @@ namespace RingCentral.SDK
 
         private Object thisLock = new Object();
 
-        public Platform(string appKey, string appSecret, string apiEndPoint)
+        //public Platform(string appKey, string appSecret, string apiEndPoint)
+        //{
+        //    AppKey = appKey;
+        //    AppSecret = appSecret;
+        //    ApiEndpoint = apiEndPoint;
+        //    Auth = new Auth();
+        //    _client = new HttpClient { BaseAddress = new Uri(ApiEndpoint) };
+        //}
+
+        public Platform(string appKey, string appSecret, string apiEndPoint, string appName, string appVersion)
         {
             AppKey = appKey;
             AppSecret = appSecret;
             ApiEndpoint = apiEndPoint;
             Auth = new Auth();
             _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
-            _client.DefaultRequestHeaders.Add("SDK-Agent", "Ring Central C Sharp SDK");
-
+            SetUserAgentHeader(appName, appVersion);
         }
 
         private string AppKey { get; set; }
@@ -126,7 +134,7 @@ namespace RingCentral.SDK
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
            
-            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
+            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
             return new Response(result);
         }
@@ -137,7 +145,7 @@ namespace RingCentral.SDK
         /// <returns>Dictionary of auth data</returns>
         public Dictionary<string, string> GetAuthData()
         {
-            return Auth.GetAuthData();
+            return Auth.GetData();
         }
 
         public Response Get(Request request)
@@ -165,15 +173,14 @@ namespace RingCentral.SDK
             if (!IsAuthorized()) throw new Exception("Access has Expired");
 
             HttpRequestMessage requestMessage = new HttpRequestMessage();
-            //requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-            //Debug.WriteLine("Headers : " + requestMessage.Headers.Authorization.ToString());
+
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = request.GetHttpMethod(method);
             requestMessage.RequestUri = request.GetUri();
             
             request.GetXhttpOverRideHeader(requestMessage);
 
-            return new Response(_client.SendAsync(requestMessage));
+            return new Response(_client.SendAsync(requestMessage).Result);
         }
 
 
@@ -193,19 +200,45 @@ namespace RingCentral.SDK
         ///     Allowed characters for AppName:AppVersion are- letters, digits, hyphen, dot and underscore.
         /// </summary>
         /// <param name="header">The value of the User-Agent header</param>
-        public void SetUserAgentHeader(string header)
+        private void SetUserAgentHeader(string appName, string appVersion)
         {
+            var agentString = String.Empty;
 
-            if (!String.IsNullOrEmpty(header))
+            #region Set UA String
+            if (!string.IsNullOrEmpty(appName))
             {
-                Regex r = new Regex("(?:[^a-z0-9-_. ]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-                var ua = r.Replace(header, String.Empty);
-
-                _client.DefaultRequestHeaders.Add("User-Agent", ua);
-                _client.DefaultRequestHeaders.Add("RC-User-Agent", ua); 
+                agentString += appName;
+                if (!string.IsNullOrEmpty(appVersion))
+                {
+                    agentString += "_" + appVersion;
+                }
             }
 
-            
+            //if (!string.IsNullOrEmpty(osName) && !string.IsNullOrEmpty(osVersion))
+            //{
+            //    agentString += "." + osName + "/" + osVersion;
+            //}
+
+            //if (!string.IsNullOrEmpty(clrVersion))
+            //{
+            //    agentString += ".CLR/" + clrVersion;
+            //}
+
+            if (string.IsNullOrEmpty(agentString))
+            {
+                agentString += "RCCSSDK_" + SDK.VERSION;
+            }
+            else
+            {
+                agentString += ".RCCSSDK_" + SDK.VERSION;
+            }
+            #endregion
+
+            Regex r = new Regex("(?:[^a-z0-9-_. ]|(?<=['\"])s)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            var ua = r.Replace(agentString, String.Empty);
+
+            _client.DefaultRequestHeaders.Add("User-Agent", ua);
+            _client.DefaultRequestHeaders.Add("RC-User-Agent", ua);
         }
 
         /// <summary>

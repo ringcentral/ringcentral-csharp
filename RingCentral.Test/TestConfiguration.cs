@@ -61,7 +61,7 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
            
-            RingCentralClient = new RingCentral.SDK.SDK(appKey, appSecret, ApiEndPoint);
+            RingCentralClient = new RingCentral.SDK.SDK(appKey, appSecret, ApiEndPoint,"C Sharp Test Suite", "1.0.0");
             Platform = RingCentralClient.GetPlatform();
             Platform._client = new HttpClient(MockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) };
             AuthResult = Platform.Authorize(UserName, Extension, password, true);

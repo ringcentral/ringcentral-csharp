@@ -32,6 +32,7 @@ namespace RingCentral.SDK
         /// <param name="jToken"></param>
         public void SetData(JToken jToken)
         {
+            #region data
             if (!string.IsNullOrEmpty((string) jToken.SelectToken("remember")))
             {
                 Remember = (bool) jToken.SelectToken("remember");
@@ -51,53 +52,130 @@ namespace RingCentral.SDK
             {
                 Scope = (string) jToken.SelectToken("scope");
             }
+            #endregion
+            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
+            #region Access Token
             if (!string.IsNullOrEmpty((string) jToken.SelectToken("access_token")))
             {
                 AccessToken = (string) jToken.SelectToken("access_token");
             }
 
+            if (!string.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
+            {
+                AccessTokenExpiresIn = (long) jToken.SelectToken("expires_in");
+            }
+
+            if (string.IsNullOrEmpty((string) jToken.SelectToken("expire_time")) &&
+                !string.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
+            {
+                AccessTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("expires_in")) * 1000) + currentTimeInMilliseconds);
+            }
+            else if(!string.IsNullOrEmpty((string) jToken.SelectToken("expire_time")))
+            {
+                AccessTokenExpireTime = (long)jToken.SelectToken("expire_time");
+            }
+            #endregion
+
+            #region Refresh Token
             if (!string.IsNullOrEmpty((string) jToken.SelectToken("refresh_token")))
             {
                 RefreshToken = (string) jToken.SelectToken("refresh_token");
             }
 
-            var currentTimeInMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
-
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
-            {
-                AccessTokenExpiresIn = (long) jToken.SelectToken("expires_in");
-
-                if (!string.IsNullOrEmpty((string) jToken.SelectToken("expire_time")))
-                {
-                    AccessTokenExpireTime = (long) jToken.SelectToken("expire_time");
-                }
-                else
-                {
-                    AccessTokenExpireTime = ((AccessTokenExpiresIn*1000) + currentTimeInMilliseconds);
-                }
-            }
-
             if (!string.IsNullOrEmpty((string) jToken.SelectToken("refresh_token_expires_in")))
             {
                 RefreshTokenExpiresIn = (long) jToken.SelectToken("refresh_token_expires_in");
-
-                if (!string.IsNullOrEmpty((string) jToken.SelectToken("expires_time")))
-                {
-                    RefreshTokenExpireTime = (long) jToken.SelectToken("refresh_token_expire_time");
-                }
-                else
-                {
-                    RefreshTokenExpireTime = ((RefreshTokenExpiresIn*1000) + currentTimeInMilliseconds);
-                }
             }
+
+            if (string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")) &&
+                !string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expires_in")))
+            {
+                RefreshTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("refresh_token_expires_in")) * 1000) + currentTimeInMilliseconds);
+            }
+            else if(!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")))
+            {
+                RefreshTokenExpireTime = (long)jToken.SelectToken("refresh_token_expire_time");
+            }
+
+            #endregion
+        }
+
+        public void SetData(Dictionary<string, string> data)
+        {
+            #region data
+            if (data.ContainsKey("remember") && !String.IsNullOrEmpty(data["remember"]))
+            {
+               Remember = Convert.ToBoolean(data["remember"]);
+            }
+
+            if (data.ContainsKey("token_type") && !String.IsNullOrEmpty(data["token_type"]))
+            {
+                TokenType = data["token_type"];
+            }
+
+            if (data.ContainsKey("owner_id") && !String.IsNullOrEmpty(data["owner_id"]))
+            {
+                OwnerId = data["owner_id"];
+            }
+
+            if (data.ContainsKey("scope") && !String.IsNullOrEmpty(data["scope"]))
+            {
+                Scope = data["scope"];
+            }
+            #endregion
+            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+            #region Access Token
+            if (data.ContainsKey("access_token") && !String.IsNullOrEmpty(data["access_token"]))
+            {
+                AccessToken = data["access_token"];
+            }
+
+            if (data.ContainsKey("expires_in") && !string.IsNullOrEmpty(data["expires_in"]))
+            {
+                AccessTokenExpiresIn = Convert.ToInt64(data["expires_in"]);
+            }
+
+            if (string.IsNullOrEmpty(data["expire_time"]) &&
+                !string.IsNullOrEmpty(data["expires_in"]))
+            {
+                AccessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
+            }
+            else if(!string.IsNullOrEmpty(data["expire_time"]))
+            {
+                AccessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
+            }       
+            #endregion
+
+            #region Refresh Token
+            if (data.ContainsKey("refresh_token") && !String.IsNullOrEmpty(data["refresh_token"]))
+            {
+                RefreshToken = data["refresh_token"];
+            }
+
+            if (data.ContainsKey("refresh_token_expires_in") && !string.IsNullOrEmpty(data["refresh_token_expires_in"]))
+            {
+                RefreshTokenExpiresIn = Convert.ToInt64(data["refresh_token_expires_in"]);
+            }
+
+            if (string.IsNullOrEmpty(data["refresh_token_expire_time"]) &&
+                !string.IsNullOrEmpty(data["refresh_token_expires_in"]))
+            {
+                RefreshTokenExpireTime = ((Convert.ToInt64(data["refresh_token_expires_in"]) * 1000) + currentTimeInMilliseconds);
+            }
+            else if (!string.IsNullOrEmpty(data["refresh_token_expire_time"]))
+            {
+                RefreshTokenExpireTime = Convert.ToInt64(data["refresh_token_expire_time"]);
+            }
+            #endregion
         }
 
         /// <summary>
         ///     Gets the auth data set on authorization
         /// </summary>
         /// <returns>Dictionary of auth data</returns>
-        public Dictionary<string, string> GetAuthData()
+        public Dictionary<string, string> GetData()
         {
             var authData = new Dictionary<string, string>
                            {
