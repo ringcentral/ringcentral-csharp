@@ -137,12 +137,12 @@ namespace RingCentral.SDK
                 AccessTokenExpiresIn = Convert.ToInt64(data["expires_in"]);
             }
 
-            if (string.IsNullOrEmpty(data["expire_time"]) &&
-                !string.IsNullOrEmpty(data["expires_in"]))
+            if ((data.ContainsKey("expire_time") && string.IsNullOrEmpty(data["expire_time"])) &&
+                (data.ContainsKey("expires_in") && !string.IsNullOrEmpty(data["expires_in"])))
             {
                 AccessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
-            else if(!string.IsNullOrEmpty(data["expire_time"]))
+            else if(data.ContainsKey("expires_time") && !string.IsNullOrEmpty(data["expire_time"]))
             {
                 AccessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
             }       
@@ -159,12 +159,12 @@ namespace RingCentral.SDK
                 RefreshTokenExpiresIn = Convert.ToInt64(data["refresh_token_expires_in"]);
             }
 
-            if (string.IsNullOrEmpty(data["refresh_token_expire_time"]) &&
-                !string.IsNullOrEmpty(data["refresh_token_expires_in"]))
+            if ((data.ContainsKey("refresh_token_expire_time") && string.IsNullOrEmpty(data["refresh_token_expire_time"])) &&
+                (data.ContainsKey("refresh_token_expires_in") && !string.IsNullOrEmpty(data["refresh_token_expires_in"])))
             {
                 RefreshTokenExpireTime = ((Convert.ToInt64(data["refresh_token_expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
-            else if (!string.IsNullOrEmpty(data["refresh_token_expire_time"]))
+            else if (data.ContainsKey("refresh_token_expire_time") && !string.IsNullOrEmpty(data["refresh_token_expire_time"]))
             {
                 RefreshTokenExpireTime = Convert.ToInt64(data["refresh_token_expire_time"]);
             }
