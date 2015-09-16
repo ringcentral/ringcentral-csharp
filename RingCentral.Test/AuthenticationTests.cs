@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using RingCentral.SDK;
 using RingCentral.SDK.Http;
 
 namespace RingCentral.Test
@@ -73,9 +76,33 @@ namespace RingCentral.Test
 
             Assert.AreEqual((string)token.SelectToken("access_token"),authData["access_token"]);
             Assert.AreEqual((string)token.SelectToken("refresh_token"),authData["refresh_token"]);
+        }
 
+        [Test]
+        public void SetAuthData()
+        {
 
+            Auth auth = new Auth();
 
+            AuthResult = Platform.Authorize("username", "101", "password", true);
+            var oldAuthData = Platform.GetAuthData();
+
+            var newAuthData = new Dictionary<string, string>();
+            newAuthData.Add("remember", "true");
+            newAuthData.Add("token_type", "test");
+            newAuthData.Add("owner_id", "test");
+            newAuthData.Add("scope", "test");
+            newAuthData.Add("access_token", oldAuthData["access_token"]);
+            newAuthData.Add("expires_in", oldAuthData["expires_in"]);
+            newAuthData.Add("refresh_token", oldAuthData["refresh_token"]);
+            newAuthData.Add("refresh_token_expires_in", oldAuthData["refresh_token_expires_in"]);
+
+            auth.SetData(newAuthData);
+
+            var authData = auth.GetData();
+            Debug.WriteLine(authData["access_token"]);
+            Assert.AreEqual(newAuthData["access_token"], authData["access_token"]);
+            Assert.AreEqual(newAuthData["refresh_token"], authData["refresh_token"]);
 
         }
     }
