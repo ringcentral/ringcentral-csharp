@@ -82,7 +82,7 @@ namespace RingCentral.Test
         public void SetAuthData()
         {
 
-            Auth auth = new Auth();
+            //Auth auth = new Auth();
 
             AuthResult = Platform.Authorize("username", "101", "password", true);
             var oldAuthData = Platform.GetAuthData();
@@ -97,9 +97,9 @@ namespace RingCentral.Test
             newAuthData.Add("refresh_token", oldAuthData["refresh_token"]);
             newAuthData.Add("refresh_token_expires_in", oldAuthData["refresh_token_expires_in"]);
 
-            auth.SetData(newAuthData);
+            Platform.SetAuthData(newAuthData);
 
-            var authData = auth.GetData();
+            var authData = Platform.GetAuthData();
             Debug.WriteLine(authData["access_token"]);
             Assert.AreEqual(newAuthData["access_token"], authData["access_token"]);
             Assert.AreEqual(newAuthData["refresh_token"], authData["refresh_token"]);
