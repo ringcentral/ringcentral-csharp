@@ -148,6 +148,15 @@ namespace RingCentral.SDK
             return Auth.GetData();
         }
 
+        /// <summary>
+        ///     Gets the auth data set on authorization
+        /// </summary>
+        /// <returns>Dictionary of auth data</returns>
+        public void SetAuthData(Dictionary<string, string> authData )
+        {
+            Auth.SetData(authData);
+        }
+
         public Response Get(Request request)
         {
             return ApiCall("GET", request);
