@@ -137,7 +137,7 @@ namespace RingCentral.SDK
         /// <returns>Dictionary of auth data</returns>
         public Dictionary<string, string> GetAuthData()
         {
-            return Auth.GetAuthData();
+            return Auth.GetData();
         }
 
         public Response Get(Request request)

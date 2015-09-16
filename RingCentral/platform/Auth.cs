@@ -97,7 +97,7 @@ namespace RingCentral.SDK
         ///     Gets the auth data set on authorization
         /// </summary>
         /// <returns>Dictionary of auth data</returns>
-        public Dictionary<string, string> GetAuthData()
+        public Dictionary<string, string> GetData()
         {
             var authData = new Dictionary<string, string>
                            {
