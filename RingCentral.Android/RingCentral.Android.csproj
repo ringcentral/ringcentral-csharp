@@ -58,7 +58,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="PubNubMessaging">
-      <HintPath>..\..\..\..\..\Desktop\pubnub\android\PubNubMessaging.dll</HintPath>
+      <HintPath>\\vmware-host\Shared Folders\II_Projects\RingCentral\pubnub-c-sharp\c-sharp\mono-for-android\PubNubMessaging\bin\Debug\PubNubMessaging.dll</HintPath>
     </Reference>
     <Reference Include="RingCentral">
       <HintPath>..\RingCentral\bin\Release\RingCentral.dll</HintPath>
