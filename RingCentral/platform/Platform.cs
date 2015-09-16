@@ -126,7 +126,7 @@ namespace RingCentral.SDK
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
            
-            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent());
+            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
             return new Response(result);
         }
@@ -165,15 +165,14 @@ namespace RingCentral.SDK
             if (!IsAuthorized()) throw new Exception("Access has Expired");
 
             HttpRequestMessage requestMessage = new HttpRequestMessage();
-            //requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
-            //Debug.WriteLine("Headers : " + requestMessage.Headers.Authorization.ToString());
+
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = request.GetHttpMethod(method);
             requestMessage.RequestUri = request.GetUri();
             
             request.GetXhttpOverRideHeader(requestMessage);
 
-            return new Response(_client.SendAsync(requestMessage));
+            return new Response(_client.SendAsync(requestMessage).Result);
         }
 
 

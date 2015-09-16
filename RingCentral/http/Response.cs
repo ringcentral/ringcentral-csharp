@@ -29,11 +29,11 @@ namespace RingCentral.SDK.Http
             
         //}
 
-        public Response(Task<HttpResponseMessage> responseMessage)
+        public Response(HttpResponseMessage responseMessage)
         {
-            var statusCode = Convert.ToInt32(responseMessage.Result.StatusCode);
-            var body = responseMessage.Result.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Result.Content.Headers;
+            var statusCode = Convert.ToInt32(responseMessage.StatusCode);
+            var body = responseMessage.Content.ReadAsStringAsync().Result;
+            var headers = responseMessage.Content.Headers;
 
             _body = body;
             _status = statusCode;
