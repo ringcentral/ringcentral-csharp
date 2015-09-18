@@ -27,14 +27,14 @@ using RingCentral;
 
 ```
 //Initialze Ring Central Client
-var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint").GetPlatform();
+var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint", "Application Name","Application Version").GetPlatform();
 ```
 
 
 ## Recipes
 ### Set User Agent Header
 ```
-ringCentral.SetUserAgentHeader("<YOUR USER AGENT HEADER>");
+ringCentral.SetUserAgentHeader("Application Name", "Application Version");
 ```
 
 ### Authorize
