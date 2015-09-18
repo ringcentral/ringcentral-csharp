@@ -124,42 +124,33 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store
 Response response = ringCentral.Delete(request);
 ```
 
-### Create Subscription
+### Create Subscription 
+``` 
+var subscription = new SubscriptionServiceImplentation(){ _platform = ringCentral};
+subscription.AddEvents("/restapi/v1.0/account/~/extension/~/presence");
+var response = subscription.Subscribe();
 ```
-var jsonData = "{\"eventFilters\": [ \"/restapi/v1.0/account/~/extension/~/presence\",\"/restapi/v1.0/account/~/extension/~/message-store\" ], \"deliveryMode\": { \"transportType\": \"PubNub\", \"encryption\": \"false\" } }";
-Request request = new Request("/restapi/v1.0/subscription" jsonData);
-Response result = ringCentral.Post(request);
-var subscriptionResult = JsonConvert.DeserializeObject<Subscription>(result.GetBody());
+Alternatively you can set Event Filters by:
 ```
-
+subscription.SetEvents(listOfEvents);
+```
+Where listOfEvents is a List<string> containing each event to subscribe to. 
 ### Delete Subscription
-```
-Request request = new Request("/restapi/v1.0/subscription{subscriptionId}");
-Response result = RingCentralClient.GetPlatform().Delete(request);
-```
-
-### Subscribing for server events through PubNub
-```
-SubscriptionServiceImplementation subscriptionServiceImplementation = new SubscriptionServiceImplementation("", "Subscriber Key","","Encryption Key", false);
-
-subscriptionServiceImplementation.Subscribe("Channel Name", "Channel Group",subscriptionServiceImplementation.NotificationReturnMessage,subscriptionServiceImplementation.SubscribeConnectStatusMessage,subscriptionServiceImplementation.ErrorMessage)
 
 ```
-
-Note: Channel Name, Subscriber key and Encrypytion key are  from Subscription result. Channel Name is the field "address" in the DeliveryMode of Subscription result. Encryption key is the field "encryptionKey" in the DeliveryMode of Subscription result.  
-
-### Unsubscribe from PubNub 
-```
-subscriptionServiceImplementation.Unsubscribe("Channel Name", "Channel Group", subscriptionServiceImplementation.NotificationReturnMessage,subscriptionServiceImplementation.SubscribeConnectStatusMessage,subscriptionServiceImplementation.ErrorMessage)
-
+var response = subscription.Remove();
 ```
 
+### Unsubscribe from Subscription
+```
+subscription.Unsubscribe();
+```
 ### Access PubNub message from subscription
 ```
-var notificationMessage = subscriptionServiceImplementation.ReturnMessage("notification");
-var connectMessage = subscriptionServiceImplementation.ReturnMessage("connectMessage");
-var disconnectMessage = subscriptionServiceImplementation.ReturnMessage("disconnectMessage");
-var errorMessage = subscriptionServiceImplementation.ReturnMessage("errorMessage");
+var notificationMessage = subscription.ReturnMessage("notification");
+var connectMessage = subscription.ReturnMessage("connectMessage");
+var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
+var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
 

@@ -2,71 +2,113 @@
 using System.Threading;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using RingCentral.Subscription;
 
 namespace RingCentral.NET40.Test
 {
     [TestFixture]
-    public class PubNubSubscriptionTest : TestConfiguration
+    public class PubNubSubscriptionTest : RingCentral.Test.TestConfiguration
     {
         
         private const string Channel = "RCNETSDK-TEST";
-
-        [Test]
-        public void SubsricptionPubNubTest()
-        {
-            _subscriptionServiceMock.Subscribe(Channel, "", null,null,null);        
-            Thread.Sleep(500);
-            string subscribeResult = _subscriptionServiceMock.ReturnMessage("connectMessage").ToString();
-            if (subscribeResult[1].Equals('{'))
-            {
-                
-                Assert.IsTrue(subscribeResult.Contains(Channel));
-                Assert.IsTrue(subscribeResult.Contains("\"status\":200"));
-            }
-            else
-            {
-                Assert.IsTrue(subscribeResult.Contains("\"Connected\""));
-                Assert.IsTrue(subscribeResult.Contains("\"RCNETSDK-TEST\""));
-            }
-
-        }
+        private SubscriptionServiceMock _subscriptionServiceMock;
+    
 
         [Test]
         public void UnsubscribePubNubTest()
         {
+            _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
             _subscriptionServiceMock.Subscribe(Channel+"2", "", null, null, null);  
             Thread.Sleep(500);
-           
             _subscriptionServiceMock.Unsubscribe(Channel+"2","",null,null,null,null);
             Thread.Sleep(500);
            Assert.IsTrue(_subscriptionServiceMock.ReturnMessage("disconnectMessage").ToString().Contains("Channel Unsubscribed from RCNETSDK-TEST2"));
+           Thread.Sleep(500);
            
         }
 
         [Test]
         public void ErrorMessagePubNubTest()
         {
+            _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
             _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
             Thread.Sleep(500);
             _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
             Thread.Sleep(500);
             Assert.IsTrue(_subscriptionServiceMock.ReturnMessage("errorMessage").ToString().Contains("Channel Already Subscribed. Duplicate channel subscription not allowed"));
-
+            Thread.Sleep(500);
         }
 
+       
         [Test]
-        public void SendMessagePubNubTest()
-        { 
-            Thread.Sleep(500);
-            _subscriptionServiceMock.Subscribe(Channel,"",null,null,null);
-           Thread.Sleep(500);
-            _subscriptionServiceMock.PublishMessage("This is a test of the RingCentral C# SDK");
-            Thread.Sleep(500);
-            Assert.IsTrue(
-                _subscriptionServiceMock.ReturnMessage("notification")
-                    .ToString()
-                    .Contains("This is a test of the RingCentral C# SDK"));
+        public void SubscribeTest()
+        {
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
+            var subscribed = sub.Subscribe();
+            Thread.Sleep(1000);
+            Assert.IsNotNull(subscribed);
+            Assert.AreEqual(true, subscribed.CheckStatus());
+            Assert.IsTrue(sub.IsSubsribed());
+            sub.Remove();
+            Thread.Sleep(1000);
+            
         }
+        [Test]
+        public void RenewSubscribeTest()
+        {
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
+            var test = sub.Subscribe();
+            Thread.Sleep(500);
+            sub.ClearEvents();
+            sub.SetEvents(new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" });
+            sub.Renew();
+            Assert.IsTrue(sub.IsSubsribed());
+            sub.Remove();
+            Thread.Sleep(500);
+        }
+        [Test]
+        public void DeleteSubscribeTest()
+        {
+
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+            sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
+            var test = sub.Subscribe();
+            Thread.Sleep(500);
+            sub.Remove();
+            Assert.IsFalse(sub.IsSubsribed());
+            Thread.Sleep(500);
+
+        }
+        [Test]
+        [ExpectedException(typeof(System.Exception),ExpectedMessage="Event filters are undefined")]
+        public void NoEventFiltersTest()
+        {
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.Subscribe();
+            Thread.Sleep(500);
+        }
+        [Test]
+        [ExpectedException(typeof(System.Exception), ExpectedMessage = "Subscription ID is required")]
+        public void NoSubscriptionIdRenewTest()
+        {
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.Renew();
+            Thread.Sleep(500);
+        }
+        [Test]
+        [ExpectedException(typeof(System.Exception), ExpectedMessage = "Subscription ID is required")]
+        public void NoSubscriptionIdRemoveTest()
+        {
+            SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+            sub.Remove();
+            Thread.Sleep(500);
+        }
+   
  
 
 
