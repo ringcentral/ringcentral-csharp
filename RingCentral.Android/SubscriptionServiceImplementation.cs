@@ -6,35 +6,185 @@ using Android.Util;
 using Newtonsoft.Json;
 using PubNubMessaging.Core;
 using Newtonsoft.Json.Linq;
+using RingCentral.SDK.Http;
+using System.Timers;
+using RingCentral.SDK;
 
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation : ISubscriptionService
     {
-        private readonly Pubnub _pubnub;
         private const string Tag = "RingCentral Android SDK";
+        private Pubnub _pubnub;
         private bool _encrypted;
         private ICryptoTransform _decrypto;
-
+        public Platform _platform;
+        private Subscription _subscription;
+        private Timer timeout;
+        private bool subscribed;
+        private List<string> eventFilters = new List<string>();
+        private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
+        private const int RenewHandicap = 60;
         private Dictionary<string, object> _events = new Dictionary<string, object>
         {
             {"notification",""},
             {"errorMessage",""},
             {"connectMessage", ""},
             {"disconnectMessage",""}
-
         };
 
-        public SubscriptionServiceImplementation(string publishKey, string subscribeKey)
+        private void SetTimeout()
+        {
+
+            timeout = new Timer((_subscription.ExpiresIn) - RenewHandicap);
+            timeout.Elapsed += OnTimedExpired;
+            timeout.AutoReset = false;
+            //Keep garbage collection from removing this on extended time
+            GC.KeepAlive(timeout);
+            timeout.Start();
+        }
+        public bool IsSubsribed()
+        {
+            return subscribed;
+        }
+        private void ClearTimeout()
+        {
+            if (timeout != null)
+            {
+                timeout.Stop();
+                timeout.Dispose();
+            }
+        }
+        public List<string> GetEvents()
+        {
+            return eventFilters;
+        }
+        public void ClearEvents()
+        {
+            eventFilters.Clear();
+        }
+        private void OnTimedExpired(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            timeout.Stop();
+            if (subscribed) Renew();
+            else Subscribe();
+
+        }
+        public void SetEvents(List<string> newEventFilters)
+        {
+            eventFilters = newEventFilters;
+        }
+
+        public void AddEvent(string eventToAdd)
+        {
+            eventFilters.Add(eventToAdd);
+        }
+        public Response Renew()
+        {
+            ClearTimeout();
+            try
+            {
+                if (_subscription == null || string.IsNullOrEmpty(_subscription.Id)) throw new Exception("Subscription ID is required");
+                if (eventFilters.Count == 0) throw new Exception("Events are undefined");
+                var jsonData = GetFullEventsFilter();
+                Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
+                Response response = _platform.Put(request);
+                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.GetBody()));
+                return response;
+            }
+            catch (Exception e)
+            {
+                Unsubscribe();
+                throw e;
+            }
+        }
+        public Response Remove()
+        {
+            if (_subscription == null || string.IsNullOrEmpty(_subscription.Id)) throw new Exception("Subscription ID is required");
+            try
+            {
+                Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id);
+                Response response = _platform.Delete(request);
+                Unsubscribe();
+                return response;
+            }
+            catch (Exception e)
+            {
+                Unsubscribe();
+                throw e;
+            }
+
+        }
+
+        public void UpdateSubscription(Subscription subscription)
+        {
+            ClearTimeout();
+            _subscription = subscription;
+            subscribed = true;
+            SetTimeout();
+        }
+
+        public Response Subscribe()
+        {
+            if (eventFilters.Count == 0)
+            {
+                throw new Exception("Event filters are undefined");
+            }
+            try
+            {
+                var jsonData = GetFullEventsFilter();
+                Request request = new Request(SubscriptionEndPoint, jsonData);
+                Response response = _platform.Post(request);
+                _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
+                if (_subscription.DeliveryMode.Encryption)
+                {
+                    PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey, false);
+                }
+                else
+                {
+                    PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
+                }
+                Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, ErrorMessage);
+                subscribed = true;
+                SetTimeout();
+                return response;
+            }
+            catch (Exception e)
+            {
+                Unsubscribe();
+                throw e;
+            }
+
+        }
+        public void Unsubscribe()
+        {
+            ClearTimeout();
+            if (_pubnub != null) Unsubscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, DisconnectMessage, ErrorMessage);
+            _subscription = new Subscription();
+            ClearEvents();
+            subscribed = false;
+
+        }
+        private string GetFullEventsFilter()
+        {
+            var fullEventsFilter = "{ \"eventFilters\": ";
+            string eventFiltersToString = "[ ";
+            foreach (string filter in eventFilters)
+            {
+                eventFiltersToString += ("\"" + filter + "\",");
+            }
+            eventFiltersToString = eventFiltersToString.TrimEnd(',');
+            eventFiltersToString += "]";
+            fullEventsFilter += (eventFiltersToString + ", \"deliveryMode\" : { \"transportType\" : \"PubNub\" } }");
+            return fullEventsFilter;
+        }
+
+        private void PubNubServiceImplementation(string publishKey, string subscribeKey)
         {
             _pubnub = new Pubnub(publishKey, subscribeKey);
         }
-        public SubscriptionServiceImplementation(string publishKey, string subscribeKey, string secretKey)
-        {
-            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey);
-        }
 
-        public SubscriptionServiceImplementation(string publishKey, string subscribeKey, string secretKey, string cipherKey, bool sslOn)
+        public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey, string cipherKey, bool sslOn)
         {
             _pubnub = new Pubnub(publishKey, subscribeKey);
             _encrypted = true;
@@ -42,44 +192,44 @@ namespace RingCentral.Subscription
             _decrypto = aes.CreateDecryptor();
         }
 
-        public void Subscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
+        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
+              Action<object> connectCallback, Action<object> errorCallback)
         {
-            _pubnub.Subscribe<string>(channel, channelGroup, NotificationReturnMessage,
-                SubscribeConnectStatusMessage, ErrorMessage);
+            _pubnub.Subscribe<string>(channel, channelGroup, userCallback,
+                connectCallback, errorCallback);
         }
 
-        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback, Action<object> connectCallback,
-            Action<object> disconnectCallback, Action<object> errorCallback)
+        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
+            Action<object> connectCallback, Action<object> disconnectCallback, Action<object> errorCallback)
         {
-            _pubnub.Unsubscribe(channel, NotificationReturnMessage, SubscribeConnectStatusMessage,
-                DisconnectMessage, ErrorMessage);
+            _pubnub.Unsubscribe(channel, userCallback, connectCallback,
+                disconnectCallback, errorCallback);
         }
-
-        public void NotificationReturnMessage(object message)
+       private void NotificationReturnMessage(object message)
         {
             if (_encrypted) _events["notification"] = DecryptMessage(message);
             else _events["notification"] = JObject.Parse(JsonConvert.DeserializeObject<List<string>>(message.ToString())[0]);
             Log.Debug(Tag, "Subscribe Message: " + message);
         }
 
-        public void SubscribeConnectStatusMessage(object message)
+        private void SubscribeConnectStatusMessage(object message)
         {
             _events["connectMessage"] = message;
             Log.Debug(Tag, "Connect Message: " + message);
         }
 
-        public void ErrorMessage(object message)
+        private void ErrorMessage(object message)
         {
             _events["errorMessage"] = message;
             Log.Debug(Tag, "Error Message: " + message);
         }
 
-        public void DisconnectMessage(object message)
+       private void DisconnectMessage(object message)
         {
             _events["disconnectMessage"] = message;
             Log.Debug(Tag, "Disconnect Message: " + message);
         }
-        public JObject DecryptMessage(object message)
+        private JObject DecryptMessage(object message)
         {
 
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());

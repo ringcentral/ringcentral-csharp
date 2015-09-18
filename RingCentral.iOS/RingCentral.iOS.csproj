@@ -61,9 +61,8 @@
       <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PubnubMessaging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>\\vmware-host\Shared Folders\II_Projects\RingCentral\pubnub-c-sharp\c-sharp\monotouch\PubnubMessaging\bin\Release\PubnubMessaging.dll</HintPath>
+    <Reference Include="PubnubMessaging">
+      <HintPath>J:\IoS\PubnubMessaging.dll</HintPath>
     </Reference>
     <Reference Include="RingCentral">
       <HintPath>..\RingCentral\bin\Release\RingCentral.dll</HintPath>

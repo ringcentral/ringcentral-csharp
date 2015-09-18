@@ -37,6 +37,22 @@ namespace RingCentral.Test
         {
             _PutMockResponses.Add(uri, responseMessage);
         }
+        public void RemovePostMockResponse(Uri uri)
+        {
+            _PostMockResponses.Remove(uri);
+        }
+        public void RemoveGetMockResponse(Uri uri)
+        {
+            _GetMockResponses.Remove(uri);
+        }
+        public void RemovePutMockResponse(Uri uri)
+        {
+            _PutMockResponses.Remove(uri);
+        }
+        public void RemoveDeleteMockresponse(Uri uri)
+        {
+            _DeleteMockResponses.Remove(uri);
+        }
 
 
 
@@ -587,26 +603,25 @@ namespace RingCentral.Test
         {
             string SubscriptionEndPoint = "/restapi/v1.0/subscription";
             AddPostMockResponse(
-            new Uri(ApiEndPoint + SubscriptionEndPoint),
-            new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
-                  "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                  "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
-                  "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
-                  "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"RCNETSDK-TEST\"," +
-                  "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
-            });
+                new Uri(ApiEndPoint + "/restapi/v1.0/subscription"),
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" + 
+                        "\"eventFilters\" : [ \"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ],\r\n  \"expirationTime\" : \"2015-09-18T00:14:39.150Z\",\r\n  \"expiresIn\" : 899,\r\n  \"deliveryMode\" :" +
+                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +    
+                        "\"encryptionAlgorithm\" : \"AES\",\r\n    \"encryptionKey\" : \"6hTFP4B94ZNI+IvgxPLY7g==\"\r\n  }\r\n}", Encoding.UTF8, "application/json")
+                }
+                );
             AddGetMockResponse(
              new Uri(ApiEndPoint + SubscriptionEndPoint + "/1"),
              new HttpResponseMessage(HttpStatusCode.OK)
              {
-                 Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
-                   "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                   "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
-                   "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
-                   "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
-                   "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
+                 Content = new StringContent(
+                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" +
+                        "\"eventFilters\" : [ \"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ],\r\n  \"expirationTime\" : \"2015-09-18T00:14:39.150Z\",\r\n  \"expiresIn\" : 899,\r\n  \"deliveryMode\" :" +
+                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +
+                        "\"encryptionAlgorithm\" : \"AES\",\r\n    \"encryptionKey\" : \"6hTFP4B94ZNI+IvgxPLY7g==\"\r\n  }\r\n}", Encoding.UTF8, "application/json")
              });
             AddDeleteMockResponse(
               new Uri(ApiEndPoint + SubscriptionEndPoint + "/1"),
@@ -617,7 +632,7 @@ namespace RingCentral.Test
               {
                   Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
                     "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/1\",\"eventFilters\": [ " +
-                    "\"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ]," +
+                    "\"/restapi/v1.0/account/1/extension/1/presence\" ]," +
                     "\"expirationTime\": \"2015-07-30T01:13:37.818Z\",\"expiresIn\": 899,\"deliveryMode\": {" +
                     "\"transportType\": \"PubNub\",\"encryption\": true,\"address\": \"2\"," +
                     "\"subscriberKey\": \"2\",\"secretKey\": \"sec2\",\"encryptionAlgorithm\": \"AES\", \"encryptionKey\": \"1=\" }}", Encoding.UTF8, "application/json")
