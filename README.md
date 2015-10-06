@@ -114,7 +114,7 @@ Response response = ringCentral.Put(request);
 ### Update Message Status via x-http-ovverride-header
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-request.SetXhttpOverRideHeader("PUT");
+request.SetXhttpOverRideHeader("PUT"); 
 Response response = ringCentral.Post(request);
 ```
 
@@ -126,13 +126,13 @@ Response response = ringCentral.Delete(request);
 
 ### Create Subscription 
 ``` 
-var subscription = new SubscriptionServiceImplentation(){ _platform = ringCentral};
-subscription.AddEvents("/restapi/v1.0/account/~/extension/~/presence");
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
+subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe();
 ```
 Alternatively you can set Event Filters by:
 ```
-subscription.SetEvents(listOfEvents);
+subscription.SetEvent(listOfEvents);
 ```
 Where listOfEvents is a List<string> containing each event to subscribe to. 
 ### Delete Subscription
