@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
-using Android.Util;
 using Newtonsoft.Json;
 using PubNubMessaging.Core;
 using Newtonsoft.Json.Linq;
@@ -31,12 +31,13 @@ namespace RingCentral.Subscription
             {"errorMessage",""},
             {"connectMessage", ""},
             {"disconnectMessage",""}
+
         };
 
         private void SetTimeout()
         {
 
-            timeout = new Timer((_subscription.ExpiresIn) - RenewHandicap);
+            timeout = new Timer((_subscription.ExpiresIn * 1000) - RenewHandicap);
             timeout.Elapsed += OnTimedExpired;
             timeout.AutoReset = false;
             //Keep garbage collection from removing this on extended time
@@ -124,7 +125,7 @@ namespace RingCentral.Subscription
             SetTimeout();
         }
 
-        public Response Subscribe()
+        public Response Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
             if (eventFilters.Count == 0)
             {
@@ -144,7 +145,7 @@ namespace RingCentral.Subscription
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
                 }
-                Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, ErrorMessage);
+                Subscribe(_subscription.DeliveryMode.Address, "", userCallback ?? NotificationReturnMessage, connectCallback ?? SubscribeConnectStatusMessage, errorCallback ?? ErrorMessage);
                 subscribed = true;
                 SetTimeout();
                 return response;
@@ -205,31 +206,31 @@ namespace RingCentral.Subscription
             _pubnub.Unsubscribe(channel, userCallback, connectCallback,
                 disconnectCallback, errorCallback);
         }
-       private void NotificationReturnMessage(object message)
+        private void NotificationReturnMessage(object message)
         {
             if (_encrypted) _events["notification"] = DecryptMessage(message);
             else _events["notification"] = JObject.Parse(JsonConvert.DeserializeObject<List<string>>(message.ToString())[0]);
-            Log.Debug(Tag, "Subscribe Message: " + message);
+            Debug.WriteLine("Subscribe Message: " + message);
         }
 
         private void SubscribeConnectStatusMessage(object message)
         {
             _events["connectMessage"] = message;
-            Log.Debug(Tag, "Connect Message: " + message);
+            Debug.WriteLine("Connect Message: " + message);
         }
 
         private void ErrorMessage(object message)
         {
             _events["errorMessage"] = message;
-            Log.Debug(Tag, "Error Message: " + message);
+            Debug.WriteLine("Error Message: " + message);
         }
 
-       private void DisconnectMessage(object message)
+        private void DisconnectMessage(object message)
         {
             _events["disconnectMessage"] = message;
-            Log.Debug(Tag, "Disconnect Message: " + message);
+            Debug.WriteLine("Disconnect Message: " + message);
         }
-        private JObject DecryptMessage(object message)
+        public JObject DecryptMessage(object message)
         {
 
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
@@ -238,6 +239,6 @@ namespace RingCentral.Subscription
             deserializedMessage[0] = Encoding.UTF8.GetString(decryptedMessage);
             return JObject.Parse(deserializedMessage[0]);
         }
-        
+
     }
 }

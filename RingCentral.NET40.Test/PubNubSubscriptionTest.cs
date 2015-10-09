@@ -13,7 +13,7 @@ namespace RingCentral.NET40.Test
         private const string Channel = "RCNETSDK-TEST";
         private SubscriptionServiceMock _subscriptionServiceMock;
     
-
+        
         [Test]
         public void UnsubscribePubNubTest()
         {
@@ -46,7 +46,7 @@ namespace RingCentral.NET40.Test
             SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var subscribed = sub.Subscribe();
+            var subscribed = sub.Subscribe(null,null,null);
             Thread.Sleep(1000);
             Assert.IsNotNull(subscribed);
             Assert.AreEqual(true, subscribed.CheckStatus());
@@ -61,7 +61,7 @@ namespace RingCentral.NET40.Test
             SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var test = sub.Subscribe();
+            var test = sub.Subscribe(null,null,null);
             Thread.Sleep(500);
             sub.ClearEvents();
             sub.SetEvents(new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" });
@@ -77,7 +77,7 @@ namespace RingCentral.NET40.Test
             SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var test = sub.Subscribe();
+            var test = sub.Subscribe(null,null,null);
             Thread.Sleep(500);
             sub.Remove();
             Assert.IsFalse(sub.IsSubsribed());
@@ -89,7 +89,7 @@ namespace RingCentral.NET40.Test
         public void NoEventFiltersTest()
         {
             SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
-            sub.Subscribe();
+            sub.Subscribe(null,null,null);
             Thread.Sleep(500);
         }
         [Test]

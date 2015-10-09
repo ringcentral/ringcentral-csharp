@@ -67,7 +67,7 @@ namespace RingCentral.Subscription
         {
             timeout.Stop();
             if (subscribed) Renew();
-            else Subscribe();
+            else Unsubscribe();
     
         }
         public void SetEvents(List<string> newEventFilters)
@@ -124,7 +124,7 @@ namespace RingCentral.Subscription
             SetTimeout();
         }
 
-        public Response Subscribe()
+        public Response Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
             if (eventFilters.Count == 0)
             {
@@ -144,7 +144,7 @@ namespace RingCentral.Subscription
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
                 }
-                Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, ErrorMessage);
+                Subscribe(_subscription.DeliveryMode.Address, "", userCallback ?? NotificationReturnMessage,  connectCallback ?? SubscribeConnectStatusMessage, errorCallback ?? ErrorMessage);
                 subscribed = true;
                 SetTimeout();
                 return response;
@@ -237,7 +237,7 @@ namespace RingCentral.Subscription
             return "Error: Message not found";
         }
 
-        private JObject DecryptMessage(object message)
+        public JObject DecryptMessage(object message)
         {
 
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
