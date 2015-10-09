@@ -145,6 +145,12 @@ var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,Actio
 ```
 Note: By overriding the actions you will not be able to access the messages through the methods shown below in "Access PubNub message from subscription". 
 
+### Decrypt Message 
+```
+var decrytpedJObject =  subscription.DecryptMessage(message)
+```
+message is the encrypted message pushed from PubNub 	
+
 ### Delete Subscription
 
 ```
