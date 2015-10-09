@@ -124,17 +124,27 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store
 Response response = ringCentral.Delete(request);
 ```
 
-### Create Subscription 
+### Create Subscription with default call backs
 ``` 
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe();
+var response = subscription.Subscribe(null,null,null);
 ```
+
 Alternatively you can set Event Filters by:
 ```
 subscription.SetEvent(listOfEvents);
 ```
-Where listOfEvents is a List<string> containing each event to subscribe to. 
+Where listOfEvents is a List<string> containing each event to subscribe to.
+
+### Create Subscription with Callbacks 
+```
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
+subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
+```
+Note: By overriding the actions you will not be able to access the messages through the methods shown below in "Access PubNub message from subscription". 
+
 ### Delete Subscription
 
 ```
