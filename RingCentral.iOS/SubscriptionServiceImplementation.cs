@@ -216,14 +216,14 @@ namespace RingCentral.Subscription
         {
 
             if (_encrypted) _events["notification"] = DecryptMessage(message);
-            else _events["notification"] = message;
+            else _events["notification"] = JsonConvert.DeserializeObject((string)message);
             if (notificationAction != null) notificationAction(_events["notification"]);
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
         private void SubscribeConnectStatusMessage(object message)
         {
-            _events["connectMessage"] = message;
+            _events["connectMessage"] = JsonConvert.DeserializeObject((string)message);
             if (connectionAction != null) connectionAction(_events["connectMessage"]);
             Debug.WriteLine("Connect Message: " + message);
         }
