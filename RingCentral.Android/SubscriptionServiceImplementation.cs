@@ -216,21 +216,20 @@ namespace RingCentral.Subscription
         {
 
             if (_encrypted) _events["notification"] = DecryptMessage(message);
-            else _events["notification"] = message;
+            else _events["notification"] = JsonConvert.DeserializeObject((string)message);
             if (notificationAction != null) notificationAction(_events["notification"]);
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
         private void SubscribeConnectStatusMessage(object message)
         {
-            _events["connectMessage"] = message;
+            _events["connectMessage"] = JsonConvert.DeserializeObject((string)message);
             if (connectionAction != null) connectionAction(_events["connectMessage"]);
             Debug.WriteLine("Connect Message: " + message);
         }
 
         private void ErrorMessage(object message)
         {
-
             _events["errorMessage"] = message;
             if (errorAction != null) errorAction(_events["errorMessage"]);
             Debug.WriteLine("Error Message: " + message);
@@ -238,7 +237,7 @@ namespace RingCentral.Subscription
 
         private void DisconnectMessage(object message)
         {
-            //Disconnect does not return JSON, it returns list of objects. Only need [1]
+            //Disconnect does not return JSON, it returns list of strings. Only need [1]
             var seperatedMessage = (List<object>)message;
             _events["disconnectMessage"] = seperatedMessage[1].ToString();
             if (disconnectAction != null) disconnectAction(_events["disconnectMessage"]);

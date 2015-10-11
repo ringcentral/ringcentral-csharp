@@ -157,23 +157,54 @@ subscription.disconnectAction =  ActionOnDisconnect;
 ```
 
 
-
+### All callbacks must take only one parameter of type object.  See below for proper casting on actions.
 ### Casting on Notification from PubNub
-**All callbacks must take only one parameter of type object.  See below code block for proper casting on action.**
+
 **This will return an object that can easily be cast to a string or a JArray (Json.Net)**
-**Messages will be decrypted, if required, before being passed to Actions**
+**Messages will be decrypted, if required, before being passed to Actions. See below for an example of JSON returned.**
 Use a JArray to grab a token
 ```
 public void ActionOnMessage(object message) {
-	var RecievedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
+	var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
 }
 ```
 Or string for other JSON parsing
 ```
 public void ActionOnMessage(object message) {
-	var RecievedMessage = message.ToString();  
+	var ReceivedMessage = message.ToString();  
 }
 ```
+
+##### Casting on Connect
+Use a JArray to grab a token. 
+```
+public void ActionOnConnect(object message){
+	var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
+}
+```
+Or string for other JSON parsing
+```
+public void ActionOnConnect(object message) {
+	var ReceivedMessage = message.ToString();  
+}
+```
+##### Casting on Disconnect 
+Note: Disconnect messages are not deserializable JSON. 
+```
+public void ActionOnDisconnect(object message) {
+	var receivedMessage = message.ToString();
+}
+```
+
+##### Casting on Error Message
+Note: PubNub error messages are not deserializable JSON. 
+```
+public void ActionOnError(object error) {
+	var receivedMessage = message.ToString();
+}
+```
+
+
 ### Example JSON returned from PubNub Notification Message
 This example provides some possible tokens for JSON parsing of PubNub Notification message
 ```
