@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.0.38</version>
+    <version>0.0.39</version>
     <title>RingCentral SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>Infinity Interactive</owners>
