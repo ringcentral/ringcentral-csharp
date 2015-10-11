@@ -50,7 +50,7 @@ namespace RingCentral.NET40.Test
             Thread.Sleep(1000);
             Assert.IsNotNull(subscribed);
             Assert.AreEqual(true, subscribed.CheckStatus());
-            Assert.IsTrue(sub.IsSubsribed());
+            Assert.IsTrue(sub.IsSubscribed());
             sub.Remove();
             Thread.Sleep(1000);
             
@@ -66,7 +66,7 @@ namespace RingCentral.NET40.Test
             sub.ClearEvents();
             sub.SetEvents(new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" });
             sub.Renew();
-            Assert.IsTrue(sub.IsSubsribed());
+            Assert.IsTrue(sub.IsSubscribed());
             sub.Remove();
             Thread.Sleep(500);
         }
@@ -80,7 +80,7 @@ namespace RingCentral.NET40.Test
             var test = sub.Subscribe(null,null,null);
             Thread.Sleep(500);
             sub.Remove();
-            Assert.IsFalse(sub.IsSubsribed());
+            Assert.IsFalse(sub.IsSubscribed());
             Thread.Sleep(500);
 
         }

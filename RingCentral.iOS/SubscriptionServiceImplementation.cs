@@ -45,7 +45,7 @@ namespace RingCentral.Subscription
             GC.KeepAlive(timeout);
             timeout.Start();
         }
-        public bool IsSubsribed()
+        public bool IsSubscribed()
         {
             return subscribed;
         }
