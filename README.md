@@ -138,18 +138,69 @@ subscription.SetEvent(listOfEvents);
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
 ### Create Subscription with Callbacks 
+
 ```
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
 ```
-Note: By overriding the actions you will not be able to access the messages through the methods shown below in "Access PubNub message from subscription". 
+Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
 
-### Decrypt Message from Subscription
 ```
-var decrytpedJObject =  subscription.DecryptMessage(message)
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral, disconnectAction = ActionOnDisconnect};
 ```
-message is the encrypted message pushed from PubNub 	
+
+Or after initialization
+
+```
+subscription.disconnectAction =  ActionOnDisconnect;
+```
+
+
+
+### Casting on Notification from PubNub
+**All callbacks must take only one parameter of type object.  See below code block for proper casting on action.**
+**This will return an object that can easily be cast to a string or a JArray (Json.Net)**
+**Messages will be decrypted, if required, before being passed to Actions**
+Use a JArray to grab a token
+```
+public void ActionOnMessage(object message) {
+	var RecievedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
+}
+```
+Or string for other JSON parsing
+```
+public void ActionOnMessage(object message) {
+	var RecievedMessage = message.ToString();  
+}
+```
+### Example JSON returned from PubNub Notification Message
+This example provides some possible tokens for JSON parsing of PubNub Notification message
+```
+[
+	{
+	  "event": "/restapi/v1.0/account/~/extension/111/message-store",
+	  "body": {
+	    "lastUpdated": "2015-10-10T21:28:43.094-07:00",
+	    "changes": [
+	      {
+	        "newCount": 0,
+	        "updatedCount": 1,
+	        "type": "Fax"
+	      },
+	      {
+	        "newCount": 2,
+	        "updatedCount": 0,
+	        "type": "SMS"
+	      }
+	    ],
+	    "extensionId": 1111
+	  },
+	  "uuid": "111-222-333-444",
+	  "timestamp": "2015-10-11T04:28:51.821Z"
+	}
+]
+```
 
 ### Delete Subscription
 
@@ -158,9 +209,11 @@ var response = subscription.Remove();
 ```
 
 ### Unsubscribe from Subscription
+Note: If you provided a callback action for PubNub disconnect it will fire once during unsubscribe.
 ```
 subscription.Unsubscribe();
 ```
+
 ### Access PubNub message from subscription
 ```
 var notificationMessage = subscription.ReturnMessage("notification");

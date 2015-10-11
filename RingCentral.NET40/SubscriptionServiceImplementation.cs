@@ -24,6 +24,8 @@ namespace RingCentral.Subscription
         private List<string> eventFilters =  new List<string>();
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
         private const int RenewHandicap = 60;
+        private Action<object> notificationAction, connectionAction, errorAction;
+        public Action<object> disconnectAction { private get; set; }
         private Dictionary<string, object> _events = new Dictionary<string, object>
         {
             {"notification",""},
@@ -126,10 +128,14 @@ namespace RingCentral.Subscription
 
         public Response Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
+
             if (eventFilters.Count == 0)
             {
                 throw new Exception("Event filters are undefined");
             }
+            if (userCallback != null) notificationAction = userCallback;
+            if (connectCallback != null) connectionAction = connectCallback;
+            if (errorCallback != null) errorAction = errorCallback;
             try
             {
                 var jsonData = GetFullEventsFilter();
@@ -144,7 +150,7 @@ namespace RingCentral.Subscription
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
                 }
-                Subscribe(_subscription.DeliveryMode.Address, "", userCallback ?? NotificationReturnMessage,  connectCallback ?? SubscribeConnectStatusMessage, errorCallback ?? ErrorMessage);
+                Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,  SubscribeConnectStatusMessage,  ErrorMessage);
                 subscribed = true;
                 SetTimeout();
                 return response;
@@ -208,26 +214,33 @@ namespace RingCentral.Subscription
 
         private void NotificationReturnMessage(object message)
         {
+
             if (_encrypted) _events["notification"] = DecryptMessage(message);
-            else _events["notification"] = JObject.Parse(JsonConvert.DeserializeObject<List<string>>(message.ToString())[0]);
+            else _events["notification"] = JsonConvert.DeserializeObject((string)message);
+            if (notificationAction != null) notificationAction(_events["notification"]);
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
         private void SubscribeConnectStatusMessage(object message)
         {
             _events["connectMessage"] = message;
+            if (connectionAction != null) connectionAction(_events["connectMessage"]);
             Debug.WriteLine("Connect Message: " + message);
         }
 
        private void ErrorMessage(object message)
         {
             _events["errorMessage"] = message;
+            if (errorAction != null) errorAction(_events["errorMessage"]);
             Debug.WriteLine("Error Message: " + message);
         }
 
         private void DisconnectMessage(object message)
         {
-            _events["disconnectMessage"] = message;
+            //Disconnect does not return JSON, it returns list of strings. Only need [1]
+            var seperatedMessage = (List<object>)message;
+            _events["disconnectMessage"] = seperatedMessage[1].ToString();
+            if (disconnectAction != null) disconnectAction(_events["disconnectMessage"]);
             Debug.WriteLine("Disconnect Message: " + message);
         }
 
@@ -237,14 +250,14 @@ namespace RingCentral.Subscription
             return "Error: Message not found";
         }
 
-        public JObject DecryptMessage(object message)
+        private object DecryptMessage(object message)
         {
 
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
             byte[] decoded64Message = Convert.FromBase64String(deserializedMessage[0]);
             byte[] decryptedMessage = _decrypto.TransformFinalBlock(decoded64Message, 0, decoded64Message.Length);
             deserializedMessage[0] = Encoding.UTF8.GetString(decryptedMessage);
-            return JObject.Parse(deserializedMessage[0]);
+            return deserializedMessage[0];
         }
 
     }
