@@ -42,6 +42,9 @@
   1. [Delete Subscription](#delete-subscription)
   1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
   1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+1. [Support](#support)
+1. [Contributions](#contributions)
+1. [License](#license)
 
 ## Installation
 
@@ -329,6 +332,26 @@ var connectMessage = subscription.ReturnMessage("connectMessage");
 var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
+
+## Support
+
+For support using this SDK, please use the following resources:
+
+1. [RingCentral Developer Community](https://devcommunity.ringcentral.com)
+1. [RingCentral C# SDK GitHub repo](https://github.com/ringcentral/ringcentral-csharp)
+1. [Stack Overflow](http://stackoverflow.com/)
+
+## Contributions
+
+Any reports of problems, comments or suggestions are most welcome.
+
+Please report these on [Github](https://github.com/ringcentral/ringcentral-csharp)
+
+## License
+
+RingCentral SDK is available under an MIT-style license. See [LICENSE](LICENSE) for details.
+
+RingCentral SDK &copy; 2015 by RingCentral.
 
  [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
  [nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
