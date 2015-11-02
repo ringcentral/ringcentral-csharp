@@ -333,6 +333,28 @@ var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
+## Links
+
+Project Repo
+
+* https://github.com/ringcentral/ringcentral-csharp
+
+RingCentral Developer Site
+
+* https://developer.ringcentral.com
+
+RingCentral API Docs
+
+* https://developer.ringcentral.com/library.html
+
+RingCentral API Explorer
+
+* http://ringcentral.github.io/api-explorer
+
+RingCentral GitHub Organization
+
+* https://github.com/ringcentral
+
 ## Support
 
 For support using this SDK, please use the following resources:
