@@ -11,6 +11,7 @@
 1. [Installation](#installation)
   1. [Additional Instructions for PubNub](#additional-instructions-for-pubnub)
 1. [Basic Usage](#basic-usage)
+  1. [API Developer Guide](#api-developer-guide)
   1. [Initialization](#initialization)
     1. [Set User Agent Header](#set-user-agent-header)
   2. [OAuth 2.0 Authorization](#oauth-2.0-authorization)
@@ -35,8 +36,8 @@
     1. [Using Explicit Callbacks](#using-explicit-callbacks)
   1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
     1. [Casting on Connect](#casting-on-connect)
-    1. [Casting on Disconnect](#casting-on-connect)
-    1. [Casting on Error](#casting-on-connect)
+    1. [Casting on Disconnect](#casting-on-disconnect)
+    1. [Casting on Error](#casting-on-error)
   1. [Example PubNub Notification Message](#example-pubnub-notification-message)
   1. [Delete Subscription](#delete-subscription)
   1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
@@ -57,6 +58,10 @@ This will download the Ring Central Portable Class Library into your project as 
 PubNub will need to manually be installed in your project.  Find the platform you are targeting at [PubNub](https://github.com/pubnub/c-sharp "PubNub") and follow the instructions to include the library in your project.
 
 ## Basic Usage
+
+### API Developer Guide
+
+This SDK wraps the RingCentral Connect Platform API which is documented in the [RingCentral Connect Platform Developer Guide](https://developer.ringcentral.com/api-docs/latest/index.html). For additional information, please refer to the Developer Guide.
 
 ### Initialization
 
