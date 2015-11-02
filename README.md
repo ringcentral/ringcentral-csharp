@@ -1,5 +1,9 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true)](https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp)
-[![Coverage Status](https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github)](https://coveralls.io/github/ringcentral/ringcentral-csharp?branch=develop)
+[![NuGet][nuget-version-svg]][nuget-version-link]
+[![NuGet][nuget-count-svg]][nuget-count-link]
+[![Build Status][build-status-svg]][build-status-link]
+[![Coverage Status][coverage-status-svg]][coverage-status-link]
+[![License][license-svg]][license-link]
+
 # RingCentral SDK for C&#35;
 
 # Installation
@@ -253,7 +257,13 @@ var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
-
-
-
-
+ [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSimple.svg
+ [nuget-version-link]: https://www.nuget.org/packages/RingCentralSimple/
+ [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSimple.svg
+ [nuget-count-link]: https://www.nuget.org/packages/RingCentralSimple/
+ [build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
+ [build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
+ [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
+ [coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
+ [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
+ [license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
