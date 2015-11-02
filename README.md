@@ -257,10 +257,10 @@ var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
- [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSimple.svg
- [nuget-version-link]: https://www.nuget.org/packages/RingCentralSimple/
- [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSimple.svg
- [nuget-count-link]: https://www.nuget.org/packages/RingCentralSimple/
+ [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
+ [nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
+ [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
+ [nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
  [build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
  [build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
  [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
