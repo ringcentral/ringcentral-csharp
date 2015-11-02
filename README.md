@@ -32,8 +32,8 @@
     1. [Delete Message](#delete-message)
 1. [Subscription](#subscription)
   1. [Create Subscription](#create-subscription)
-    1. [Using Default Callbacks](#using-default-callbacks)
-    1. [Using Explicit Callbacks](#using-explicit-callbacks)
+    1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
+    1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
   1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
     1. [Casting on Connect](#casting-on-connect)
     1. [Casting on Disconnect](#casting-on-disconnect)
@@ -68,19 +68,19 @@ This SDK wraps the RingCentral Connect Platform API which is documented in the [
 
 ### Initialization
 
-```csharp
+```cs
 //import RingCentral SDK
 using RingCentral;
 ```
 
-```csharp
+```cs
 //Initialize Ring Central Client
 var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint", "Application Name","Application Version").GetPlatform();
 ```
 
 #### Set User Agent Header
 
-```csharp
+```cs
 ringCentral.SetUserAgentHeader("Application Name", "Application Version");
 ```
 
@@ -88,19 +88,19 @@ ringCentral.SetUserAgentHeader("Application Name", "Application Version");
 
 #### Authorize
 
-```csharp
+```cs
 Response response = ringCentral.Authorize(userName, extension, password, true);
 ```
 
 #### Refresh
 
-```csharp
+```cs
 Response response = ringCentral.Refresh();
 ```
 
 #### Logout
 
-```csharp
+```cs
 ringCentral.Logout();
 ```
 
@@ -161,21 +161,21 @@ var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
 ```
 
 #### Update Message Status
-```
+```cs
 var messageStatusJson = "{\"readStatus\": \"Read\"}";
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 Response response = ringCentral.Put(request);
 ```
 
 ##### Update Message Status using x-http-ovverride-header
-```
+```cs
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 request.SetXhttpOverRideHeader("PUT"); 
 Response response = ringCentral.Post(request);
 ```
 
 #### Delete Message
-```
+```cs
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
 Response response = ringCentral.Delete(request);
 ```
@@ -188,34 +188,34 @@ RingCentral provides the ability to subscribe for event data using PubNub.
 
 #### Create Subscription using Default Callbacks
 
-```csharp
+```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(null,null,null);
 ```
 
 Alternatively you can set Event Filters by:
-```
+```cs
 subscription.SetEvent(listOfEvents);
 ```
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
 #### Create Subscription using Explicit Callbacks 
 
-```csharp
+```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
 ```
 Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
 
-```csharp
+```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral, disconnectAction = ActionOnDisconnect};
 ```
 
 Or after initialization
 
-```csharp
+```cs
 subscription.disconnectAction =  ActionOnDisconnect;
 ```
 
@@ -228,7 +228,7 @@ All callbacks must take only one parameter of type object.  See below for proper
 
 Use a JArray to grab a token
 
-```csharp
+```cs
 public void ActionOnMessage(object message) {
 	var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
 }
@@ -236,7 +236,7 @@ public void ActionOnMessage(object message) {
 
 Or string for other JSON parsing
 
-```csharp
+```cs
 public void ActionOnMessage(object message) {
 	var ReceivedMessage = message.ToString();  
 }
@@ -246,7 +246,7 @@ public void ActionOnMessage(object message) {
 
 Use a JArray to grab a token.
 
-```csharp
+```cs
 public void ActionOnConnect(object message){
 	var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
 }
@@ -254,7 +254,7 @@ public void ActionOnConnect(object message){
 
 Or string for other JSON parsing
 
-```csharp
+```cs
 public void ActionOnConnect(object message) {
 	var ReceivedMessage = message.ToString();  
 }
@@ -264,7 +264,7 @@ public void ActionOnConnect(object message) {
 
 Note: Disconnect messages are not deserializable JSON.
 
-```csharp
+```cs
 public void ActionOnDisconnect(object message) {
 	var receivedMessage = message.ToString();
 }
@@ -274,7 +274,7 @@ public void ActionOnDisconnect(object message) {
 
 Note: PubNub error messages are not deserializable JSON.
 
-```csharp
+```cs
 public void ActionOnError(object error) {
 	var receivedMessage = message.ToString();
 }
@@ -312,7 +312,7 @@ This example provides some possible tokens for JSON parsing of PubNub Notificati
 
 ### Delete Subscription
 
-```csharp
+```cs
 var response = subscription.Remove();
 ```
 
@@ -320,13 +320,13 @@ var response = subscription.Remove();
 
 Note: If you provided a callback action for PubNub disconnect it will fire once during unsubscribe.
 
-```csharp
+```cs
 subscription.Unsubscribe();
 ```
 
 ### Access PubNub Message from Subscription
 
-```csharp
+```cs
 var notificationMessage = subscription.ReturnMessage("notification");
 var connectMessage = subscription.ReturnMessage("connectMessage");
 var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
