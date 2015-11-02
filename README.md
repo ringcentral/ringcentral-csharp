@@ -30,18 +30,18 @@
     1. [Update Message Status](#update-message-status)
       1. [Update Message Status using x-http-override-header](#update-message-using-x-http-override-header)
     1. [Delete Message](#delete-message)
-1. [Subscription](#subscription)
-  1. [Create Subscription](#create-subscription)
-    1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
-    1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
-  1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
-    1. [Casting on Connect](#casting-on-connect)
-    1. [Casting on Disconnect](#casting-on-disconnect)
-    1. [Casting on Error](#casting-on-error)
-  1. [Example PubNub Notification Message](#example-pubnub-notification-message)
-  1. [Delete Subscription](#delete-subscription)
-  1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
-  1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+  1. [Subscription](#subscription)
+    1. [Create Subscription](#create-subscription)
+      1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
+      1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
+    1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
+      1. [Casting on Connect](#casting-on-connect)
+      1. [Casting on Disconnect](#casting-on-disconnect)
+      1. [Casting on Error](#casting-on-error)
+    1. [Example PubNub Notification Message](#example-pubnub-notification-message)
+    1. [Delete Subscription](#delete-subscription)
+    1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
+    1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
 1. [Support](#support)
 1. [Contributions](#contributions)
 1. [License](#license)
@@ -180,13 +180,13 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store
 Response response = ringCentral.Delete(request);
 ```
 
-## Subscription
+### Subscription
 
 RingCentral provides the ability to subscribe for event data using PubNub.
 
-### Create Subscription
+#### Create Subscription
 
-#### Create Subscription using Default Callbacks
+##### Create Subscription using Default Callbacks
 
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
@@ -200,7 +200,7 @@ subscription.SetEvent(listOfEvents);
 ```
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
-#### Create Subscription using Explicit Callbacks 
+##### Create Subscription using Explicit Callbacks 
 
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
@@ -221,7 +221,7 @@ subscription.disconnectAction =  ActionOnDisconnect;
 
 All callbacks must take only one parameter of type object.  See below for proper casting on actions.
 
-### Casting PubNub Notifications
+#### Casting PubNub Notifications
 
 **This will return an object that can easily be cast to a string or a JArray (Json.Net)**
 **Messages will be decrypted, if required, before being passed to Actions. See below for an example of JSON returned.**
@@ -242,7 +242,7 @@ public void ActionOnMessage(object message) {
 }
 ```
 
-#### Casting on Connect
+##### Casting on Connect
 
 Use a JArray to grab a token.
 
@@ -260,7 +260,7 @@ public void ActionOnConnect(object message) {
 }
 ```
 
-#### Casting on Disconnect
+##### Casting on Disconnect
 
 Note: Disconnect messages are not deserializable JSON.
 
@@ -270,7 +270,7 @@ public void ActionOnDisconnect(object message) {
 }
 ```
 
-#### Casting on Error
+##### Casting on Error
 
 Note: PubNub error messages are not deserializable JSON.
 
@@ -280,7 +280,7 @@ public void ActionOnError(object error) {
 }
 ```
 
-### Example PubNub Notification Message
+#### Example PubNub Notification Message
 
 This example provides some possible tokens for JSON parsing of PubNub Notification message
 
@@ -310,13 +310,13 @@ This example provides some possible tokens for JSON parsing of PubNub Notificati
 ]
 ```
 
-### Delete Subscription
+#### Delete Subscription
 
 ```cs
 var response = subscription.Remove();
 ```
 
-### Unsubscribe from Subscription
+#### Unsubscribe from Subscription
 
 Note: If you provided a callback action for PubNub disconnect it will fire once during unsubscribe.
 
@@ -324,7 +324,7 @@ Note: If you provided a callback action for PubNub disconnect it will fire once 
 subscription.Unsubscribe();
 ```
 
-### Access PubNub Message from Subscription
+#### Access PubNub Message from Subscription
 
 ```cs
 var notificationMessage = subscription.ReturnMessage("notification");
