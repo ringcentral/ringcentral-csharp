@@ -1,76 +1,111 @@
+# RingCentral SDK for C&#35;
+
 [![NuGet][nuget-version-svg]][nuget-version-link]
 [![NuGet][nuget-count-svg]][nuget-count-link]
 [![Build Status][build-status-svg]][build-status-link]
 [![Coverage Status][coverage-status-svg]][coverage-status-link]
 [![License][license-svg]][license-link]
 
-# RingCentral SDK for C&#35;
+## Table of contents
 
-# Installation
+1. [Installation](#installation)
+  1. [Additional Instructions for PubNub](#additional-instructions-for-pubnub)
+1. [Basic Usage](#basic-usage)
+  1. [Initialization](#initialization)
+    1. [Set User Agent Header](#set-user-agent-header)
+  2. [OAuth 2.0 Authorization](#oauth-2.0-authorization)
+    1. [Authorize](#authorize)
+    1. [Refresh](#refresh)
+    1. [Logout](#logout)
+  3. [Quick Recipes](#quick-recipes)
+    1. [Send SMS](#send-sms)
+    1. [Send Fax](#send-fax)
+    1. [Get Account Information](#get-account-information)
+    1. [Get Address Book](#get-address-book)
+    1. [Using x-http-method-override Header](#using-x-http-method-override-header)
+  4. [Message Store](#message-store)
+    1. [Get Message Store](#get-message-store)
+    1. [Get Message Store First ID](#get-message-store-first-id)
+    1. [Update Message Status](#update-message-status)
+      1. [Update Message Status using x-http-override-header](#update-message-using-x-http-override-header)
+    1. [Delete Message](#delete-message)
+1. [Subscription](#subscription)
+  1. [Create Subscription](#create-subscription)
+    1. [Using Default Callbacks](#using-default-callbacks)
+    1. [Using Explicit Callbacks](#using-explicit-callbacks)
+  1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
+    1. [Casting on Connect](#casting-on-connect)
+    1. [Casting on Disconnect](#casting-on-connect)
+    1. [Casting on Error](#casting-on-connect)
+  1. [Example PubNub Notification Message](#example-pubnub-notification-message)
+  1. [Delete Subscription](#delete-subscription)
+  1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
+  1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+
+## Installation
 
 Via NuGet
 
 ```
-Install-Package RingCentralSDK 
+PM> Install-Package RingCentralSDK 
 ```
 
 This will download the Ring Central Portable Class Library into your project as well as the [PubNub](https://github.com/pubnub/c-sharp "PubNub") dependencies
 
-## Additional Instructions for PubNub
+### Additional Instructions for PubNub
 
 PubNub will need to manually be installed in your project.  Find the platform you are targeting at [PubNub](https://github.com/pubnub/c-sharp "PubNub") and follow the instructions to include the library in your project.
 
-# Basic Usage
+## Basic Usage
 
-## Initialization
+### Initialization
 
-```
+```csharp
 //import RingCentral SDK
 using RingCentral;
 ```
 
-```
+```csharp
 //Initialize Ring Central Client
 var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint", "Application Name","Application Version").GetPlatform();
 ```
 
+#### Set User Agent Header
 
-## Recipes
-### Set User Agent Header
-```
+```csharp
 ringCentral.SetUserAgentHeader("Application Name", "Application Version");
 ```
 
-### Authorize
-```
-Response response = ringCentral.Authorize(userName, extension, password, true);
-````
+### OAuth 2.0 Authorization
 
-### Refresh
+#### Authorize
+
+```csharp
+Response response = ringCentral.Authorize(userName, extension, password, true);
 ```
+
+#### Refresh
+
+```csharp
 Response response = ringCentral.Refresh();
 ```
 
-### Logout
-```
+#### Logout
+
+```csharp
 ringCentral.Logout();
 ```
 
-### x-http-method-override
-```
-Request overRiderequest = new Request("/restapi/v1.0/account/~");
-overRiderequest.SetXhttpOverRideHeader("GET");
-Response overRideResponse = ringCentral.Post(overRiderequest);
+### Quick Recipes
+
+#### Send SMS
+```cs
+Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
+Response response = ringCentral.Post(request);
 ```
 
-### Get Account Information
-```
-Request request = new Request("/restapi/v1.0/account/~");
-Response response = ringCentral.Get(request);
-```
-
-### Send Fax
-```
+#### Send Fax
+```cs
 const string text = "Hello world!";
 
 var byteArrayText = System.Text.Encoding.UTF8.GetBytes(text);
@@ -85,51 +120,67 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, a
 Response response = ringCentral.Post(request);
 ```
 
-### Send SMS
-```
-Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
-Response response = ringCentral.Post(request);
+#### Get Account Information
+```cs
+Request request = new Request("/restapi/v1.0/account/~");
+Response response = ringCentral.Get(request);
 ```
 
 ### Get Address Book
-```
+```cs
 Request request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
 Response response = ringCentral.Get(request);
 ```
 
-### Get Message Store
+#### Using x-http-method-override Header
+```cs
+Request overRideRequest = new Request("/restapi/v1.0/account/~");
+overRideRequest.SetXhttpOverRideHeader("GET");
+Response overRideResponse = ringCentral.Post(overRideRequest);
 ```
+
+### Message Store
+
+#### Get Message Store
+```cs
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
 Response response = ringCentral.Get(request);
 ```
 
-### Get the First id in the Message Store
-```
+#### Get Message Store First ID
+```cs
 var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
 ```
 
-### Update Message Status
+#### Update Message Status
 ```
 var messageStatusJson = "{\"readStatus\": \"Read\"}";
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 Response response = ringCentral.Put(request);
 ```
 
-### Update Message Status via x-http-ovverride-header
+##### Update Message Status using x-http-ovverride-header
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 request.SetXhttpOverRideHeader("PUT"); 
 Response response = ringCentral.Post(request);
 ```
 
-### Delete Message
+#### Delete Message
 ```
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
 Response response = ringCentral.Delete(request);
 ```
 
-### Create Subscription with default call backs
-``` 
+## Subscription
+
+RingCentral provides the ability to subscribe for event data using PubNub.
+
+### Create Subscription
+
+#### Create Subscription using Default Callbacks
+
+```csharp
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(null,null,null);
@@ -141,77 +192,91 @@ subscription.SetEvent(listOfEvents);
 ```
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
-### Create Subscription with Callbacks 
+#### Create Subscription using Explicit Callbacks 
 
-```
+```csharp
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
 ```
 Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
 
-```
+```csharp
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral, disconnectAction = ActionOnDisconnect};
 ```
 
 Or after initialization
 
-```
+```csharp
 subscription.disconnectAction =  ActionOnDisconnect;
 ```
 
+All callbacks must take only one parameter of type object.  See below for proper casting on actions.
 
-### All callbacks must take only one parameter of type object.  See below for proper casting on actions.
-### Casting on Notification from PubNub
+### Casting PubNub Notifications
 
 **This will return an object that can easily be cast to a string or a JArray (Json.Net)**
 **Messages will be decrypted, if required, before being passed to Actions. See below for an example of JSON returned.**
+
 Use a JArray to grab a token
-```
+
+```csharp
 public void ActionOnMessage(object message) {
 	var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
 }
 ```
+
 Or string for other JSON parsing
-```
+
+```csharp
 public void ActionOnMessage(object message) {
 	var ReceivedMessage = message.ToString();  
 }
 ```
 
-##### Casting on Connect
-Use a JArray to grab a token. 
-```
+#### Casting on Connect
+
+Use a JArray to grab a token.
+
+```csharp
 public void ActionOnConnect(object message){
 	var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
 }
 ```
+
 Or string for other JSON parsing
-```
+
+```csharp
 public void ActionOnConnect(object message) {
 	var ReceivedMessage = message.ToString();  
 }
 ```
-##### Casting on Disconnect 
-Note: Disconnect messages are not deserializable JSON. 
-```
+
+#### Casting on Disconnect
+
+Note: Disconnect messages are not deserializable JSON.
+
+```csharp
 public void ActionOnDisconnect(object message) {
 	var receivedMessage = message.ToString();
 }
 ```
 
-##### Casting on Error Message
-Note: PubNub error messages are not deserializable JSON. 
-```
+#### Casting on Error
+
+Note: PubNub error messages are not deserializable JSON.
+
+```csharp
 public void ActionOnError(object error) {
 	var receivedMessage = message.ToString();
 }
 ```
 
+### Example PubNub Notification Message
 
-### Example JSON returned from PubNub Notification Message
 This example provides some possible tokens for JSON parsing of PubNub Notification message
-```
+
+```json
 [
 	{
 	  "event": "/restapi/v1.0/account/~/extension/111/message-store",
@@ -239,18 +304,21 @@ This example provides some possible tokens for JSON parsing of PubNub Notificati
 
 ### Delete Subscription
 
-```
+```csharp
 var response = subscription.Remove();
 ```
 
 ### Unsubscribe from Subscription
+
 Note: If you provided a callback action for PubNub disconnect it will fire once during unsubscribe.
-```
+
+```csharp
 subscription.Unsubscribe();
 ```
 
-### Access PubNub message from subscription
-```
+### Access PubNub Message from Subscription
+
+```csharp
 var notificationMessage = subscription.ReturnMessage("notification");
 var connectMessage = subscription.ReturnMessage("connectMessage");
 var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
