@@ -59,7 +59,7 @@ namespace RingCentral.SDK
             var body = new Dictionary<string, string>
                        {
                            {"username", userName},
-                           {"password", Uri.EscapeUriString(password)},
+                           {"password", password},
                            {"extension", extension},
                            {"grant_type", "password"},
                            {"access_token_ttl", AccessTokenTtl},
