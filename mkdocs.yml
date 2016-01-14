@@ -4,17 +4,9 @@ repo_url: https://github.com/ringcentral/ringcentral-csharp.git
 docs_dir: docs
 theme: readthedocs
 pages:
-# Introduction:
-- ['index.md', 'Overview', 'RingCentral SDK']
-
-## Initialization
-- ['usage/initialization/Initialization.md', 'Initialization', 'Initialization']
-
-## Authorization:
-- ['usage/authorization/Authorization.md', 'Authorization', 'Authorization']
-
-## Message Store:
-- ['usage/message-store/Message-Store.md', 'Message Store', 'Message Store']
-
-## Notifications:
-- ['usage/notifications/Subscriptions.md', 'Notifications', 'Subscriptions']
+- Quickstart: 'index.md'
+- User Guide:
+    - 'Initialization': 'usage/initialization/Initialization.md'
+    - 'Authorization': 'usage/authorization/Authorization.md'
+    - 'Message Store': 'usage/message-store/Message-Store.md'
+    - 'Subscriptions': 'usage/notifications/Subscriptions.md'
