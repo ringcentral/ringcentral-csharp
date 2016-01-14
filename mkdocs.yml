@@ -5,10 +5,13 @@ docs_dir: docs
 theme: readthedocs
 pages:
 # Introduction:
-- ['index.md', 'Quickstart', 'RingCentral SDK']
+- ['index.md', 'Overview', 'RingCentral SDK']
 
 ## Initialization
 - ['usage/initialization/Initialization.md', 'Initialization', 'Initialization']
 
 ## Authorization:
 - ['usage/authorization/Authorization.md', 'Authorization', 'Authorization']
+
+## Message Store:
+- ['usage/message-store/Message-Store.md', 'Message Store', 'Message Store']

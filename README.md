@@ -4,6 +4,7 @@
 [![NuGet][nuget-count-svg]][nuget-count-link]
 [![Build Status][build-status-svg]][build-status-link]
 [![Coverage Status][coverage-status-svg]][coverage-status-link]
+[![Docs][docs-readthedocs-svg]][docs-readthedocs-link]
 [![License][license-svg]][license-link]
 
 ## Table of contents
@@ -383,5 +384,7 @@ RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
  [build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
  [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
  [coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
+ [docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
+ [docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
  [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
  [license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
