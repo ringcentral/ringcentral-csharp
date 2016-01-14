@@ -373,7 +373,7 @@ Please report these on [Github](https://github.com/ringcentral/ringcentral-cshar
 
 RingCentral SDK is available under an MIT-style license. See [LICENSE](LICENSE) for details.
 
-RingCentral SDK &copy; 2015 by RingCentral.
+RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
 
  [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
  [nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
