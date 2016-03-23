@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
+using RingCentral.Subscription;
 
 namespace RingCentral.Test
 {
