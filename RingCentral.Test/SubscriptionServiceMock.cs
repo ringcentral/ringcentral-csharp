@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using PubNubMessaging.Core;
-using RingCentral.Subscription;
 
-namespace RingCentral.NET40.Test
+
+namespace RingCentral.Test
 {
-    public class SubscriptionServiceMock : ISubscriptionService
+    public class SubscriptionServiceMock
     {
         private readonly Pubnub _pubnub;
         private Dictionary<string, object> Events = new Dictionary<string, object>
