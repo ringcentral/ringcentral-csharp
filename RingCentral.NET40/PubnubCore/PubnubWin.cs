@@ -4,6 +4,9 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
+using System.Net.Security;
+
+
 #if NETFX_CORE
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
