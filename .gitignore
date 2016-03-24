@@ -190,3 +190,6 @@ ModelManifest.xml
 /RingCentralConsole/packages
 /RingCentral/*.nupkg
 /*.nupkg
+
+# Mac File ignore
+*.DS_Store
