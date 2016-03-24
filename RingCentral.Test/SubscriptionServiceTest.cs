@@ -124,6 +124,15 @@ namespace RingCentral.Test
                 Thread.Sleep(500);
             }
 
+            [Test]
+            public void SetSslFlagForPubnubTest()
+            {
+
+                SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
+                sub.SetSsl(true);
+                Assert.True(sub.GetSsl());
+            }
+
 
         }
     }

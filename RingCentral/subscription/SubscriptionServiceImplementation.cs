@@ -25,6 +25,7 @@ namespace RingCentral.Subscription
 		private const int RenewHandicap = 60;
 		private Action<object> notificationAction, connectionAction, errorAction;
 		public Action<object> disconnectAction { private get; set; }
+        private bool sslOn;
 		private Dictionary<string, object> _events = new Dictionary<string, object>
 		{
 			{"notification",""},
@@ -143,12 +144,19 @@ namespace RingCentral.Subscription
 				Response response = _platform.Post(request);
 				_subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
 				if (_subscription.DeliveryMode.Encryption)
-				{
-					PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey, false);
+                { 
+					PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey, sslOn);
 				}
 				else
 				{
-					PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
+				    if (sslOn)
+				    {
+                        PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,sslOn);
+				    }
+				    else
+				    {
+				        PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
+				    }
 				}
 				Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,  SubscribeConnectStatusMessage,  ErrorMessage);
 				subscribed = true;
@@ -188,14 +196,22 @@ namespace RingCentral.Subscription
 		private void PubNubServiceImplementation(string publishKey, string subscribeKey)
 		{
 			_pubnub = new Pubnub(publishKey, subscribeKey);
+            GC.KeepAlive(_pubnub);
 		}
+        private void PubNubServiceImplementation(string publishKey, string subscribeKey,bool sslOn)
+        {
+            _pubnub = new Pubnub(publishKey, subscribeKey,"","",sslOn);
+            GC.KeepAlive(_pubnub);
+        }
 
-		public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey,bool sslOn)
+        public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey,bool sslOn)
 		{
-			_pubnub = new Pubnub(publishKey,subscribeKey);
+			_pubnub = new Pubnub(publishKey,subscribeKey,secretKey,cipherKey,sslOn);
 			_encrypted = true;
 			_decrypto = new  PubnubCrypto(cipherKey);
-		}
+            GC.KeepAlive(_pubnub);
+            GC.KeepAlive(_decrypto);
+        }
 
 		public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
 			Action<object> connectCallback, Action<object> errorCallback)
@@ -251,11 +267,20 @@ namespace RingCentral.Subscription
 
 		private object DecryptMessage(object message)
 		{
-		   
 
 			var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
 			return _decrypto.Decrypt(deserializedMessage[0]);
 		}
+
+        public void SetSsl(bool setSsl)
+        {
+            sslOn = setSsl;
+        }
+
+        public bool GetSsl()
+        {
+            return sslOn;
+        }
 	}
 
 }
