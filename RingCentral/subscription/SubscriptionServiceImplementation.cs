@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Threading;
 
 
+
+
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation
@@ -40,8 +42,8 @@ namespace RingCentral.Subscription
 
             AutoResetEvent autoEvent = new AutoResetEvent(false);
             //TODO: Ensure these timers are right
-            timeout = new Timer(OnTimedExpired,autoEvent,(int)((_subscription.ExpiresIn*1000) - RenewHandicap),250);
-
+           
+            timeout = new Timer(OnTimedExpired,autoEvent,(int)((_subscription.ExpiresIn*1000) - RenewHandicap), Timeout.Infinite);
 			//Keep garbage collection from removing this on extended time
 			GC.KeepAlive(timeout);
 
@@ -142,7 +144,6 @@ namespace RingCentral.Subscription
 				var jsonData = GetFullEventsFilter();
 				Request request = new Request(SubscriptionEndPoint, jsonData);
 				Response response = _platform.Post(request);
-				_subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
 				if (_subscription.DeliveryMode.Encryption)
                 { 
 					PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey, sslOn);
@@ -161,7 +162,7 @@ namespace RingCentral.Subscription
 				Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,  SubscribeConnectStatusMessage,  ErrorMessage);
 				subscribed = true;
 				SetTimeout();
-				return response;
+                return response;
 			}
 			catch(Exception e)
 			{
@@ -177,6 +178,7 @@ namespace RingCentral.Subscription
 			_subscription = new Subscription();
 			ClearEvents();
 			subscribed = false;
+            
 
 		}
 		private string GetFullEventsFilter()
