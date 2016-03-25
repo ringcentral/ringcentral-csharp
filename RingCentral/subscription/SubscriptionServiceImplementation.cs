@@ -144,7 +144,8 @@ namespace RingCentral.Subscription
 				var jsonData = GetFullEventsFilter();
 				Request request = new Request(SubscriptionEndPoint, jsonData);
 				Response response = _platform.Post(request);
-				if (_subscription.DeliveryMode.Encryption)
+                _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
+                if (_subscription.DeliveryMode.Encryption)
                 { 
 					PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey, sslOn);
 				}
