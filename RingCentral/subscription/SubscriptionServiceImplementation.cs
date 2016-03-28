@@ -151,14 +151,8 @@ namespace RingCentral.Subscription
 				}
 				else
 				{
-				    if (sslOn)
-				    {
-                        PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,sslOn);
-				    }
-				    else
-				    {
-				        PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
-				    }
+				   PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
+				   
 				}
 				Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,  SubscribeConnectStatusMessage,  ErrorMessage);
 				subscribed = true;
@@ -198,15 +192,11 @@ namespace RingCentral.Subscription
 
 		private void PubNubServiceImplementation(string publishKey, string subscribeKey)
 		{
-			_pubnub = new Pubnub(publishKey, subscribeKey);
-            GC.KeepAlive(_pubnub);
+		    if (sslOn) _pubnub = new Pubnub(publishKey, subscribeKey, "", "", sslOn);
+		    else _pubnub = new Pubnub(publishKey, subscribeKey); 
+		    GC.KeepAlive(_pubnub);
 		}
-        private void PubNubServiceImplementation(string publishKey, string subscribeKey,bool sslOn)
-        {
-            _pubnub = new Pubnub(publishKey, subscribeKey,"","",sslOn);
-            GC.KeepAlive(_pubnub);
-        }
-
+       
         public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey,bool sslOn)
 		{
 			_pubnub = new Pubnub(publishKey,subscribeKey,secretKey,cipherKey,sslOn);
