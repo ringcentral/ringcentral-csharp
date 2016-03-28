@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.1.2</version>
+    <version>0.1.2-alpha6</version>
     <title>RingCentral SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>RingCentral</owners>
@@ -11,7 +11,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>RingCentral C# SDK</description>
-    <copyright>Copyright 2015</copyright>
+    <copyright>Copyright 2016</copyright>
     <tags>RingCentral Ring Central C# SDK</tags>
     <dependencies>
     

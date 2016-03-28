@@ -129,8 +129,8 @@ namespace RingCentral.Test
             {
 
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = Platform };
-                sub.SetSsl(true);
-                Assert.True(sub.GetSsl());
+                sub.EnableSSL(true);
+                Assert.True(sub.IsSSL());
             }
 
 
