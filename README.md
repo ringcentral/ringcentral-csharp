@@ -33,6 +33,7 @@
     1. [Delete Message](#delete-message)
   1. [Subscription](#subscription)
     1. [Create Subscription](#create-subscription)
+	  1. [Enable SSL in Subscription](#enable-ssl-for-pubnub-subscription)
       1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
       1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
     1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
@@ -55,11 +56,8 @@ Via NuGet
 PM> Install-Package RingCentralSDK 
 ```
 
-This will download the Ring Central Portable Class Library into your project as well as the [PubNub](https://github.com/pubnub/c-sharp "PubNub") dependencies
+This will download the Ring Central Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. Separate versions for Xamarin Android, iOS and .NET 4.0 no longer required. 
 
-### Additional Instructions for PubNub
-
-PubNub will need to manually be installed in your project.  Find the platform you are targeting at [PubNub](https://github.com/pubnub/c-sharp "PubNub") and follow the instructions to include the library in your project.
 
 ## Basic Usage
 
@@ -201,6 +199,19 @@ subscription.SetEvent(listOfEvents);
 ```
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
+##### Enabling SSL for PubNub Subscription
+To enable SSL for PubNub you will need to call the method ```cs  subscription.EnableSSL(true);```
+ before calling
+ ```cs  subscription.Subscribe(null,null,null);```
+An Example of enabling SSL for Pubnub:
+```cs
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
+subscription.EnableSSL(true);
+subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+var response = subscription.Subscribe(null,null,null);
+```
+Checking if SSL is enabled can be done by:
+```cs bool isSSLOn = subscription.isSSL(); ```
 ##### Create Subscription using Explicit Callbacks 
 
 ```cs
