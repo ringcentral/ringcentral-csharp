@@ -200,18 +200,30 @@ subscription.SetEvent(listOfEvents);
 Where listOfEvents is a List<string> containing each event to subscribe to.
 
 ##### Enabling SSL for PubNub Subscription
-To enable SSL for PubNub you will need to call the method ```cs  subscription.EnableSSL(true);```
- before calling
- ```cs  subscription.Subscribe(null,null,null);```
+To enable SSL for PubNub you will need to call the method 
+```cs  
+subscription.EnableSSL(true);
+```
+
+before calling
+
+```cs
+subscription.Subscribe(null,null,null);
+```
+
 An Example of enabling SSL for Pubnub:
+
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.EnableSSL(true);
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
 var response = subscription.Subscribe(null,null,null);
 ```
+
 Checking if SSL is enabled can be done by:
-```cs bool isSSLOn = subscription.isSSL(); ```
+```cs 
+bool isSSLOn = subscription.isSSL();
+ ```
 ##### Create Subscription using Explicit Callbacks 
 
 ```cs
