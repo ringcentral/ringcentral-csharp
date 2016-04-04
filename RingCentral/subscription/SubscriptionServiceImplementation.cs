@@ -6,16 +6,22 @@ using Subscription = RingCentral.Subscription.Subscription;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
-
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
+using Org.BouncyCastle.Crypto.Parameters;
+using PCLCrypto;
 
 
 
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation
-	{
-		private Pubnub _pubnub;
+    {
+
+        private Pubnub _pubnub;
 		private bool _encrypted;
 		private PubnubCrypto _decrypto;
 		public Platform _platform;
@@ -41,10 +47,7 @@ namespace RingCentral.Subscription
 		{
 
             AutoResetEvent autoEvent = new AutoResetEvent(false);
-            //TODO: Ensure these timers are right
-           
             timeout = new Timer(OnTimedExpired,autoEvent,(int)((_subscription.ExpiresIn*1000) - RenewHandicap), Timeout.Infinite);
-			//Keep garbage collection from removing this on extended time
 			GC.KeepAlive(timeout);
 
 		}
@@ -198,12 +201,11 @@ namespace RingCentral.Subscription
 		}
        
         public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey,string cipherKey)
-		{
-			_pubnub = new Pubnub(publishKey,subscribeKey,secretKey,cipherKey,_enableSSL);
-			_encrypted = true;
-			_decrypto = new  PubnubCrypto(cipherKey);
+        {
+            
+            _encrypted = true;
+			_pubnub = new Pubnub(publishKey,subscribeKey,secretKey,"",_enableSSL);
             GC.KeepAlive(_pubnub);
-            GC.KeepAlive(_decrypto);
         }
 
 		public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
@@ -223,8 +225,8 @@ namespace RingCentral.Subscription
 		private void NotificationReturnMessage(object message)
 		{
 
-			if (_encrypted) _events["notification"] = DecryptMessage(message);
-			else _events["notification"] = JsonConvert.DeserializeObject((string)message);
+            if (_encrypted) _events["notification"] = DecryptMessage(message);
+            else  _events["notification"] = JsonConvert.DeserializeObject((string)message);
 			if (notificationAction != null) notificationAction(_events["notification"]);
 			Debug.WriteLine("Subscribe Message: " + message);
 		}
@@ -260,9 +262,13 @@ namespace RingCentral.Subscription
 
 		private object DecryptMessage(object message)
 		{
-
-			var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
-			return _decrypto.Decrypt(deserializedMessage[0]);
+            var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
+		    byte[] keyArray = Convert.FromBase64String(_subscription.DeliveryMode.EncryptionKey);
+		    byte[] messageData = Convert.FromBase64String(deserializedMessage[0]);
+            var encyptionProvider = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcbPkcs7);
+            var key = encyptionProvider.CreateSymmetricKey(keyArray);
+            byte[] decodedMessage = WinRTCrypto.CryptographicEngine.Decrypt(key, messageData);
+            return Encoding.UTF8.GetString(decodedMessage,0,decodedMessage.Length);
 		}
 
         public void EnableSSL(bool enableSSL)

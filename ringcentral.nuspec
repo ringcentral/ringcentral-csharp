@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>0.1.2-alpha6</version>
+    <version>0.1.2-alpha7</version>
     <title>RingCentral SDK</title>
     <authors>Paul Zolnierczyk</authors>
     <owners>RingCentral</owners>
@@ -21,6 +21,7 @@
         <dependency id="Microsoft.Net.Http" version="2.2.29"  />
         <dependency id="Newtonsoft.Json" version="7.0.1" /> 
 		<dependency id="PubnubPCL" version="3.7.0.1"/>
+		<dependency id="PCLCrypto" version="1.0.86"/>
       </group>
       
       <group targetFramework="portable-net40">
@@ -29,11 +30,16 @@
         <dependency id="Microsoft.Net.Http" version="2.2.29"  />
         <dependency id="Newtonsoft.Json" version="7.0.1" /> 
 		<dependency id="PubnubPCL" version="3.7.0.1"/>
+		<dependency id="PCLCrypto" version="1.0.86"/>
+
       </group>
       
-      <group targetFramework="portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS+Xamarin.Android">
+      <group targetFramework="portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+Xamarin.Android">
         <dependency id="Newtonsoft.Json" version="7.0.1" /> 
 		<dependency id="PubnubPCL" version="3.7.0.1"/>  
+		<dependency id="PCLCrypto" version="2.0.147"/>
+		
+
   </group>
 	
     </dependencies>
