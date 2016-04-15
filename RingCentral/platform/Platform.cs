@@ -32,19 +32,19 @@ namespace RingCentral.SDK
         //    _client = new HttpClient { BaseAddress = new Uri(ApiEndpoint) };
         //}
 
-        public Platform(string appKey, string appSecret, string apiEndPoint, string appName, string appVersion)
+        public Platform(string appKey, string appSecret, string server, string appName = "", string appVersion = "")
         {
             AppKey = appKey;
             AppSecret = appSecret;
-            ApiEndpoint = apiEndPoint;
+            Server = server;
             Auth = new Auth();
-            _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
+            _client = new HttpClient {BaseAddress = new Uri(Server)};
             SetUserAgentHeader(appName, appVersion);
         }
 
         private string AppKey { get; set; }
         private string AppSecret { get; set; }
-        private string ApiEndpoint { get; set; }
+        private string Server { get; set; }
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session

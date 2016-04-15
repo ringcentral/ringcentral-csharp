@@ -4,7 +4,7 @@
     {
         private string AppKey { get; set; }
         private string AppSecret { get; set; }
-        private string ApiEndpoint { get; set; }
+        private string Server { get; set; }
         private string AppName { get; set; }
         private string AppVersion { get; set; }
 
@@ -17,16 +17,16 @@
         /// </summary>
         /// <param name="appKey">RingCentral Application Key</param>
         /// <param name="appSecret">RingCentral Application Secret</param>
-        /// <param name="apiEndPoint">RingCentral API Endpoint</param>
-        public SDK(string appKey, string appSecret, string apiEndPoint, string appName, string appVersion)
+        /// <param name="server">RingCentral API Endpoint</param>
+        public SDK(string appKey, string appSecret, string server, string appName = "", string appVersion = "")
         {
             AppKey = appKey;
             AppSecret = appSecret;
-            ApiEndpoint = apiEndPoint;
+            Server = server;
             AppName = appName;
             AppVersion = appVersion;
 
-            Platform = new Platform(appKey,appSecret,apiEndPoint,appName,appVersion);
+            Platform = new Platform(appKey,appSecret,server,appName,appVersion);
         }
 
         public Platform GetPlatform()
