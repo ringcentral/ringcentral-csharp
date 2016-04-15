@@ -23,7 +23,6 @@ namespace RingCentral.Subscription
 
         private Pubnub _pubnub;
 		private bool _encrypted;
-		private PubnubCrypto _decrypto;
 		public Platform _platform;
 		private Subscription _subscription;
 		private Timer timeout;

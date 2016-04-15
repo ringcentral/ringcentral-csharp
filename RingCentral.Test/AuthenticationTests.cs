@@ -12,7 +12,6 @@ namespace RingCentral.Test
     {
         protected const string RefreshEndPoint = "/restapi/oauth/token";
         protected const string VersionEndPoint = "/restapi";
-        protected const string RevokeEndPoint = "/restapi/oauth/revoke";
 
     
 
