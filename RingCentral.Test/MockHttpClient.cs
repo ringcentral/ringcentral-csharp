@@ -96,7 +96,7 @@ namespace RingCentral.Test
             AddRingOutResponses();
             AddSubscriptionResponses();
             AddResponseTestResponses();
-            
+
         }
 
         public void AddAccountAndExtensionResponses()
@@ -607,9 +607,9 @@ namespace RingCentral.Test
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
-                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" + 
+                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" +
                         "\"eventFilters\" : [ \"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ],\r\n  \"expirationTime\" : \"2015-09-18T00:14:39.150Z\",\r\n  \"expiresIn\" : 899,\r\n  \"deliveryMode\" :" +
-                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +    
+                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +
                         "\"encryptionAlgorithm\" : \"AES\",\r\n    \"encryptionKey\" : \"6hTFP4B94ZNI+IvgxPLY7g==\"\r\n  }\r\n}", Encoding.UTF8, "application/json")
                 }
                 );
@@ -644,16 +644,16 @@ namespace RingCentral.Test
             string AccountInformationEndPoint = "/restapi/v1.0/account/";
             string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
 
-            AddGetMockResponse(new Uri(ApiEndPoint + AccountInformationEndPoint + "5" ),
+            AddGetMockResponse(new Uri(ApiEndPoint + AccountInformationEndPoint + "5"),
                 new HttpResponseMessage(HttpStatusCode.BadRequest)
-            {
-              Content = new StringContent("{\"errorCode\": \"CMN-201\",\"message\": \"Service Temporary Unavailable\","+
-                                         "\"errors\": [{\"errorCode\": \"CMN-201\"," + 
-                                         "\"message\": \"Service Temporary Unavailable\" }]}",Encoding.UTF8,"application/json")  
-            });
+                {
+                    Content = new StringContent("{\"errorCode\": \"CMN-201\",\"message\": \"Service Temporary Unavailable\"," +
+                                         "\"errors\": [{\"errorCode\": \"CMN-201\"," +
+                                         "\"message\": \"Service Temporary Unavailable\" }]}", Encoding.UTF8, "application/json")
+                });
             AddGetMockResponse(
                new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/6"),
-               new HttpResponseMessage(HttpStatusCode.OK) 
+               new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent(
                        "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/6\"," + "\"id\": 6," + "\"serviceInfo\": {" +
@@ -664,13 +664,14 @@ namespace RingCentral.Test
                                 "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
                                   "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
                               "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 6," +
-                                "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}",Encoding.UTF8,"text/plain")});
+                                "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "text/plain")
+               });
             AddGetMockResponse(new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/7"),
                 new HttpResponseMessage(HttpStatusCode.BadRequest)
                 {
                     Content = new StringContent("{ \"error\": \"invalid_request\", \"error_description\": \"Unsupported grant type\" }", Encoding.UTF8, "application/json")
                 });
-         
+
         }
     }
 }

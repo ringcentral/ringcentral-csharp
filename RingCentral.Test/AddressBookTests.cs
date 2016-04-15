@@ -56,7 +56,7 @@ namespace RingCentral.Test
                              "\"zip\": \"94123\"}" +
                              "}";
 
-            Request request = new Request(AddressBookEndPoint,jsonData);
+            Request request = new Request(AddressBookEndPoint, jsonData);
 
             Response response = Platform.Post(request);
             JToken token = response.GetJson();

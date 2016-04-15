@@ -26,7 +26,7 @@
             AppName = appName;
             AppVersion = appVersion;
 
-            Platform = new Platform(appKey,appSecret,server,appName,appVersion);
+            Platform = new Platform(appKey, appSecret, server, appName, appVersion);
         }
 
         public Platform GetPlatform()

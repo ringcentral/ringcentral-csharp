@@ -1,17 +1,17 @@
-﻿using System;
+﻿using RingCentral.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using RingCentral.Helper;
 
 namespace RingCentral.Http
 {
     public class Request : Headers
     {
         protected static List<string> RequestTypes =
-            new List<string>(new[] {UrlEncodedContentType, JsonContentType, MultipartContentType});
+            new List<string>(new[] { UrlEncodedContentType, JsonContentType, MultipartContentType });
 
         private readonly List<Attachment> _attachments;
         private readonly Dictionary<string, string> _formBody;
@@ -90,7 +90,7 @@ namespace RingCentral.Http
 
         public Uri GetUri()
         {
-            return new Uri(_url + GetQuerystring(),UriKind.Relative);
+            return new Uri(_url + GetQuerystring(), UriKind.Relative);
         }
 
         public HttpMethod GetHttpMethod(string method)
@@ -154,9 +154,9 @@ namespace RingCentral.Http
                 {
                     var fileContent = new ByteArrayContent(attachment.GetByteArrayContent());
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                                                             {
-                                                                 FileName = attachment.GetFileName()
-                                                             };
+                    {
+                        FileName = attachment.GetFileName()
+                    };
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.GetContentType());
                     multiPartContent.Add(fileContent);
                 }
@@ -214,7 +214,7 @@ namespace RingCentral.Http
         /// <param name="method">The method that will be used to override</param>
         public void SetXhttpOverRideHeader(string method)
         {
-            var allowedMethods = new List<string>(new[] {"GET", "POST", "PUT", "DELETE"});
+            var allowedMethods = new List<string>(new[] { "GET", "POST", "PUT", "DELETE" });
 
             if (method != null && allowedMethods.Contains(method.ToUpper()))
             {

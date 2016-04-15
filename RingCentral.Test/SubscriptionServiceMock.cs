@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PubNubMessaging.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using PubNubMessaging.Core;
 
 
 namespace RingCentral.Test
@@ -18,7 +18,7 @@ namespace RingCentral.Test
         };
 
         public SubscriptionServiceMock(string publishKey, string subscribeKey, string secretKey, string cipherKey, bool sslOn)
-            
+
         {
             _pubnub = new Pubnub(publishKey, subscribeKey, secretKey, cipherKey, sslOn);
             _pubnub.GrantAccess<string>("RCNETSDK-TEST", true, true, 20, SubscribeConnectStatusMessage, ErrorMessage);
@@ -27,8 +27,8 @@ namespace RingCentral.Test
         public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
             Action<object> connectCallback, Action<object> errorCallback)
         {
-                       _pubnub.Subscribe<string>(channel, channelGroup, NotificationMessage,
-                SubscribeConnectStatusMessage, ErrorMessage);
+            _pubnub.Subscribe<string>(channel, channelGroup, NotificationMessage,
+     SubscribeConnectStatusMessage, ErrorMessage);
         }
 
         public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
@@ -43,7 +43,7 @@ namespace RingCentral.Test
             _pubnub.Publish<string>("RCNETSDK-TEST", message, true, NotificationMessage, ErrorMessage);
         }
 
- 
+
         public void NotificationMessage(object message)
         {
             Events["notification"] = message;

@@ -1,6 +1,6 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using RingCentral.Http;
+using System;
 
 namespace RingCentral.Test
 {
@@ -14,16 +14,16 @@ namespace RingCentral.Test
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/6");
             Response result = RingCentralClient.GetPlatform().Get(request);
-            var jsonResult =  result.GetJson();
-            
+            var jsonResult = result.GetJson();
+
         }
 
         [Test]
         public void GetErrorGoodCheckStatus()
         {
-           Request request = new Request(AccountInformationEndPoint);
-           Response result = RingCentralClient.GetPlatform().Get(request);
-           Assert.IsNull(result.GetError());
+            Request request = new Request(AccountInformationEndPoint);
+            Response result = RingCentralClient.GetPlatform().Get(request);
+            Assert.IsNull(result.GetError());
         }
     }
 }

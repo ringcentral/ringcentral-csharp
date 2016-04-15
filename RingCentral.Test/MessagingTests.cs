@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Helper;
 using RingCentral.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace RingCentral.Test
 {
@@ -131,10 +131,10 @@ namespace RingCentral.Test
         [Test]
         public void SendPagerMessage()
         {
-            List<string> pagerToList = new List<string> {"102", "103"};
-            PagerHelper pagerHelper = new PagerHelper(pagerToList,"101","Hello");
-            var jsonData = "{\"to\": [{\"extensionNumber\": \""+ pagerHelper.to[0] + "\"}, {\"extensionNumber\": \"" + pagerHelper.to[1] + "\"}]," +
-                            "\"from\": {\"extensionNumber\": \""+ pagerHelper.from +"\"},\"text\": \""+ pagerHelper.text +"\"}";
+            List<string> pagerToList = new List<string> { "102", "103" };
+            PagerHelper pagerHelper = new PagerHelper(pagerToList, "101", "Hello");
+            var jsonData = "{\"to\": [{\"extensionNumber\": \"" + pagerHelper.to[0] + "\"}, {\"extensionNumber\": \"" + pagerHelper.to[1] + "\"}]," +
+                            "\"from\": {\"extensionNumber\": \"" + pagerHelper.from + "\"},\"text\": \"" + pagerHelper.text + "\"}";
             Request request = new Request(PagerEndPoint, jsonData);
             Response result = RingCentralClient.GetPlatform().Post(request);
             JToken token = result.GetJson();
@@ -145,8 +145,8 @@ namespace RingCentral.Test
         [Test]
         public void SendSms()
         {
-            SmsHelper smsHelper= new SmsHelper("19999999999", "19999999999","Test SMS message");
-            var jsonData = "{\"to\": [{\"phoneNumber\": \""  +smsHelper.to + "\"}]," +
+            SmsHelper smsHelper = new SmsHelper("19999999999", "19999999999", "Test SMS message");
+            var jsonData = "{\"to\": [{\"phoneNumber\": \"" + smsHelper.to + "\"}]," +
                            "\"from\": {\"phoneNumber\": \"" + smsHelper.from + "\"}," +
                           "\"text\": \"" + smsHelper.text + "\" }";
             Request request = new Request(SmsEndPoint, jsonData);

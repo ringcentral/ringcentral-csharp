@@ -17,7 +17,7 @@ namespace RingCentral.Test
 
             JToken token = response.GetJson();
 
-            var presenceStatus = (string) token.SelectToken("presenceStatus");
+            var presenceStatus = (string)token.SelectToken("presenceStatus");
 
             Assert.AreEqual(presenceStatus, "Available");
         }

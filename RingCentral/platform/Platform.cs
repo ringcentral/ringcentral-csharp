@@ -1,12 +1,10 @@
-﻿using System;
+﻿using RingCentral.Http;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using RingCentral.Http;
-using System.Diagnostics;
 
 namespace RingCentral
 {
@@ -18,7 +16,7 @@ namespace RingCentral
         private const string TokenEndpoint = "restapi/oauth/token";
         private const string RevokeEndpoint = "restapi/oauth/revoke";
 
-        public HttpClient _client {  private get;  set; }
+        public HttpClient _client { private get; set; }
         protected Auth Auth;
 
         private Object thisLock = new Object();
@@ -38,7 +36,7 @@ namespace RingCentral
             AppSecret = appSecret;
             Server = server;
             Auth = new Auth();
-            _client = new HttpClient {BaseAddress = new Uri(Server)};
+            _client = new HttpClient { BaseAddress = new Uri(Server) };
             SetUserAgentHeader(appName, appVersion);
         }
 
@@ -133,7 +131,7 @@ namespace RingCentral
         private Response AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
-           
+
             var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
             return new Response(result);
@@ -152,7 +150,7 @@ namespace RingCentral
         ///     Gets the auth data set on authorization
         /// </summary>
         /// <returns>Dictionary of auth data</returns>
-        public void SetAuthData(Dictionary<string, string> authData )
+        public void SetAuthData(Dictionary<string, string> authData)
         {
             Auth.SetData(authData);
         }
@@ -186,7 +184,7 @@ namespace RingCentral
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = request.GetHttpMethod(method);
             requestMessage.RequestUri = request.GetUri();
-            
+
             request.GetXhttpOverRideHeader(requestMessage);
 
             return new Response(_client.SendAsync(requestMessage).Result);

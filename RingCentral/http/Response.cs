@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace RingCentral.Http
 {
@@ -26,7 +24,7 @@ namespace RingCentral.Http
 
         //    SetHeaders(headers);
 
-            
+
         //}
 
         public Response(HttpResponseMessage responseMessage)
@@ -38,7 +36,7 @@ namespace RingCentral.Http
             _body = body;
             _status = statusCode;
             SetHeaders(headers);
-            
+
             if (!CheckStatus())
             {
                 throw new Exception(GetError());
@@ -94,7 +92,7 @@ namespace RingCentral.Http
         {
             var output = Regex.Split(_body, "--Boundary([^;]+)");
 
-            var splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
+            var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
 
             var responses = new List<string>();
 
@@ -138,10 +136,10 @@ namespace RingCentral.Http
 
             var data = GetJson();
 
-            if (!string.IsNullOrEmpty((string) (data["message"])))
+            if (!string.IsNullOrEmpty((string)(data["message"])))
             {
-                message = (string) (data["message"]);
-            }            
+                message = (string)(data["message"]);
+            }
             if (!string.IsNullOrEmpty((string)(data["error_description"])))
             {
                 message = (string)(data["error_description"]);

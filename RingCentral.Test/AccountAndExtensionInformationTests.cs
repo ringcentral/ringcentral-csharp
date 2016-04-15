@@ -9,7 +9,7 @@ namespace RingCentral.Test
     {
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/";
         protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
-       
+
 
 
         [Test]
@@ -18,7 +18,7 @@ namespace RingCentral.Test
             Request request = new Request(AccountExtensionInformationEndPoint);
             Response response = Platform.Get(request);
 
-            Assert.AreEqual(response.GetStatus(),200);
+            Assert.AreEqual(response.GetStatus(), 200);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace RingCentral.Test
             Response response = Platform.Get(request);
 
             JToken token = response.GetJson();
-            var mainNumber = (string) token.SelectToken("mainNumber");
+            var mainNumber = (string)token.SelectToken("mainNumber");
 
             Assert.AreEqual(mainNumber, "19999999999");
         }

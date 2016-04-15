@@ -70,6 +70,6 @@ namespace RingCentral.Test
 
             Assert.AreEqual(getStatus, "Active");
         }
-             
+
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace RingCentral
 {
@@ -33,59 +33,59 @@ namespace RingCentral
         public void SetData(JToken jToken)
         {
             #region data
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("remember")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("remember")))
             {
-                Remember = (bool) jToken.SelectToken("remember");
+                Remember = (bool)jToken.SelectToken("remember");
             }
 
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("token_type")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("token_type")))
             {
-                TokenType = (string) jToken.SelectToken("token_type");
+                TokenType = (string)jToken.SelectToken("token_type");
             }
 
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("owner_id")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("owner_id")))
             {
-                OwnerId = (string) jToken.SelectToken("owner_id");
+                OwnerId = (string)jToken.SelectToken("owner_id");
             }
 
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("scope")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("scope")))
             {
-                Scope = (string) jToken.SelectToken("scope");
+                Scope = (string)jToken.SelectToken("scope");
             }
             #endregion
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
             #region Access Token
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("access_token")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("access_token")))
             {
-                AccessToken = (string) jToken.SelectToken("access_token");
+                AccessToken = (string)jToken.SelectToken("access_token");
             }
 
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("expires_in")))
             {
-                AccessTokenExpiresIn = (long) jToken.SelectToken("expires_in");
+                AccessTokenExpiresIn = (long)jToken.SelectToken("expires_in");
             }
 
-            if (string.IsNullOrEmpty((string) jToken.SelectToken("expire_time")) &&
-                !string.IsNullOrEmpty((string) jToken.SelectToken("expires_in")))
+            if (string.IsNullOrEmpty((string)jToken.SelectToken("expire_time")) &&
+                !string.IsNullOrEmpty((string)jToken.SelectToken("expires_in")))
             {
                 AccessTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("expires_in")) * 1000) + currentTimeInMilliseconds);
             }
-            else if(!string.IsNullOrEmpty((string) jToken.SelectToken("expire_time")))
+            else if (!string.IsNullOrEmpty((string)jToken.SelectToken("expire_time")))
             {
                 AccessTokenExpireTime = (long)jToken.SelectToken("expire_time");
             }
             #endregion
 
             #region Refresh Token
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("refresh_token")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token")))
             {
-                RefreshToken = (string) jToken.SelectToken("refresh_token");
+                RefreshToken = (string)jToken.SelectToken("refresh_token");
             }
 
-            if (!string.IsNullOrEmpty((string) jToken.SelectToken("refresh_token_expires_in")))
+            if (!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expires_in")))
             {
-                RefreshTokenExpiresIn = (long) jToken.SelectToken("refresh_token_expires_in");
+                RefreshTokenExpiresIn = (long)jToken.SelectToken("refresh_token_expires_in");
             }
 
             if (string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")) &&
@@ -93,7 +93,7 @@ namespace RingCentral
             {
                 RefreshTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("refresh_token_expires_in")) * 1000) + currentTimeInMilliseconds);
             }
-            else if(!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")))
+            else if (!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")))
             {
                 RefreshTokenExpireTime = (long)jToken.SelectToken("refresh_token_expire_time");
             }
@@ -106,7 +106,7 @@ namespace RingCentral
             #region data
             if (data.ContainsKey("remember") && !String.IsNullOrEmpty(data["remember"]))
             {
-               Remember = Convert.ToBoolean(data["remember"]);
+                Remember = Convert.ToBoolean(data["remember"]);
             }
 
             if (data.ContainsKey("token_type") && !String.IsNullOrEmpty(data["token_type"]))
@@ -142,10 +142,10 @@ namespace RingCentral
             {
                 AccessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
-            else if(data.ContainsKey("expires_time") && !string.IsNullOrEmpty(data["expire_time"]))
+            else if (data.ContainsKey("expires_time") && !string.IsNullOrEmpty(data["expire_time"]))
             {
                 AccessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
-            }       
+            }
             #endregion
 
             #region Refresh Token
@@ -221,7 +221,7 @@ namespace RingCentral
         /// <returns>bool value of token validity</returns>
         private bool IsTokenValid(long accessToken)
         {
-            var currentTimeInMilliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
             return accessToken > currentTimeInMilliseconds;
         }
