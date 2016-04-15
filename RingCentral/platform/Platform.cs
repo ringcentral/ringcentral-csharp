@@ -179,7 +179,7 @@ namespace RingCentral.SDK
 
         private Response ApiCall(string method, Request request)
         {
-            if (!IsAuthorized()) throw new Exception("Access has Expired");
+            if (!LoggedIn()) throw new Exception("Access has Expired");
 
             HttpRequestMessage requestMessage = new HttpRequestMessage();
 
@@ -255,7 +255,7 @@ namespace RingCentral.SDK
         ///     then a refresh is issued.
         /// </summary>
         /// <returns>boolean value of access authorization</returns>
-        public bool IsAuthorized()
+        public bool LoggedIn()
         {
             if (Auth.IsAccessTokenValid())
             {

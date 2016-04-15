@@ -62,7 +62,7 @@ namespace RingCentral.Test
         public void RevokeAuthorization()
         {
             Response revokeResult = Platform.Logout();
-            Assert.IsFalse(Platform.IsAuthorized());
+            Assert.IsFalse(Platform.LoggedIn());
         }
 
         [Test]
