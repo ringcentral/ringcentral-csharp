@@ -34,6 +34,7 @@ namespace RingCentral.Test
 
         public MockHttpClient()
         {
+            AddAuthenticationMockData();
             AddAccountAndExtensionResponses();
             AddAddressBookResponses();
             AddAuthenticationResponses();
@@ -114,15 +115,6 @@ namespace RingCentral.Test
                 {
                     Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }", Encoding.UTF8, "application/json")
                 });
-            mockResponses[HttpMethod.Post].Add(
-              new Uri(ApiEndPoint + RefreshEndPoint),
-              new HttpResponseMessage(HttpStatusCode.OK)
-              {
-                  Content = new StringContent(
-                      "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," +
-                      "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\"," +
-                      "\"owner_id\": \"1\" }", Encoding.UTF8, "application/json")
-              });
         }
         public void AddCallLogResponses()
         {

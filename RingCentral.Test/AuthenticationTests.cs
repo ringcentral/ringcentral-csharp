@@ -1,11 +1,35 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RingCentral.Http;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 
 namespace RingCentral.Test
 {
+
+    public partial class MockHttpClient
+    {
+        private void AddAuthenticationMockData()
+        {
+            mockResponses[HttpMethod.Post][new Uri(ApiEndPoint + "/restapi/oauth/token")] = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(@"{
+   ""access_token"" : ""U1BCMDFUMDRKV1MwMXxzLFSvXdw5PHMsVLEn_MrtcyxUsw"",
+   ""token_type"" : ""bearer"",
+   ""expires_in"" : 7199,
+   ""refresh_token"" : ""U1BCMDFUMDRKV1MwMXxzLFL4ec6A0XMsUv9wLriecyxS_w"",
+   ""refresh_token_expires_in"" : 604799,
+   ""scope"" : ""AccountInfo CallLog ExtensionInfo Messages SMS"",
+   ""owner_id"" : ""256440016""
+}", Encoding.UTF8, "application/json")
+            };
+        }
+    }
+
     [TestFixture]
     public class AuthenticationTests : TestConfiguration
     {
