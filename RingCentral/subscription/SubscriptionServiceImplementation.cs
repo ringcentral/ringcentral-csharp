@@ -1,7 +1,7 @@
 ﻿using System;
 using PubNubMessaging.Core;
-using RingCentral.SDK.Http;
-using RingCentral.SDK;
+using RingCentral.Http;
+using RingCentral;
 using Subscription = RingCentral.Subscription.Subscription;
 using System.Collections.Generic;
 using Newtonsoft.Json;

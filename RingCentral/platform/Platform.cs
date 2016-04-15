@@ -5,10 +5,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 using System.Diagnostics;
 
-namespace RingCentral.SDK
+namespace RingCentral
 {
     public class Platform
     {

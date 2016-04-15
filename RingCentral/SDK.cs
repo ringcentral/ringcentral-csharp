@@ -1,4 +1,4 @@
-﻿namespace RingCentral.SDK
+﻿namespace RingCentral
 {
     public class SDK
     {

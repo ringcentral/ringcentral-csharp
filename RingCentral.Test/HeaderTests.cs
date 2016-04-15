@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {

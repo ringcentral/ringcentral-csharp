@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
-using RingCentral.SDK;
+using RingCentral.Http;
+using RingCentral;
 
 namespace RingCentral.Test
 {
@@ -28,7 +28,7 @@ namespace RingCentral.Test
 
         protected Platform Platform;
 
-        protected RingCentral.SDK.SDK RingCentralClient;
+        protected RingCentral.SDK RingCentralClient;
         protected MockHttpClient MockResponseHandler = new MockHttpClient();
 
         [TestFixtureSetUp]
@@ -61,7 +61,7 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("PASSWORD");
             }
            
-            RingCentralClient = new RingCentral.SDK.SDK(appKey, appSecret, ApiEndPoint,"C Sharp Test Suite", "1.0.0");
+            RingCentralClient = new RingCentral.SDK(appKey, appSecret, ApiEndPoint,"C Sharp Test Suite", "1.0.0");
             Platform = RingCentralClient.GetPlatform();
             Platform._client = new HttpClient(MockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) };
             AuthResult = Platform.Authorize(UserName, Extension, password, true);

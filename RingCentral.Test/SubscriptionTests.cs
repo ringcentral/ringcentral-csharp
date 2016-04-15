@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 
 
 namespace RingCentral.Test
