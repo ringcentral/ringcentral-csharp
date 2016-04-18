@@ -37,7 +37,6 @@ namespace RingCentral.Test
             AddAuthenticationMockData();
             AddAccountAndExtensionResponses();
             AddAddressBookResponses();
-            AddAuthenticationResponses();
             AddCallLogResponses();
             AddGeographicalDicitonaryResponses();
             AddMessagingResponses();
@@ -96,25 +95,6 @@ namespace RingCentral.Test
                              "\"street\": \"3 Marina Blvd\", " + "\"city\": \"San-Francisco\", " + "\"state\": \"CA\", " + "\"zip\": \"94123\"}" + "} ", Encoding.UTF8, "application/json")
                    });
 
-        }
-        public void AddAuthenticationResponses()
-        {
-            string RefreshEndPoint = "/restapi/oauth/token";
-            string VersionEndPoint = "/restapi";
-            string RevokeEndPOint = "/restapi/oauth/revoke";
-            mockResponses[HttpMethod.Post].Add(
-                new Uri(ApiEndPoint + RevokeEndPOint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("")
-                }
-                );
-            mockResponses[HttpMethod.Get].Add(
-                new Uri(ApiEndPoint + VersionEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }", Encoding.UTF8, "application/json")
-                });
         }
         public void AddCallLogResponses()
         {

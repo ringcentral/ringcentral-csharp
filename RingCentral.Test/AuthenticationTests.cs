@@ -4,6 +4,7 @@ using RingCentral.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -25,6 +26,26 @@ namespace RingCentral.Test
    ""refresh_token_expires_in"" : 604799,
    ""scope"" : ""AccountInfo CallLog ExtensionInfo Messages SMS"",
    ""owner_id"" : ""256440016""
+}", Encoding.UTF8, "application/json")
+            };
+
+            mockResponses[HttpMethod.Post][new Uri(ApiEndPoint + "/restapi/oauth/revoke")] = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("")
+            };
+
+            mockResponses[HttpMethod.Get][new Uri(ApiEndPoint + "/restapi")] = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(@"{
+  ""uri"" : ""https.../restapi/"",
+  ""apiVersions"" : [ {
+    ""uri"" : ""https.../restapi/v1.0"",
+    ""versionString"" : ""1.0.14"",
+    ""releaseDate"" : ""2014-10-31T00:00:00.000Z"",
+    ""uriString"" : ""v1.0""
+  } ],
+  ""serverVersion"" : ""7.0.0.551"",
+  ""serverRevision"" : ""598ed4edcc56""
 }", Encoding.UTF8, "application/json")
             };
         }
@@ -76,7 +97,7 @@ namespace RingCentral.Test
             Response response = Platform.Get(request);
 
             JToken token = response.GetJson();
-            var version = (string)token.SelectToken("apiVersions").SelectToken("uriString");
+            var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
 
             Assert.AreEqual(version, "v1.0");
         }
