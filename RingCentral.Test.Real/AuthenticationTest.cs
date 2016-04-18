@@ -8,7 +8,7 @@ namespace RingCentral.Test.Real
         [Test]
         public void GetToken()
         {
-            // already authenticated in OneTimeSetUp
+            // already authenticated in TestFixtureSetUp
             Assert.IsTrue(platform.LoggedIn());
         }
 
