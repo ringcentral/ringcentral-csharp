@@ -193,3 +193,5 @@ ModelManifest.xml
 
 # Mac File ignore
 *.DS_Store
+
+swagger-codegen.jar
