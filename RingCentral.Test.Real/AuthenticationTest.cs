@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace RingCentral.Test.Real
+namespace RingCentral.Test
 {
     [TestFixture]
     public class AuthenticationTest : BaseTest

@@ -1,10 +1,8 @@
 ﻿using NUnit.Framework;
 using RingCentral.Http;
-using System;
-using Newtonsoft.Json.Linq;
 using System.Linq;
 
-namespace RingCentral.Test.Real
+namespace RingCentral.Test
 {
     [TestFixture]
     class APIVersionsTest:BaseTest

@@ -3,7 +3,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 
-namespace RingCentral.Test.Real
+namespace RingCentral.Test
 {
     [TestFixture]
     public class BaseTest
