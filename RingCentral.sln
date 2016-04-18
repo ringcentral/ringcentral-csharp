@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Test.Real", "Ri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Test.Mock", "RingCentral.Test.Mock\RingCentral.Test.Mock.csproj", "{96B878AF-BFD3-4E56-BEBF-7697D85F174A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.CodeGen", "RingCentral.CodeGen\RingCentral.CodeGen.csproj", "{98B86EA0-C589-4AF1-BDDB-4AC1187C51AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{96B878AF-BFD3-4E56-BEBF-7697D85F174A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96B878AF-BFD3-4E56-BEBF-7697D85F174A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96B878AF-BFD3-4E56-BEBF-7697D85F174A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98B86EA0-C589-4AF1-BDDB-4AC1187C51AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98B86EA0-C589-4AF1-BDDB-4AC1187C51AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98B86EA0-C589-4AF1-BDDB-4AC1187C51AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98B86EA0-C589-4AF1-BDDB-4AC1187C51AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
