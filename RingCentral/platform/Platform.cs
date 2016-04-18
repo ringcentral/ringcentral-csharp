@@ -21,15 +21,6 @@ namespace RingCentral
 
         private Object thisLock = new Object();
 
-        //public Platform(string appKey, string appSecret, string apiEndPoint)
-        //{
-        //    AppKey = appKey;
-        //    AppSecret = appSecret;
-        //    ApiEndpoint = apiEndPoint;
-        //    Auth = new Auth();
-        //    _client = new HttpClient { BaseAddress = new Uri(ApiEndpoint) };
-        //}
-
         public Platform(string appKey, string appSecret, string server, string appName = "", string appVersion = "")
         {
             AppKey = appKey;
