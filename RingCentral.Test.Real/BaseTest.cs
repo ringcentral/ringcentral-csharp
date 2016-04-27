@@ -50,7 +50,7 @@ namespace RingCentral.Test
         [TearDown]
         public void TearDown()
         {
-            Thread.Sleep(10000); // there is a rate limit
+            Thread.Sleep(3000); // there is a rate limit
         }
     }
 }
