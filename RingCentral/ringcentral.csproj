@@ -36,7 +36,6 @@
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <None Include="app.config" />
-    <None Include="model\README.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -46,8 +45,6 @@
     <Compile Include="Http\Headers.cs" />
     <Compile Include="Http\Request.cs" />
     <Compile Include="Http\Response.cs" />
-    <Compile Include="model\APIVersions.cs" />
-    <Compile Include="model\VersionInfo.cs" />
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

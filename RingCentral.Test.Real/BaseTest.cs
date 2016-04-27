@@ -21,24 +21,24 @@ namespace RingCentral.Test
             var password = "";
             var extension = "";
 
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_KEY")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_APP_KEY")))
             {
-                appKey = Environment.GetEnvironmentVariable("APP_KEY");
+                appKey = Environment.GetEnvironmentVariable("RC_APP_KEY");
             }
 
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_SECRET")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_APP_SECRET")))
             {
-                appSecret = Environment.GetEnvironmentVariable("APP_SECRET");
+                appSecret = Environment.GetEnvironmentVariable("RC_APP_SECRET");
             }
 
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("USER_NAME")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_USERNAME")))
             {
-                username = Environment.GetEnvironmentVariable("USER_NAME");
+                username = Environment.GetEnvironmentVariable("RC_USERNAME");
             }
 
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PASSWORD")))
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_PASSWORD")))
             {
-                password = Environment.GetEnvironmentVariable("PASSWORD");
+                password = Environment.GetEnvironmentVariable("RC_PASSWORD");
             }
 
             ringCentral = new SDK(appKey, appSecret, ApiEndPoint, "C Sharp Test Suite", "1.0.0");
