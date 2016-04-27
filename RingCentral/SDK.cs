@@ -12,7 +12,7 @@
         public const string SandboxServer = "https://platform.devtest.ringcentral.com";
         public const string ProductionServer = "https://platform.ringcentral.com";
 
-        protected Platform Platform;
+        private Platform platform;
 
         /// <summary>
         ///     Constructor that sets up RingCentralClient
@@ -28,12 +28,15 @@
             AppName = appName;
             AppVersion = appVersion;
 
-            Platform = new Platform(appKey, appSecret, server, appName, appVersion);
+            platform = new Platform(appKey, appSecret, server, appName, appVersion);
         }
 
-        public Platform GetPlatform()
+        public Platform Platform
         {
-            return Platform;
+            get
+            {
+                return platform;
+            }
         }
 
     }

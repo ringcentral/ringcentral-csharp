@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Net.Http;
 using System.Threading;
 
 namespace RingCentral.Test
@@ -42,8 +41,7 @@ namespace RingCentral.Test
             }
 
             ringCentral = new SDK(appKey, appSecret, server, "C Sharp Test Suite", "1.0.0");
-            platform = ringCentral.GetPlatform();
-            platform._client = new HttpClient(new WebRequestHandler()) { BaseAddress = new Uri(server) };
+            platform = ringCentral.Platform;
             platform.Authorize(username, extension, password, true);
         }
 

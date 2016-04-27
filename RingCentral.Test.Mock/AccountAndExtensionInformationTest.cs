@@ -66,7 +66,7 @@ namespace RingCentral.Test
     }
 
     [TestFixture]
-    public class AccountAndExtensionInformationTests : TestConfiguration
+    public class AccountAndExtensionInformationTests : BaseTest
     {
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/";
         protected const string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
@@ -77,7 +77,7 @@ namespace RingCentral.Test
         public void GetAccountExtensionInformation()
         {
             Request request = new Request(AccountExtensionInformationEndPoint);
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
 
             Assert.AreEqual(response.GetStatus(), 200);
         }
@@ -86,7 +86,7 @@ namespace RingCentral.Test
         public void GetAccountInformation()
         {
             Request request = new Request(AccountInformationEndPoint);
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
             var mainNumber = (string)token.SelectToken("mainNumber");
@@ -98,7 +98,7 @@ namespace RingCentral.Test
         public void GetExtensionInformation()
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/1");
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
 
             Assert.IsNotNull(response);
         }

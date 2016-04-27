@@ -52,7 +52,7 @@ namespace RingCentral.Test
     }
 
     [TestFixture]
-    public class AuthenticationTests : TestConfiguration
+    public class AuthenticationTests : BaseTest
     {
         protected const string RefreshEndPoint = "/restapi/oauth/token";
         protected const string VersionEndPoint = "/restapi";
@@ -62,7 +62,7 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            AuthResult = Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult.GetBody());
@@ -77,7 +77,7 @@ namespace RingCentral.Test
         public void TestRefresh()
         {
 
-            Response refreshResult = Platform.Refresh();
+            Response refreshResult = sdk.Platform.Refresh();
 
             Assert.NotNull(refreshResult);
 
@@ -94,7 +94,7 @@ namespace RingCentral.Test
         public void TestVersion()
         {
             Request request = new Request(VersionEndPoint);
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
             var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
@@ -105,15 +105,15 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            Response revokeResult = Platform.Logout();
-            Assert.IsFalse(Platform.LoggedIn());
+            Response revokeResult = sdk.Platform.Logout();
+            Assert.IsFalse(sdk.Platform.LoggedIn());
         }
 
         [Test]
         public void GetAuthData()
         {
-            AuthResult = Platform.Authorize("username", "101", "password", true);
-            var authData = Platform.GetAuthData();
+            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var authData = sdk.Platform.GetAuthData();
 
             JToken token = AuthResult.GetJson();
 
@@ -124,11 +124,8 @@ namespace RingCentral.Test
         [Test]
         public void SetAuthData()
         {
-
-            //Auth auth = new Auth();
-
-            AuthResult = Platform.Authorize("username", "101", "password", true);
-            var oldAuthData = Platform.GetAuthData();
+            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var oldAuthData = sdk.Platform.GetAuthData();
 
             var newAuthData = new Dictionary<string, string>();
             newAuthData.Add("remember", "true");
@@ -140,13 +137,12 @@ namespace RingCentral.Test
             newAuthData.Add("refresh_token", oldAuthData["refresh_token"]);
             newAuthData.Add("refresh_token_expires_in", oldAuthData["refresh_token_expires_in"]);
 
-            Platform.SetAuthData(newAuthData);
+            sdk.Platform.SetAuthData(newAuthData);
 
-            var authData = Platform.GetAuthData();
+            var authData = sdk.Platform.GetAuthData();
             Debug.WriteLine(authData["access_token"]);
             Assert.AreEqual(newAuthData["access_token"], authData["access_token"]);
             Assert.AreEqual(newAuthData["refresh_token"], authData["refresh_token"]);
-
         }
     }
 }

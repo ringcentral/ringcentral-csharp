@@ -4,7 +4,7 @@ using RingCentral.Http;
 namespace RingCentral.Test
 {
     [TestFixture]
-    public class HeaderTests : TestConfiguration
+    public class HeaderTest : BaseTest
     {
         protected const string AccountInformationEndPoint = "/restapi/v1.0/account/";
 
@@ -12,7 +12,7 @@ namespace RingCentral.Test
         public void GetHeaders()
         {
             Request request = new Request(AccountInformationEndPoint);
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
             Assert.IsNotNull(response.GetHeaders());
             Assert.AreEqual("application/json; charset=utf-8", response.GetHeaders().ContentType.ToString());
         }
@@ -21,7 +21,7 @@ namespace RingCentral.Test
         public void GetUrlEncoded()
         {
             Request request = new Request(AccountInformationEndPoint);
-            Response response = Platform.Get(request);
+            Response response = sdk.Platform.Get(request);
             Assert.IsFalse(response.IsUrlEncoded());
         }
     }
