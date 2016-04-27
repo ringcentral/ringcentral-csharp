@@ -101,7 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountAndExtensionInformationTests.cs" />
+    <Compile Include="AccountAndExtensionInformationTest.cs" />
     <Compile Include="AddressBookTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
     <Compile Include="CallLogTest.cs" />

@@ -9,14 +9,14 @@ namespace RingCentral.Test
         public void GetToken()
         {
             // already authenticated in TestFixtureSetUp
-            Assert.IsTrue(platform.LoggedIn());
+            Assert.IsTrue(sdk.Platform.LoggedIn());
         }
 
         [Test]
         public void RevokeToken()
         {
-            platform.Logout();
-            Assert.IsFalse(platform.LoggedIn());
+            sdk.Platform.Logout();
+            Assert.IsFalse(sdk.Platform.LoggedIn());
         }
     }
 }
