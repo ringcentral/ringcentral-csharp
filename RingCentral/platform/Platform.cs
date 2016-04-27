@@ -224,11 +224,11 @@ namespace RingCentral
 
             if (string.IsNullOrEmpty(agentString))
             {
-                agentString += "RCCSSDK_" + SDK.VERSION;
+                agentString += "RCCSSDK_" + SDK.Version;
             }
             else
             {
-                agentString += ".RCCSSDK_" + SDK.VERSION;
+                agentString += ".RCCSSDK_" + SDK.Version;
             }
             #endregion
 

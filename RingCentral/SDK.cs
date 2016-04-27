@@ -8,9 +8,9 @@
         private string AppName { get; set; }
         private string AppVersion { get; set; }
 
-        public const string VERSION = "1.0.0";
-        public const string SANDBOX_SERVER = "https://platform.devtest.ringcentral.com";
-        public const string PRODUCTION_SERVER = "https://platform.ringcentral.com";
+        public const string Version = "1.0.0";
+        public const string SandboxServer = "https://platform.devtest.ringcentral.com";
+        public const string ProductionServer = "https://platform.ringcentral.com";
 
         protected Platform Platform;
 

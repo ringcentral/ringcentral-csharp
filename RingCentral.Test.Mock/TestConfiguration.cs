@@ -8,64 +8,28 @@ namespace RingCentral.Test
     [TestFixture]
     public class TestConfiguration
     {
+        protected const string Server = SDK.SandboxServer;
+        protected const string AppKey = "AppKey";
+        protected const string AppSecret = "AppSecret";
 
-        protected string UserName = "";
-
+        protected const string Username = "147258369";
+        protected const string Password = "963852741";
         protected const string Extension = "101";
 
-        protected const string ApiEndPoint = SDK.SANDBOX_SERVER;
-
-        protected const string RevokeEndPoint = "/restapi/oauth/revoke";
-
-        protected const string AuthenticateEndPoint = "/restapi/oauth/token";
-
-        protected const string SmsText = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
-
-        protected string ToPhone = "";
+        protected const string ToPhone = "258369741";
 
         protected Response AuthResult;
-
         protected Platform Platform;
-
-        protected RingCentral.SDK RingCentralClient;
+        protected SDK RingCentralClient;
         protected MockHttpClient MockResponseHandler = new MockHttpClient();
 
         [TestFixtureSetUp]
         public void SetUp()
         {
-
-            var appKey = "";
-            var appSecret = "";
-            var password = "";
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_KEY")))
-            {
-
-                appKey = Environment.GetEnvironmentVariable("APP_KEY");
-            }
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APP_SECRET")))
-            {
-                appSecret = Environment.GetEnvironmentVariable("APP_SECRET");
-            }
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("USER_NAME")))
-            {
-                UserName = Environment.GetEnvironmentVariable("USER_NAME");
-                ToPhone = UserName;
-            }
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PASSWORD")))
-            {
-                password = Environment.GetEnvironmentVariable("PASSWORD");
-            }
-
-            RingCentralClient = new RingCentral.SDK(appKey, appSecret, ApiEndPoint, "C Sharp Test Suite", "1.0.0");
+            RingCentralClient = new SDK(AppKey, AppSecret, Server, "C Sharp Test Suite", "1.0.0");
             Platform = RingCentralClient.GetPlatform();
-            Platform._client = new HttpClient(MockResponseHandler) { BaseAddress = new Uri(ApiEndPoint) };
-            AuthResult = Platform.Authorize(UserName, Extension, password, true);
+            Platform._client = new HttpClient(MockResponseHandler) { BaseAddress = new Uri(Server) };
+            AuthResult = Platform.Authorize(Username, Extension, Password, true);
         }
-
-
     }
 }

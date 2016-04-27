@@ -8,7 +8,7 @@ namespace RingCentral.Test
     [TestFixture]
     public class BaseTest
     {
-        private const string server = SDK.SANDBOX_SERVER;
+        private const string server = SDK.SandboxServer;
         private SDK ringCentral;
         protected Platform platform;
 
