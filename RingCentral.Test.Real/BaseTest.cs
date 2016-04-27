@@ -8,7 +8,7 @@ namespace RingCentral.Test
     [TestFixture]
     public class BaseTest
     {
-        private const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
+        private const string server = SDK.SANDBOX_SERVER;
         private SDK ringCentral;
         protected Platform platform;
 
@@ -41,9 +41,9 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("RC_PASSWORD");
             }
 
-            ringCentral = new SDK(appKey, appSecret, ApiEndPoint, "C Sharp Test Suite", "1.0.0");
+            ringCentral = new SDK(appKey, appSecret, server, "C Sharp Test Suite", "1.0.0");
             platform = ringCentral.GetPlatform();
-            platform._client = new HttpClient(new WebRequestHandler()) { BaseAddress = new Uri(ApiEndPoint) };
+            platform._client = new HttpClient(new WebRequestHandler()) { BaseAddress = new Uri(server) };
             platform.Authorize(username, extension, password, true);
         }
 

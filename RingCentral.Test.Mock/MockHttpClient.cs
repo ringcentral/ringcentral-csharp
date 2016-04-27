@@ -10,7 +10,7 @@ namespace RingCentral.Test
 {
     public partial class MockHttpClient : DelegatingHandler
     {
-        private const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
+        private const string ApiEndPoint = SDK.SANDBOX_SERVER;
 
         private readonly Dictionary<HttpMethod, Dictionary<Uri, HttpResponseMessage>> mockResponses
             = new Dictionary<HttpMethod, Dictionary<Uri, HttpResponseMessage>> {

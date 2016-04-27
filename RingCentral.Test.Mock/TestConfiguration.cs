@@ -13,7 +13,7 @@ namespace RingCentral.Test
 
         protected const string Extension = "101";
 
-        protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
+        protected const string ApiEndPoint = SDK.SANDBOX_SERVER;
 
         protected const string RevokeEndPoint = "/restapi/oauth/revoke";
 
