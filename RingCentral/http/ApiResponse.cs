@@ -6,24 +6,44 @@ using System.Text.RegularExpressions;
 
 namespace RingCentral.Http
 {
-    public class Response : Headers
+    public class ApiResponse : Headers
     {
         private readonly string _body;
         private readonly int _status;
+        private readonly Request _request;
+        private readonly HttpResponseMessage _response;
 
-        public Response(HttpResponseMessage responseMessage)
+        public ApiResponse(HttpResponseMessage response, Request request)
         {
-            var statusCode = Convert.ToInt32(responseMessage.StatusCode);
-            var body = responseMessage.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Content.Headers;
+            var statusCode = Convert.ToInt32(response.StatusCode);
+            var body = response.Content.ReadAsStringAsync().Result;
+            var headers = response.Content.Headers;
 
             _body = body;
             _status = statusCode;
+            _response = response;
+            _request = request;
             SetHeaders(headers);
 
             if (!CheckStatus())
             {
                 throw new Exception(GetError());
+            }
+        }
+
+        public HttpResponseMessage Response
+        {
+            get
+            {
+                return _response;
+            }
+        }
+
+        public Request Request
+        {
+            get
+            {
+                return _request;
             }
         }
 

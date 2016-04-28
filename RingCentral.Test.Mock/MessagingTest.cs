@@ -24,7 +24,7 @@ namespace RingCentral.Test
         public void DeleteConversationById()
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123123123");
-            Response result = sdk.Platform.Delete(request);
+            ApiResponse result = sdk.Platform.Delete(request);
             Assert.AreEqual(204, result.GetStatus());
 
         }
@@ -33,7 +33,7 @@ namespace RingCentral.Test
         public void DeleteMessage()
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123");
-            Response result = sdk.Platform.Delete(request);
+            ApiResponse result = sdk.Platform.Delete(request);
             Assert.AreEqual(204, result.GetStatus());
 
         }
@@ -45,7 +45,7 @@ namespace RingCentral.Test
             const string expectedMessage = "This is a test from the the NUnit Test Suite of the RingCentral C# SDK";
 
             Request request = new Request(ExtensionMessageEndPoint + "/1/content/1");
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             Assert.AreEqual(response.GetBody(), expectedMessage);
         }
@@ -58,7 +58,7 @@ namespace RingCentral.Test
             string batchMessages = messages.Aggregate("", (current, message) => current + (message + ","));
 
             Request request = new Request(ExtensionMessageEndPoint + "/" + batchMessages);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
             Assert.IsTrue(response.IsMultiPartResponse());
             List<string> multiPartResult = response.GetMultiPartResponses();
 
@@ -83,7 +83,7 @@ namespace RingCentral.Test
         public void GetMessagesFromExtension()
         {
             Request request = new Request(ExtensionMessageEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
             var phoneNumber = (string)token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
@@ -95,7 +95,7 @@ namespace RingCentral.Test
         public void GetSingleMessage()
         {
             Request request = new Request(ExtensionMessageEndPoint + "/2");
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
@@ -119,7 +119,7 @@ namespace RingCentral.Test
             var attachments = new List<Attachment> { attachment, attachment2 };
 
             Request request = new Request(FaxEndPoint, json, attachments);
-            Response response = sdk.Platform.Post(request);
+            ApiResponse response = sdk.Platform.Post(request);
 
             JToken token = response.GetJson();
             var availability = (string)token.SelectToken("availability");
@@ -136,7 +136,7 @@ namespace RingCentral.Test
             var jsonData = "{\"to\": [{\"extensionNumber\": \"" + pagerHelper.to[0] + "\"}, {\"extensionNumber\": \"" + pagerHelper.to[1] + "\"}]," +
                             "\"from\": {\"extensionNumber\": \"" + pagerHelper.from + "\"},\"text\": \"" + pagerHelper.text + "\"}";
             Request request = new Request(PagerEndPoint, jsonData);
-            Response result = sdk.Platform.Post(request);
+            ApiResponse result = sdk.Platform.Post(request);
             JToken token = result.GetJson();
             var id = (int)token.SelectToken("id");
             Assert.AreEqual(8, id);
@@ -150,7 +150,7 @@ namespace RingCentral.Test
                            "\"from\": {\"phoneNumber\": \"" + smsHelper.from + "\"}," +
                           "\"text\": \"" + smsHelper.text + "\" }";
             Request request = new Request(SmsEndPoint, jsonData);
-            Response result = sdk.Platform.Post(request);
+            ApiResponse result = sdk.Platform.Post(request);
 
             JToken token = JObject.Parse(result.GetBody());
             var messageStatus = (string)token.SelectToken("messageStatus");
@@ -163,7 +163,7 @@ namespace RingCentral.Test
         {
             var jsonData = "{\"readStatus\": \"Read\"}";
             Request request = new Request(ExtensionMessageEndPoint + "/3", jsonData);
-            Response result = sdk.Platform.Put(request);
+            ApiResponse result = sdk.Platform.Put(request);
             JToken token = JObject.Parse(result.GetBody());
             var availability = (string)token.SelectToken("availability");
             var readStatus = (string)token.SelectToken("readStatus");

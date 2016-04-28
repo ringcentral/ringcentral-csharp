@@ -77,7 +77,7 @@ namespace RingCentral.Test
         public void GetAccountExtensionInformation()
         {
             Request request = new Request(AccountExtensionInformationEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             Assert.AreEqual(response.GetStatus(), 200);
         }
@@ -86,7 +86,7 @@ namespace RingCentral.Test
         public void GetAccountInformation()
         {
             Request request = new Request(AccountInformationEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
             var mainNumber = (string)token.SelectToken("mainNumber");
@@ -98,7 +98,7 @@ namespace RingCentral.Test
         public void GetExtensionInformation()
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/1");
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             Assert.IsNotNull(response);
         }

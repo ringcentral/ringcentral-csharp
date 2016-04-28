@@ -13,7 +13,7 @@ namespace RingCentral.Test
         public void GetPresence()
         {
             Request request = new Request(PresenceEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 

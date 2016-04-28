@@ -80,7 +80,7 @@ namespace RingCentral.Subscription
         {
             eventFilters.Add(eventToAdd);
         }
-        public Response Renew()
+        public ApiResponse Renew()
         {
             ClearTimeout();
             try
@@ -89,7 +89,7 @@ namespace RingCentral.Subscription
                 if (eventFilters.Count == 0) throw new Exception("Events are undefined");
                 var jsonData = GetFullEventsFilter();
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
-                Response response = _platform.Put(request);
+                ApiResponse response = _platform.Put(request);
                 UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.GetBody()));
                 return response;
             }
@@ -99,13 +99,13 @@ namespace RingCentral.Subscription
                 throw e;
             }
         }
-        public Response Remove()
+        public ApiResponse Remove()
         {
             if (_subscription == null || string.IsNullOrEmpty(_subscription.Id)) throw new Exception("Subscription ID is required");
             try
             {
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id);
-                Response response = _platform.Delete(request);
+                ApiResponse response = _platform.Delete(request);
                 Unsubscribe();
                 return response;
             }
@@ -125,7 +125,7 @@ namespace RingCentral.Subscription
             SetTimeout();
         }
 
-        public Response Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
+        public ApiResponse Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
 
             if (eventFilters.Count == 0)
@@ -139,7 +139,7 @@ namespace RingCentral.Subscription
             {
                 var jsonData = GetFullEventsFilter();
                 Request request = new Request(SubscriptionEndPoint, jsonData);
-                Response response = _platform.Post(request);
+                ApiResponse response = _platform.Post(request);
                 _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
                 if (_subscription.DeliveryMode.Encryption)
                 {

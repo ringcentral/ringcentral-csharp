@@ -77,7 +77,7 @@ namespace RingCentral.Test
         public void TestRefresh()
         {
 
-            Response refreshResult = sdk.Platform.Refresh();
+            ApiResponse refreshResult = sdk.Platform.Refresh();
 
             Assert.NotNull(refreshResult);
 
@@ -94,7 +94,7 @@ namespace RingCentral.Test
         public void TestVersion()
         {
             Request request = new Request(VersionEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
             var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
@@ -105,7 +105,7 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            Response revokeResult = sdk.Platform.Logout();
+            ApiResponse revokeResult = sdk.Platform.Logout();
             Assert.IsFalse(sdk.Platform.LoggedIn());
         }
 

@@ -13,7 +13,7 @@ namespace RingCentral.Test
         public void GetContactFromAddressBook()
         {
             Request request = new Request(AddressBookEndPoint + "/1");
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
             JToken token = response.GetJson();
             var firstNameResponse = (string)token.SelectToken("firstName");
 
@@ -23,7 +23,7 @@ namespace RingCentral.Test
         public void GetAddressBook()
         {
             Request request = new Request(AddressBookEndPoint);
-            Response response = sdk.Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
             JToken token = response.GetJson();
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
@@ -38,7 +38,7 @@ namespace RingCentral.Test
         public void DeleteContactFromAddressBook()
         {
             Request request = new Request(AddressBookEndPoint + "/3");
-            Response response = sdk.Platform.Delete(request);
+            ApiResponse response = sdk.Platform.Delete(request);
             JToken token = response.GetJson();
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
@@ -58,7 +58,7 @@ namespace RingCentral.Test
 
             Request request = new Request(AddressBookEndPoint, jsonData);
 
-            Response response = sdk.Platform.Post(request);
+            ApiResponse response = sdk.Platform.Post(request);
             JToken token = response.GetJson();
 
             var firstName = (string)token.SelectToken("firstName");
@@ -80,7 +80,7 @@ namespace RingCentral.Test
                               "}";
             Request request = new Request(AddressBookEndPoint + "/5", jsonData);
 
-            Response response = sdk.Platform.Put(request);
+            ApiResponse response = sdk.Platform.Put(request);
 
             JToken token = response.GetJson();
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");

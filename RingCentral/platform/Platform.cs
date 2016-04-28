@@ -43,7 +43,7 @@ namespace RingCentral
         /// <param name="extension">Optional: Extension number to login</param>
         /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public Response Authorize(string userName, string extension, string password, bool isRemember)
+        public ApiResponse Authorize(string userName, string extension, string password, bool isRemember)
         {
             var body = new Dictionary<string, string>
                        {
@@ -70,7 +70,7 @@ namespace RingCentral
         ///     Refreshes expired Access token during valid lifetime of Refresh Token
         /// </summary>
         /// <returns>string response of Refresh result</returns>
-        public Response Refresh()
+        public ApiResponse Refresh()
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
@@ -96,7 +96,7 @@ namespace RingCentral
         ///     Revokes the already granted access to stop application activity
         /// </summary>
         /// <returns>string response of Revoke result</returns>
-        public Response Logout()
+        public ApiResponse Logout()
         {
             var body = new Dictionary<string, string>
                        {
@@ -119,13 +119,13 @@ namespace RingCentral
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>Response object</returns>
-        private Response AuthCall(Request request)
+        private ApiResponse AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
 
-            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
+            var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
-            return new Response(result);
+            return new ApiResponse(response, request);
         }
 
         /// <summary>
@@ -146,27 +146,27 @@ namespace RingCentral
             Auth.SetData(authData);
         }
 
-        public Response Get(Request request)
+        public ApiResponse Get(Request request)
         {
             return ApiCall("GET", request);
         }
 
-        public Response Post(Request request)
+        public ApiResponse Post(Request request)
         {
             return ApiCall("POST", request);
         }
 
-        public Response Delete(Request request)
+        public ApiResponse Delete(Request request)
         {
             return ApiCall("DELETE", request);
         }
 
-        public Response Put(Request request)
+        public ApiResponse Put(Request request)
         {
             return ApiCall("PUT", request);
         }
 
-        private Response ApiCall(string method, Request request)
+        private ApiResponse ApiCall(string method, Request request)
         {
             if (!LoggedIn()) throw new Exception("Access has Expired");
 
@@ -178,7 +178,7 @@ namespace RingCentral
 
             request.GetXhttpOverRideHeader(requestMessage);
 
-            return new Response(_client.SendAsync(requestMessage).Result);
+            return new ApiResponse(_client.SendAsync(requestMessage).Result, request);
         }
 
 
@@ -287,7 +287,7 @@ namespace RingCentral
         /// <param name="authCode">The authorization code returned from server</param>
         /// <param name="redirectUri">The same redirectUri when you were obtaining the authCode in previous step</param>
         /// <returns></returns>
-        public Response Authenticate(string authCode, string redirectUri)
+        public ApiResponse Authenticate(string authCode, string redirectUri)
         {
             var request = new Request("/restapi/oauth/token",
                 new Dictionary<string, string> { { "grant_type", "authorization_code" },

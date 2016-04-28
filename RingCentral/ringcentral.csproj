@@ -44,7 +44,7 @@
     <Compile Include="Helper\SmsHelper.cs" />
     <Compile Include="Http\Headers.cs" />
     <Compile Include="Http\Request.cs" />
-    <Compile Include="Http\Response.cs" />
+    <Compile Include="Http\ApiResponse.cs" />
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
