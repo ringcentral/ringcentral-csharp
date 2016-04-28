@@ -11,22 +11,6 @@ namespace RingCentral.Http
         private readonly string _body;
         private readonly int _status;
 
-        /// <summary>
-        ///     Creates a Response Object
-        /// </summary>
-        /// <param name="status">The status of the response message</param>
-        /// <param name="body">The body of the response message</param>
-        /// <param name="headers">HttpContentHeaders of the response message</param>
-        //public Response(int status, string body, HttpContentHeaders headers)
-        //{
-        //    _body = body;
-        //    _status = status;
-
-        //    SetHeaders(headers);
-
-
-        //}
-
         public Response(HttpResponseMessage responseMessage)
         {
             var statusCode = Convert.ToInt32(responseMessage.StatusCode);
