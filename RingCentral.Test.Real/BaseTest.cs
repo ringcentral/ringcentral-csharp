@@ -35,6 +35,10 @@ namespace RingCentral.Test
                 password = Environment.GetEnvironmentVariable("RC_PASSWORD");
             }
 
+            if (appKey == "")
+            { // don't run real tests if no appKey
+                Assert.Ignore();
+            }
             sdk = new SDK(appKey, appSecret, SDK.SandboxServer, "C Sharp Test Suite", "1.0.0");
             sdk.Platform.Authorize(username, extension, password, true);
         }
