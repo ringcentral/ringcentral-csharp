@@ -263,5 +263,38 @@ namespace RingCentral
 
             return false;
         }
+
+        /// <summary>
+        /// When your application needs to authentiate an user, redirect the user to RingCentral API server for authentication.
+        /// This method helps you to build the URI. Later you can redirect user to this URI.
+        /// </summary>
+        /// <param name="redirectUri">This is a callback URI which determines where the response will be sent to. The value of this parameter must exactly match one of the URIs you have provided for your app upon registration. This URI can be HTTP/HTTPS address for web applications or custom scheme URI for mobile or desktop applications.</param>
+        /// <param name="state">Optional, recommended. An opaque value used by the client to maintain state between the request and callback. The authorization server includes this value when redirecting the user-agent back to the client. The parameter should be used for preventing cross-site request forgery</param>
+        /// <returns></returns>
+        public string AuthorizeUri(string redirectUri, string state = "")
+        {
+            var baseUrl = Server + "/restapi/oauth/authorize";
+            var authUrl = string.Format("{0}?response_type=code&state={1}&redirect_uri={2}&client_id={3}",
+                baseUrl, Uri.EscapeUriString(state),
+                Uri.EscapeUriString(redirectUri),
+                Uri.EscapeUriString(AppKey));
+            return authUrl;
+        }
+
+        /// <summary>
+        /// Do authentication with the authorization code returned from server
+        /// </summary>
+        /// <param name="authCode">The authorization code returned from server</param>
+        /// <param name="redirectUri">The same redirectUri when you were obtaining the authCode in previous step</param>
+        /// <returns></returns>
+        public Response Authenticate(string authCode, string redirectUri)
+        {
+            var request = new Request("/restapi/oauth/token",
+                new Dictionary<string, string> { { "grant_type", "authorization_code" },
+                    { "redirect_uri", redirectUri }, { "code", authCode } });
+            var response = AuthCall(request);
+            Auth.SetData(response.GetJson());
+            return response;
+        }
     }
 }
