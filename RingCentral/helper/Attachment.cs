@@ -2,49 +2,37 @@
 {
     public class Attachment
     {
-
-        private string FileName { get; set; }
-        private string ContentType { get; set; }
-        private byte[] ByteArrayContents { get; set; }
+        private string fileName { get; set; }
+        private string contentType { get; set; }
+        public byte[] ByteArray { get; private set; }
 
         /// <summary>
         /// Constructor that initializes an attachment that can be sent via fax
         /// </summary>
         /// <param name="fileName">Name of the attachment</param>
         /// <param name="contentType">content type that is a valid MIME type supported by Ring Central</param>
-        /// <param name="byteArrayContents">the byte array contents of the file being attached</param>
-        public Attachment(string fileName, string contentType, byte[] byteArrayContents)
+        /// <param name="byteArray">the byte array contents of the file being attached</param>
+        public Attachment(string fileName, string contentType, byte[] byteArray)
         {
-            FileName = fileName;
-            ContentType = contentType;
-            ByteArrayContents = byteArrayContents;
+            this.fileName = fileName;
+            this.contentType = contentType;
+            ByteArray = byteArray;
         }
 
-        /// <summary>
-        /// Gets the file name with a default of file.txt
-        /// </summary>
-        /// <returns>The file name</returns>
-        public string GetFileName()
+        public string FileName
         {
-            return !string.IsNullOrEmpty(FileName) ? FileName : "file.txt";
+            get
+            {
+                return !string.IsNullOrEmpty(fileName) ? fileName : "file.txt";
+            }
         }
 
-        /// <summary>
-        /// Gets the content type with a default of text/plain
-        /// </summary>
-        /// <returns>The Content Type</returns>
-        public string GetContentType()
+        public string ContentType
         {
-            return !string.IsNullOrEmpty(ContentType) ? ContentType : "text/plain";
-        }
-
-        /// <summary>
-        /// Gets the byte array contents
-        /// </summary>
-        /// <returns>The byte array contents</returns>
-        public byte[] GetByteArrayContent()
-        {
-            return ByteArrayContents;
+            get
+            {
+                return !string.IsNullOrEmpty(contentType) ? contentType : "text/plain";
+            }
         }
     }
 }

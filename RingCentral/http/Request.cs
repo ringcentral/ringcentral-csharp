@@ -127,12 +127,12 @@ namespace RingCentral.Http
 
                 foreach (var attachment in _attachments)
                 {
-                    var fileContent = new ByteArrayContent(attachment.GetByteArrayContent());
+                    var fileContent = new ByteArrayContent(attachment.ByteArray);
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
                     {
-                        FileName = attachment.GetFileName()
+                        FileName = attachment.FileName
                     };
-                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.GetContentType());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.ContentType);
                     multiPartContent.Add(fileContent);
                 }
 
