@@ -19,21 +19,21 @@ namespace RingCentral
         public HttpClient _client { private get; set; }
         protected Auth Auth;
 
-        private Object thisLock = new Object();
+        private object thisLock = new object();
 
-        public Platform(string appKey, string appSecret, string server, string appName = "", string appVersion = "")
+        public Platform(string appKey, string appSecret, string serverUrl, string appName = "", string appVersion = "")
         {
-            AppKey = appKey;
-            AppSecret = appSecret;
-            Server = server;
+            this.appKey = appKey;
+            this.appSecret = appSecret;
+            this.serverUrl = serverUrl;
             Auth = new Auth();
-            _client = new HttpClient { BaseAddress = new Uri(Server) };
+            _client = new HttpClient { BaseAddress = new Uri(this.serverUrl) };
             SetUserAgentHeader(appName, appVersion);
         }
 
-        private string AppKey { get; set; }
-        private string AppSecret { get; set; }
-        private string Server { get; set; }
+        private string appKey;
+        private string appSecret;
+        private string serverUrl;
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -121,11 +121,11 @@ namespace RingCentral
         /// <returns>Response object</returns>
         private ApiResponse AuthCall(Request request)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
 
             var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
-            return new ApiResponse(response, request);
+            return new ApiResponse(response);
         }
 
         /// <summary>
@@ -168,27 +168,29 @@ namespace RingCentral
 
         private ApiResponse ApiCall(string method, Request request)
         {
-            if (!LoggedIn()) throw new Exception("Access has Expired");
+            if (!LoggedIn())
+            {
+                throw new Exception("Access has Expired");
+            }
 
-            HttpRequestMessage requestMessage = new HttpRequestMessage();
-
+            var requestMessage = new HttpRequestMessage();
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = request.GetHttpMethod(method);
             requestMessage.RequestUri = request.GetUri();
 
             request.GetXhttpOverRideHeader(requestMessage);
 
-            return new ApiResponse(_client.SendAsync(requestMessage).Result, request);
+            return new ApiResponse(_client.SendAsync(requestMessage).Result);
         }
 
 
         /// <summary>
-        ///     Gets the API key by encoding the AppKey and AppSecret with Encoding.UTF8.GetBytes
+        /// Generates auth token by encoding appKey and appSecret then converting it to base64
         /// </summary>
         /// <returns>The Api Key</returns>
-        private string GetApiKey()
+        private string GenerateAuthToken()
         {
-            var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
+            var byteArray = Encoding.UTF8.GetBytes(appKey + ":" + appSecret);
             return Convert.ToBase64String(byteArray);
         }
 
@@ -197,7 +199,8 @@ namespace RingCentral
         ///     are optional but they will help a lot to identify your application in API logs and speed up any potential troubleshooting.
         ///     Allowed characters for AppName:AppVersion are- letters, digits, hyphen, dot and underscore.
         /// </summary>
-        /// <param name="header">The value of the User-Agent header</param>
+        /// <param name="appName">Application Name</param>
+        /// <param name="appVersion">Application Version</param>
         private void SetUserAgentHeader(string appName, string appVersion)
         {
             var agentString = String.Empty;
@@ -211,17 +214,6 @@ namespace RingCentral
                     agentString += "_" + appVersion;
                 }
             }
-
-            //if (!string.IsNullOrEmpty(osName) && !string.IsNullOrEmpty(osVersion))
-            //{
-            //    agentString += "." + osName + "/" + osVersion;
-            //}
-
-            //if (!string.IsNullOrEmpty(clrVersion))
-            //{
-            //    agentString += ".CLR/" + clrVersion;
-            //}
-
             if (string.IsNullOrEmpty(agentString))
             {
                 agentString += "RCCSSDK_" + SDK.Version;
@@ -273,11 +265,11 @@ namespace RingCentral
         /// <returns></returns>
         public string AuthorizeUri(string redirectUri, string state = "")
         {
-            var baseUrl = Server + "/restapi/oauth/authorize";
+            var baseUrl = serverUrl + "/restapi/oauth/authorize";
             var authUrl = string.Format("{0}?response_type=code&state={1}&redirect_uri={2}&client_id={3}",
                 baseUrl, Uri.EscapeUriString(state),
                 Uri.EscapeUriString(redirectUri),
-                Uri.EscapeUriString(AppKey));
+                Uri.EscapeUriString(appKey));
             return authUrl;
         }
 

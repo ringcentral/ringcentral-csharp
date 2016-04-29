@@ -10,10 +10,9 @@ namespace RingCentral.Http
     {
         private readonly string _body;
         private readonly int _status;
-        private readonly Request _request;
         private readonly HttpResponseMessage _response;
 
-        public ApiResponse(HttpResponseMessage response, Request request)
+        public ApiResponse(HttpResponseMessage response)
         {
             var statusCode = Convert.ToInt32(response.StatusCode);
             var body = response.Content.ReadAsStringAsync().Result;
@@ -22,7 +21,6 @@ namespace RingCentral.Http
             _body = body;
             _status = statusCode;
             _response = response;
-            _request = request;
             SetHeaders(headers);
 
             if (!CheckStatus())
@@ -39,11 +37,11 @@ namespace RingCentral.Http
             }
         }
 
-        public Request Request
+        public HttpRequestMessage Request
         {
             get
             {
-                return _request;
+                return _response.RequestMessage;
             }
         }
 
