@@ -15,7 +15,7 @@ namespace RingCentral.Test
             string AccountInformationEndPoint = "/restapi/v1.0/account/";
             string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
             mockResponses[HttpMethod.Get].Add(
-                new Uri(ApiEndPoint + AccountExtensionInformationEndPoint),
+                new Uri(ServerUrl + AccountExtensionInformationEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
@@ -32,7 +32,7 @@ namespace RingCentral.Test
 
                 );
             mockResponses[HttpMethod.Get].Add(
-              new Uri(ApiEndPoint + AccountInformationEndPoint),
+              new Uri(ServerUrl + AccountInformationEndPoint),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
                   Content = new StringContent(
@@ -50,7 +50,7 @@ namespace RingCentral.Test
               );
 
             mockResponses[HttpMethod.Get].Add(
-             new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/1"),
+             new Uri(ServerUrl + AccountExtensionInformationEndPoint + "/1"),
              new HttpResponseMessage(HttpStatusCode.OK)
              {
                  Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\"," +

@@ -16,7 +16,7 @@ namespace RingCentral.Test
     {
         private void AddAuthenticationMockData()
         {
-            mockResponses[HttpMethod.Post][new Uri(ApiEndPoint + "/restapi/oauth/token")] = new HttpResponseMessage(HttpStatusCode.OK)
+            mockResponses[HttpMethod.Post][new Uri(ServerUrl + "/restapi/oauth/token")] = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(@"{
    ""access_token"" : ""U1BCMDFUMDRKV1MwMXxzLFSvXdw5PHMsVLEn_MrtcyxUsw"",
@@ -29,12 +29,12 @@ namespace RingCentral.Test
 }", Encoding.UTF8, "application/json")
             };
 
-            mockResponses[HttpMethod.Post][new Uri(ApiEndPoint + "/restapi/oauth/revoke")] = new HttpResponseMessage(HttpStatusCode.OK)
+            mockResponses[HttpMethod.Post][new Uri(ServerUrl + "/restapi/oauth/revoke")] = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("")
             };
 
-            mockResponses[HttpMethod.Get][new Uri(ApiEndPoint + "/restapi")] = new HttpResponseMessage(HttpStatusCode.OK)
+            mockResponses[HttpMethod.Get][new Uri(ServerUrl + "/restapi")] = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(@"{
   ""uri"" : ""https.../restapi/"",

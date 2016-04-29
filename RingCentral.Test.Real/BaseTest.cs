@@ -39,7 +39,7 @@ namespace RingCentral.Test
             { // don't run real tests if no appKey
                 Assert.Ignore();
             }
-            sdk = new SDK(appKey, appSecret, SDK.SandboxServer, "C Sharp Test Suite", "1.0.0");
+            sdk = new SDK(appKey, appSecret, SDK.Server.Sandbox, "C Sharp Test Suite", "1.0.0");
             sdk.Platform.Authorize(username, extension, password, true);
         }
 

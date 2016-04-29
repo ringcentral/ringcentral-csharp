@@ -2,42 +2,41 @@
 {
     public class SDK
     {
-        private string AppKey { get; set; }
-        private string AppSecret { get; set; }
-        private string Server { get; set; }
-        private string AppName { get; set; }
-        private string AppVersion { get; set; }
-
         public const string Version = "1.0.0";
-        public const string SandboxServer = "https://platform.devtest.ringcentral.com";
-        public const string ProductionServer = "https://platform.ringcentral.com";
-
-        private Platform platform;
+        public const string SandboxServerUrl = "https://platform.devtest.ringcentral.com";
+        public const string ProductionServerUrl = "https://platform.ringcentral.com";
+        public enum Server
+        {
+            Sandbox,
+            Production
+        }
 
         /// <summary>
-        ///     Constructor that sets up RingCentralClient
+        /// Constructor that sets up RingCentral Client
         /// </summary>
-        /// <param name="appKey">RingCentral Application Key</param>
-        /// <param name="appSecret">RingCentral Application Secret</param>
-        /// <param name="server">RingCentral API Endpoint</param>
-        public SDK(string appKey, string appSecret, string server, string appName = "", string appVersion = "")
+        /// <param name="appKey">Application Key</param>
+        /// <param name="appSecret">Application Secret</param>
+        /// <param name="serverUrl">Server Url, either SDK.SandboxServerUrl or SDK.ProductionServerUrl</param>
+        /// <param name="appName">Application name, will be used in user agent</param>
+        /// <param name="appVersion">Application Version, will be used in user agent</param>
+        public SDK(string appKey, string appSecret, string serverUrl, string appName = "", string appVersion = "")
         {
-            AppKey = appKey;
-            AppSecret = appSecret;
-            Server = server;
-            AppName = appName;
-            AppVersion = appVersion;
-
-            platform = new Platform(appKey, appSecret, server, appName, appVersion);
+            Platform = new Platform(appKey, appSecret, serverUrl, appName, appVersion);
         }
 
-        public Platform Platform
+        /// <summary>
+        /// Constructor that sets up RingCentral Client
+        /// </summary>
+        /// <param name="appKey">Application Key</param>
+        /// <param name="appSecret">Application Secret</param>
+        /// <param name="server">Server.Sandbox or Server.Production</param>
+        /// <param name="appName">Application name, will be used in user agent</param>
+        /// <param name="appVersion">Application Version, will be used in user agent</param>
+        public SDK(string appKey, string appSecret, Server server, string appName = "", string appVersion = "") : this(appKey, appSecret,
+            (server == Server.Production ? ProductionServerUrl : SandboxServerUrl), appName, appVersion)
         {
-            get
-            {
-                return platform;
-            }
         }
 
+        public Platform Platform { get; private set; }
     }
 }

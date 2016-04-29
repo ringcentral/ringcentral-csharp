@@ -7,7 +7,6 @@ namespace RingCentral.Test
     [TestFixture]
     public class BaseTest
     {
-        protected const string Server = SDK.SandboxServer;
         protected const string AppKey = "AppKey";
         protected const string AppSecret = "AppSecret";
 
@@ -21,9 +20,9 @@ namespace RingCentral.Test
         [TestFixtureSetUp]
         public void SetUp()
         {
-            sdk = new SDK(AppKey, AppSecret, Server, "C Sharp Test Suite", "1.0.0");
+            sdk = new SDK(AppKey, AppSecret, SDK.Server.Sandbox, "C Sharp Test Suite", "1.0.0");
             // mock test only, don't contact remote server
-            sdk.Platform._client = new HttpClient(new MockHttpClient()) { BaseAddress = new Uri(Server) };
+            sdk.Platform._client = new HttpClient(new MockHttpClient()) { BaseAddress = new Uri(SDK.SandboxServerUrl) };
             sdk.Platform.Authorize(Username, Extension, Password, true);
         }
     }
