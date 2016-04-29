@@ -1,4 +1,4 @@
-﻿namespace RingCentral.Helper
+﻿namespace RingCentral.Http
 {
     public class Attachment
     {

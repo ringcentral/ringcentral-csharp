@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.Helper;
 using RingCentral.Http;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,10 +130,12 @@ namespace RingCentral.Test
         [Test]
         public void SendPagerMessage()
         {
-            List<string> pagerToList = new List<string> { "102", "103" };
-            PagerHelper pagerHelper = new PagerHelper(pagerToList, "101", "Hello");
-            var jsonData = "{\"to\": [{\"extensionNumber\": \"" + pagerHelper.to[0] + "\"}, {\"extensionNumber\": \"" + pagerHelper.to[1] + "\"}]," +
-                            "\"from\": {\"extensionNumber\": \"" + pagerHelper.from + "\"},\"text\": \"" + pagerHelper.text + "\"}";
+            var from = "101";
+            var to1 = "102";
+            var to2 = "103";
+            var text = "Hello";
+            var jsonData = "{\"to\": [{\"extensionNumber\": \"" + to1 + "\"}, {\"extensionNumber\": \"" + to2 + "\"}]," +
+                            "\"from\": {\"extensionNumber\": \"" + from + "\"},\"text\": \"" + text + "\"}";
             Request request = new Request(PagerEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
             JToken token = result.GetJson();
@@ -145,10 +146,12 @@ namespace RingCentral.Test
         [Test]
         public void SendSms()
         {
-            SmsHelper smsHelper = new SmsHelper("19999999999", "19999999999", "Test SMS message");
-            var jsonData = "{\"to\": [{\"phoneNumber\": \"" + smsHelper.to + "\"}]," +
-                           "\"from\": {\"phoneNumber\": \"" + smsHelper.from + "\"}," +
-                          "\"text\": \"" + smsHelper.text + "\" }";
+            var from = "19999999999";
+            var to = "19999999999";
+            var text = "Test SMS message";
+            var jsonData = "{\"to\": [{\"phoneNumber\": \"" + to + "\"}]," +
+                           "\"from\": {\"phoneNumber\": \"" + from + "\"}," +
+                          "\"text\": \"" + text + "\" }";
             Request request = new Request(SmsEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
 
