@@ -130,25 +130,25 @@ namespace RingCentral
 
         public ApiResponse Get(Request request)
         {
-            return ApiCall("GET", request);
+            return Send(HttpMethod.Get, request);
         }
 
         public ApiResponse Post(Request request)
         {
-            return ApiCall("POST", request);
+            return Send(HttpMethod.Post, request);
         }
 
         public ApiResponse Delete(Request request)
         {
-            return ApiCall("DELETE", request);
+            return Send(HttpMethod.Delete, request);
         }
 
         public ApiResponse Put(Request request)
         {
-            return ApiCall("PUT", request);
+            return Send(HttpMethod.Put, request);
         }
 
-        private ApiResponse ApiCall(string method, Request request)
+        private ApiResponse Send(HttpMethod httpMethod, Request request)
         {
             if (!LoggedIn())
             {
@@ -157,7 +157,7 @@ namespace RingCentral
 
             var requestMessage = new HttpRequestMessage();
             requestMessage.Content = request.GetHttpContent();
-            requestMessage.Method = request.GetHttpMethod(method);
+            requestMessage.Method = httpMethod;
             requestMessage.RequestUri = request.GetUri();
 
             request.GetXhttpOverRideHeader(requestMessage);

@@ -93,31 +93,6 @@ namespace RingCentral.Http
             return new Uri(_url + GetQuerystring(), UriKind.Relative);
         }
 
-        public HttpMethod GetHttpMethod(string method)
-        {
-            if (method.Equals("GET"))
-            {
-                return HttpMethod.Get;
-            }
-
-            if (method.Equals("POST"))
-            {
-                return HttpMethod.Post;
-            }
-
-            if (method.Equals("PUT"))
-            {
-                return HttpMethod.Put;
-            }
-
-            if (method.Equals("DELETE"))
-            {
-                return HttpMethod.Delete;
-            }
-
-            return null;
-        }
-
         /// <summary>
         ///     Returns HTTP content based on Content Type
         /// </summary>
