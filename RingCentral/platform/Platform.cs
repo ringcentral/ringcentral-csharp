@@ -17,7 +17,7 @@ namespace RingCentral
         private const string RevokeEndpoint = "restapi/oauth/revoke";
 
         public HttpClient _client { private get; set; }
-        protected Auth Auth;
+        public Auth Auth { get; private set; }
 
         private object thisLock = new object();
 
@@ -126,24 +126,6 @@ namespace RingCentral
             var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
 
             return new ApiResponse(response);
-        }
-
-        /// <summary>
-        ///     Gets the auth data set on authorization
-        /// </summary>
-        /// <returns>Dictionary of auth data</returns>
-        public Dictionary<string, string> GetAuthData()
-        {
-            return Auth.GetData();
-        }
-
-        /// <summary>
-        ///     Gets the auth data set on authorization
-        /// </summary>
-        /// <returns>Dictionary of auth data</returns>
-        public void SetAuthData(Dictionary<string, string> authData)
-        {
-            Auth.SetData(authData);
         }
 
         public ApiResponse Get(Request request)
