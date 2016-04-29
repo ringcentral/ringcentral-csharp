@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressBookTest.cs" />
     <Compile Include="APIVersionsTest.cs" />
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="BaseTest.cs" />

@@ -148,7 +148,7 @@ namespace RingCentral
             return Send(HttpMethod.Put, request);
         }
 
-        private ApiResponse Send(HttpMethod httpMethod, Request request)
+        public ApiResponse Send(HttpMethod httpMethod, Request request)
         {
             if (!LoggedIn())
             {
