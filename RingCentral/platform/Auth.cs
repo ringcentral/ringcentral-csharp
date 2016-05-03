@@ -217,13 +217,13 @@ namespace RingCentral
         /// <summary>
         ///     Private method to determine if the Access Token or Refresh Token is valid
         /// </summary>
-        /// <param name="accessToken"></param>
+        /// <param name="accessTokenExpireTime">Access token expire time</param>
         /// <returns>bool value of token validity</returns>
-        private bool IsTokenValid(long accessToken)
+        private bool IsTokenValid(long accessTokenExpireTime)
         {
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-            return accessToken > currentTimeInMilliseconds;
+            return accessTokenExpireTime > currentTimeInMilliseconds;
         }
 
         /// <summary>
