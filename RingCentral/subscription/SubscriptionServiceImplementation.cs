@@ -9,12 +9,10 @@ using System.Text;
 using System.Threading;
 
 
-
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation
     {
-
         private Pubnub _pubnub;
         private bool _encrypted;
         public Platform _platform;
@@ -33,44 +31,51 @@ namespace RingCentral.Subscription
             {"errorMessage",""},
             {"connectMessage", ""},
             {"disconnectMessage",""}
-
         };
 
         private void SetTimeout()
         {
-
             AutoResetEvent autoEvent = new AutoResetEvent(false);
             timeout = new Timer(OnTimedExpired, autoEvent, (int)((_subscription.ExpiresIn * 1000) - RenewHandicap), Timeout.Infinite);
             GC.KeepAlive(timeout);
-
         }
+
         public bool IsSubscribed()
         {
             return subscribed;
         }
+
         private void ClearTimeout()
         {
             if (timeout != null)
             {
-
                 timeout.Dispose();
             }
         }
+
         public List<string> GetEvents()
         {
             return eventFilters;
         }
+
         public void ClearEvents()
         {
             eventFilters.Clear();
         }
+
         private void OnTimedExpired(Object source)
         {
             timeout.Dispose();
-            if (subscribed) Renew();
-            else Unsubscribe();
-
+            if (subscribed)
+            {
+                Renew();
+            }
+            else
+            {
+                Unsubscribe();
+            }
         }
+
         public void SetEvents(List<string> newEventFilters)
         {
             eventFilters = newEventFilters;
@@ -80,13 +85,20 @@ namespace RingCentral.Subscription
         {
             eventFilters.Add(eventToAdd);
         }
+
         public ApiResponse Renew()
         {
             ClearTimeout();
             try
             {
-                if (_subscription == null || string.IsNullOrEmpty(_subscription.Id)) throw new Exception("Subscription ID is required");
-                if (eventFilters.Count == 0) throw new Exception("Events are undefined");
+                if (_subscription == null || string.IsNullOrEmpty(_subscription.Id))
+                {
+                    throw new Exception("Subscription ID is required");
+                }
+                if (eventFilters.Count == 0)
+                {
+                    throw new Exception("Events are undefined");
+                }
                 var jsonData = GetFullEventsFilter();
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
@@ -99,9 +111,13 @@ namespace RingCentral.Subscription
                 throw e;
             }
         }
+
         public ApiResponse Remove()
         {
-            if (_subscription == null || string.IsNullOrEmpty(_subscription.Id)) throw new Exception("Subscription ID is required");
+            if (_subscription == null || string.IsNullOrEmpty(_subscription.Id))
+            {
+                throw new Exception("Subscription ID is required");
+            }
             try
             {
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id);
@@ -114,7 +130,6 @@ namespace RingCentral.Subscription
                 Unsubscribe();
                 throw e;
             }
-
         }
 
         public void UpdateSubscription(Subscription subscription)
@@ -127,14 +142,22 @@ namespace RingCentral.Subscription
 
         public ApiResponse Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
-
             if (eventFilters.Count == 0)
             {
                 throw new Exception("Event filters are undefined");
             }
-            if (userCallback != null) notificationAction = userCallback;
-            if (connectCallback != null) connectionAction = connectCallback;
-            if (errorCallback != null) errorAction = errorCallback;
+            if (userCallback != null)
+            {
+                notificationAction = userCallback;
+            }
+            if (connectCallback != null)
+            {
+                connectionAction = connectCallback;
+            }
+            if (errorCallback != null)
+            {
+                errorAction = errorCallback;
+            }
             try
             {
                 var jsonData = GetFullEventsFilter();
@@ -143,12 +166,12 @@ namespace RingCentral.Subscription
                 _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
                 if (_subscription.DeliveryMode.Encryption)
                 {
-                    PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey, _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey);
+                    PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,
+                        _subscription.DeliveryMode.SecretKey, _subscription.DeliveryMode.EncryptionKey);
                 }
                 else
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey);
-
                 }
                 Subscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, ErrorMessage);
                 subscribed = true;
@@ -160,18 +183,21 @@ namespace RingCentral.Subscription
                 Unsubscribe();
                 throw e;
             }
-
         }
+
         public void Unsubscribe()
         {
             ClearTimeout();
-            if (_pubnub != null) Unsubscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage, SubscribeConnectStatusMessage, DisconnectMessage, ErrorMessage);
+            if (_pubnub != null)
+            {
+                Unsubscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,
+                    SubscribeConnectStatusMessage, DisconnectMessage, ErrorMessage);
+            }
             _subscription = new Subscription();
             ClearEvents();
             subscribed = false;
-
-
         }
+
         private string GetFullEventsFilter()
         {
             var fullEventsFilter = "{ \"eventFilters\": ";
@@ -188,14 +214,19 @@ namespace RingCentral.Subscription
 
         private void PubNubServiceImplementation(string publishKey, string subscribeKey)
         {
-            if (_enableSSL) _pubnub = new Pubnub(publishKey, subscribeKey, "", "", _enableSSL);
-            else _pubnub = new Pubnub(publishKey, subscribeKey);
+            if (_enableSSL)
+            {
+                _pubnub = new Pubnub(publishKey, subscribeKey, "", "", _enableSSL);
+            }
+            else
+            {
+                _pubnub = new Pubnub(publishKey, subscribeKey);
+            }
             GC.KeepAlive(_pubnub);
         }
 
         public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey, string cipherKey)
         {
-
             _encrypted = true;
             _pubnub = new Pubnub(publishKey, subscribeKey, secretKey, "", _enableSSL);
             GC.KeepAlive(_pubnub);
@@ -217,24 +248,38 @@ namespace RingCentral.Subscription
 
         private void NotificationReturnMessage(object message)
         {
-
-            if (_encrypted) _events["notification"] = DecryptMessage(message);
-            else _events["notification"] = JsonConvert.DeserializeObject((string)message);
-            if (notificationAction != null) notificationAction(_events["notification"]);
+            if (_encrypted)
+            {
+                _events["notification"] = DecryptMessage(message);
+            }
+            else
+            {
+                _events["notification"] = JsonConvert.DeserializeObject((string)message);
+            }
+            if (notificationAction != null)
+            {
+                notificationAction(_events["notification"]);
+            }
             Debug.WriteLine("Subscribe Message: " + message);
         }
 
         private void SubscribeConnectStatusMessage(object message)
         {
             _events["connectMessage"] = JsonConvert.DeserializeObject((string)message);
-            if (connectionAction != null) connectionAction(_events["connectMessage"]);
+            if (connectionAction != null)
+            {
+                connectionAction(_events["connectMessage"]);
+            }
             Debug.WriteLine("Connect Message: " + message);
         }
 
         private void ErrorMessage(object message)
         {
             _events["errorMessage"] = message;
-            if (errorAction != null) errorAction(_events["errorMessage"]);
+            if (errorAction != null)
+            {
+                errorAction(_events["errorMessage"]);
+            }
             Debug.WriteLine("Error Message: " + message);
         }
 
@@ -243,13 +288,19 @@ namespace RingCentral.Subscription
             //Disconnect does not return JSON, it returns list of strings. Only need [1]
             var seperatedMessage = (List<object>)message;
             _events["disconnectMessage"] = seperatedMessage[1].ToString();
-            if (disconnectAction != null) disconnectAction(_events["disconnectMessage"]);
+            if (disconnectAction != null)
+            {
+                disconnectAction(_events["disconnectMessage"]);
+            }
             Debug.WriteLine("Disconnect Message: " + message);
         }
 
         private object ReturnMessage(string requestedMessage)
         {
-            if (_events.ContainsKey(requestedMessage)) return _events[requestedMessage];
+            if (_events.ContainsKey(requestedMessage))
+            {
+                return _events[requestedMessage];
+            }
             return "Error: Message not found";
         }
 
@@ -274,6 +325,4 @@ namespace RingCentral.Subscription
             return _enableSSL;
         }
     }
-
 }
-
