@@ -232,17 +232,19 @@ namespace RingCentral.Subscription
             GC.KeepAlive(_pubnub);
         }
 
-        public void Subscribe(string channel, string channelGroup, Action<object> userCallback,
+        public void Subscribe(string channel, string channelGroup, Action<object> subscribeCallback,
             Action<object> connectCallback, Action<object> errorCallback)
         {
-            _pubnub.Subscribe<string>(channel, channelGroup, userCallback,
+            _pubnub.Subscribe<string>(channel, channelGroup, subscribeCallback,
                 connectCallback, errorCallback);
         }
 
-        public void Unsubscribe(string channel, string channelGroup, Action<object> userCallback,
+
+        // todo: why channelGroup
+        public void Unsubscribe(string channel, string channelGroup, Action<object> subscribeCallback,
             Action<object> connectCallback, Action<object> disconnectCallback, Action<object> errorCallback)
         {
-            _pubnub.Unsubscribe(channel, userCallback, connectCallback,
+            _pubnub.Unsubscribe(channel, subscribeCallback, connectCallback,
                 disconnectCallback, errorCallback);
         }
 
