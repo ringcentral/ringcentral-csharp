@@ -21,7 +21,7 @@ namespace RingCentral.Subscription
         private bool subscribed;
         private List<string> eventFilters = new List<string>();
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
-        private const int RenewHandicap = 1000;
+        private const int RenewHandicap = 100000;
         private Action<object> notificationAction, connectionAction, errorAction;
         public Action<object> disconnectAction { private get; set; }
         private bool _enableSSL;
