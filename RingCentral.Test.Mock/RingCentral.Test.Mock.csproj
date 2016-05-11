@@ -101,22 +101,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountAndExtensionInformationTests.cs" />
+    <Compile Include="AccountAndExtensionInformationTest.cs" />
     <Compile Include="AddressBookTests.cs" />
     <Compile Include="AuthenticationTests.cs" />
-    <Compile Include="CallLogTests.cs" />
-    <Compile Include="GeographicalDictionaryTests.cs" />
-    <Compile Include="HeaderTests.cs" />
-    <Compile Include="MessagingTests.cs" />
+    <Compile Include="CallLogTest.cs" />
+    <Compile Include="GeographicalDictionaryTest.cs" />
+    <Compile Include="HeaderTest.cs" />
+    <Compile Include="MessagingTest.cs" />
     <Compile Include="MockHttpClient.cs" />
-    <Compile Include="PresenceTests.cs" />
+    <Compile Include="PresenceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseTest.cs" />
-    <Compile Include="RingOutTests.cs" />
+    <Compile Include="RingOutTest.cs" />
     <Compile Include="SubscriptionServiceMock.cs" />
     <Compile Include="SubscriptionServiceTest.cs" />
-    <Compile Include="SubscriptionTests.cs" />
-    <Compile Include="TestConfiguration.cs" />
+    <Compile Include="SubscriptionTest.cs" />
+    <Compile Include="BaseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
     [TestFixture]
-    public class RingOutTests : TestConfiguration
+    public class RingOutTest : BaseTest
     {
         private const string RingOutEndPoint = "/restapi/v1.0/account/~/extension/~/ringout";
 
@@ -13,7 +13,7 @@ namespace RingCentral.Test
         public void CancelRingOut()
         {
             Request request = new Request(RingOutEndPoint + "/1");
-            Response cancelResult = RingCentralClient.GetPlatform().Delete(request);
+            ApiResponse cancelResult = sdk.Platform.Delete(request);
             Assert.AreEqual(204, cancelResult.GetStatus());
         }
 
@@ -21,7 +21,7 @@ namespace RingCentral.Test
         public void GetRingOutStatus()
         {
             Request request = new Request(RingOutEndPoint + "/1");
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
@@ -38,7 +38,7 @@ namespace RingCentral.Test
                                     "\"callerId\": {\"phoneNumber\": \"19999999999\"},\"playPrompt\": true}\"";
             Request request = new Request(RingOutEndPoint, jsonData);
 
-            Response result = RingCentralClient.GetPlatform().Post(request);
+            ApiResponse result = sdk.Platform.Post(request);
 
             JToken token = JObject.Parse(result.GetBody());
 

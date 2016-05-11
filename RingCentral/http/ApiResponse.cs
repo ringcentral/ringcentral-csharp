@@ -1,47 +1,47 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
-namespace RingCentral.SDK.Http
+namespace RingCentral.Http
 {
-    public class Response : Headers
+    public class ApiResponse : Headers
     {
         private readonly string _body;
         private readonly int _status;
+        private readonly HttpResponseMessage _response;
 
-        /// <summary>
-        ///     Creates a Response Object
-        /// </summary>
-        /// <param name="status">The status of the response message</param>
-        /// <param name="body">The body of the response message</param>
-        /// <param name="headers">HttpContentHeaders of the response message</param>
-        //public Response(int status, string body, HttpContentHeaders headers)
-        //{
-        //    _body = body;
-        //    _status = status;
-
-        //    SetHeaders(headers);
-
-            
-        //}
-
-        public Response(HttpResponseMessage responseMessage)
+        public ApiResponse(HttpResponseMessage response)
         {
-            var statusCode = Convert.ToInt32(responseMessage.StatusCode);
-            var body = responseMessage.Content.ReadAsStringAsync().Result;
-            var headers = responseMessage.Content.Headers;
+            var statusCode = Convert.ToInt32(response.StatusCode);
+            var body = response.Content.ReadAsStringAsync().Result;
+            var headers = response.Content.Headers;
 
             _body = body;
             _status = statusCode;
+            _response = response;
             SetHeaders(headers);
-            
+
             if (!CheckStatus())
             {
                 throw new Exception(GetError());
+            }
+        }
+
+        public HttpResponseMessage Response
+        {
+            get
+            {
+                return _response;
+            }
+        }
+
+        public HttpRequestMessage Request
+        {
+            get
+            {
+                return _response.RequestMessage;
             }
         }
 
@@ -94,7 +94,7 @@ namespace RingCentral.SDK.Http
         {
             var output = Regex.Split(_body, "--Boundary([^;]+)");
 
-            var splitString = output[1].Split(new[] {"--"}, StringSplitOptions.None);
+            var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
 
             var responses = new List<string>();
 
@@ -138,10 +138,10 @@ namespace RingCentral.SDK.Http
 
             var data = GetJson();
 
-            if (!string.IsNullOrEmpty((string) (data["message"])))
+            if (!string.IsNullOrEmpty((string)(data["message"])))
             {
-                message = (string) (data["message"]);
-            }            
+                message = (string)(data["message"]);
+            }
             if (!string.IsNullOrEmpty((string)(data["error_description"])))
             {
                 message = (string)(data["error_description"]);

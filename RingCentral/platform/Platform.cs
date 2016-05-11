@@ -1,14 +1,12 @@
-﻿using System;
+﻿using RingCentral.Http;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using RingCentral.SDK.Http;
-using System.Diagnostics;
 
-namespace RingCentral.SDK
+namespace RingCentral
 {
     public class Platform
     {
@@ -18,33 +16,24 @@ namespace RingCentral.SDK
         private const string TokenEndpoint = "restapi/oauth/token";
         private const string RevokeEndpoint = "restapi/oauth/revoke";
 
-        public HttpClient _client {  private get;  set; }
-        protected Auth Auth;
+        public HttpClient _client { private get; set; }
+        public Auth Auth { get; private set; }
 
-        private Object thisLock = new Object();
+        private object thisLock = new object();
 
-        //public Platform(string appKey, string appSecret, string apiEndPoint)
-        //{
-        //    AppKey = appKey;
-        //    AppSecret = appSecret;
-        //    ApiEndpoint = apiEndPoint;
-        //    Auth = new Auth();
-        //    _client = new HttpClient { BaseAddress = new Uri(ApiEndpoint) };
-        //}
-
-        public Platform(string appKey, string appSecret, string apiEndPoint, string appName, string appVersion)
+        public Platform(string appKey, string appSecret, string serverUrl, string appName = "", string appVersion = "")
         {
-            AppKey = appKey;
-            AppSecret = appSecret;
-            ApiEndpoint = apiEndPoint;
+            this.appKey = appKey;
+            this.appSecret = appSecret;
+            this.serverUrl = serverUrl;
             Auth = new Auth();
-            _client = new HttpClient {BaseAddress = new Uri(ApiEndpoint)};
+            _client = new HttpClient { BaseAddress = new Uri(this.serverUrl) };
             SetUserAgentHeader(appName, appVersion);
         }
 
-        private string AppKey { get; set; }
-        private string AppSecret { get; set; }
-        private string ApiEndpoint { get; set; }
+        private string appKey;
+        private string appSecret;
+        private string serverUrl;
 
         /// <summary>
         ///     Method to generate Access Token and Refresh Token to establish an authenticated session
@@ -54,7 +43,7 @@ namespace RingCentral.SDK
         /// <param name="extension">Optional: Extension number to login</param>
         /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>string response of Authenticate result.</returns>
-        public Response Authorize(string userName, string extension, string password, bool isRemember)
+        public ApiResponse Authorize(string userName, string extension, string password, bool isRemember)
         {
             var body = new Dictionary<string, string>
                        {
@@ -81,7 +70,7 @@ namespace RingCentral.SDK
         ///     Refreshes expired Access token during valid lifetime of Refresh Token
         /// </summary>
         /// <returns>string response of Refresh result</returns>
-        public Response Refresh()
+        public ApiResponse Refresh()
         {
             if (!Auth.IsRefreshTokenValid()) throw new Exception("Refresh Token has Expired");
 
@@ -107,7 +96,7 @@ namespace RingCentral.SDK
         ///     Revokes the already granted access to stop application activity
         /// </summary>
         /// <returns>string response of Revoke result</returns>
-        public Response Logout()
+        public ApiResponse Logout()
         {
             var body = new Dictionary<string, string>
                        {
@@ -130,76 +119,60 @@ namespace RingCentral.SDK
         ///     <c>Refresh</c>, <c>Revoke</c>)
         /// </param>
         /// <returns>Response object</returns>
-        private Response AuthCall(Request request)
+        private ApiResponse AuthCall(Request request)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GetApiKey());
-           
-            var result = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
 
-            return new Response(result);
+            var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
+
+            return new ApiResponse(response);
         }
 
-        /// <summary>
-        ///     Gets the auth data set on authorization
-        /// </summary>
-        /// <returns>Dictionary of auth data</returns>
-        public Dictionary<string, string> GetAuthData()
+        public ApiResponse Get(Request request)
         {
-            return Auth.GetData();
+            return Send(HttpMethod.Get, request);
         }
 
-        /// <summary>
-        ///     Gets the auth data set on authorization
-        /// </summary>
-        /// <returns>Dictionary of auth data</returns>
-        public void SetAuthData(Dictionary<string, string> authData )
+        public ApiResponse Post(Request request)
         {
-            Auth.SetData(authData);
+            return Send(HttpMethod.Post, request);
         }
 
-        public Response Get(Request request)
+        public ApiResponse Delete(Request request)
         {
-            return ApiCall("GET", request);
+            return Send(HttpMethod.Delete, request);
         }
 
-        public Response Post(Request request)
+        public ApiResponse Put(Request request)
         {
-            return ApiCall("POST", request);
+            return Send(HttpMethod.Put, request);
         }
 
-        public Response Delete(Request request)
+        public ApiResponse Send(HttpMethod httpMethod, Request request)
         {
-            return ApiCall("DELETE", request);
-        }
+            if (!LoggedIn())
+            {
+                throw new Exception("Access has Expired");
+            }
 
-        public Response Put(Request request)
-        {
-            return ApiCall("PUT", request);
-        }
-
-        private Response ApiCall(string method, Request request)
-        {
-            if (!IsAuthorized()) throw new Exception("Access has Expired");
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage();
-
+            var requestMessage = new HttpRequestMessage();
             requestMessage.Content = request.GetHttpContent();
-            requestMessage.Method = request.GetHttpMethod(method);
+            requestMessage.Method = httpMethod;
             requestMessage.RequestUri = request.GetUri();
-            
+
             request.GetXhttpOverRideHeader(requestMessage);
 
-            return new Response(_client.SendAsync(requestMessage).Result);
+            return new ApiResponse(_client.SendAsync(requestMessage).Result);
         }
 
 
         /// <summary>
-        ///     Gets the API key by encoding the AppKey and AppSecret with Encoding.UTF8.GetBytes
+        /// Generates auth token by encoding appKey and appSecret then converting it to base64
         /// </summary>
         /// <returns>The Api Key</returns>
-        private string GetApiKey()
+        private string GenerateAuthToken()
         {
-            var byteArray = Encoding.UTF8.GetBytes(AppKey + ":" + AppSecret);
+            var byteArray = Encoding.UTF8.GetBytes(appKey + ":" + appSecret);
             return Convert.ToBase64String(byteArray);
         }
 
@@ -208,7 +181,8 @@ namespace RingCentral.SDK
         ///     are optional but they will help a lot to identify your application in API logs and speed up any potential troubleshooting.
         ///     Allowed characters for AppName:AppVersion are- letters, digits, hyphen, dot and underscore.
         /// </summary>
-        /// <param name="header">The value of the User-Agent header</param>
+        /// <param name="appName">Application Name</param>
+        /// <param name="appVersion">Application Version</param>
         private void SetUserAgentHeader(string appName, string appVersion)
         {
             var agentString = String.Empty;
@@ -222,24 +196,13 @@ namespace RingCentral.SDK
                     agentString += "_" + appVersion;
                 }
             }
-
-            //if (!string.IsNullOrEmpty(osName) && !string.IsNullOrEmpty(osVersion))
-            //{
-            //    agentString += "." + osName + "/" + osVersion;
-            //}
-
-            //if (!string.IsNullOrEmpty(clrVersion))
-            //{
-            //    agentString += ".CLR/" + clrVersion;
-            //}
-
             if (string.IsNullOrEmpty(agentString))
             {
-                agentString += "RCCSSDK_" + SDK.VERSION;
+                agentString += "RCCSSDK_" + SDK.Version;
             }
             else
             {
-                agentString += ".RCCSSDK_" + SDK.VERSION;
+                agentString += ".RCCSSDK_" + SDK.Version;
             }
             #endregion
 
@@ -255,7 +218,7 @@ namespace RingCentral.SDK
         ///     then a refresh is issued.
         /// </summary>
         /// <returns>boolean value of access authorization</returns>
-        public bool IsAuthorized()
+        public bool LoggedIn()
         {
             if (Auth.IsAccessTokenValid())
             {
@@ -273,6 +236,39 @@ namespace RingCentral.SDK
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// When your application needs to authentiate an user, redirect the user to RingCentral API server for authentication.
+        /// This method helps you to build the URI. Later you can redirect user to this URI.
+        /// </summary>
+        /// <param name="redirectUri">This is a callback URI which determines where the response will be sent to. The value of this parameter must exactly match one of the URIs you have provided for your app upon registration. This URI can be HTTP/HTTPS address for web applications or custom scheme URI for mobile or desktop applications.</param>
+        /// <param name="state">Optional, recommended. An opaque value used by the client to maintain state between the request and callback. The authorization server includes this value when redirecting the user-agent back to the client. The parameter should be used for preventing cross-site request forgery</param>
+        /// <returns></returns>
+        public string AuthorizeUri(string redirectUri, string state = "")
+        {
+            var baseUrl = serverUrl + "/restapi/oauth/authorize";
+            var authUrl = string.Format("{0}?response_type=code&state={1}&redirect_uri={2}&client_id={3}",
+                baseUrl, Uri.EscapeUriString(state),
+                Uri.EscapeUriString(redirectUri),
+                Uri.EscapeUriString(appKey));
+            return authUrl;
+        }
+
+        /// <summary>
+        /// Do authentication with the authorization code returned from server
+        /// </summary>
+        /// <param name="authCode">The authorization code returned from server</param>
+        /// <param name="redirectUri">The same redirectUri when you were obtaining the authCode in previous step</param>
+        /// <returns></returns>
+        public ApiResponse Authenticate(string authCode, string redirectUri)
+        {
+            var request = new Request("/restapi/oauth/token",
+                new Dictionary<string, string> { { "grant_type", "authorization_code" },
+                    { "redirect_uri", redirectUri }, { "code", authCode } });
+            var response = AuthCall(request);
+            Auth.SetData(response.GetJson());
+            return response;
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
     [TestFixture]
-    public class AddressBookTests : TestConfiguration
+    public class AddressBookTests : BaseTest
     {
         private const string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
 
@@ -13,7 +13,7 @@ namespace RingCentral.Test
         public void GetContactFromAddressBook()
         {
             Request request = new Request(AddressBookEndPoint + "/1");
-            Response response = Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
             JToken token = response.GetJson();
             var firstNameResponse = (string)token.SelectToken("firstName");
 
@@ -23,7 +23,7 @@ namespace RingCentral.Test
         public void GetAddressBook()
         {
             Request request = new Request(AddressBookEndPoint);
-            Response response = Platform.Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
             JToken token = response.GetJson();
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
@@ -38,7 +38,7 @@ namespace RingCentral.Test
         public void DeleteContactFromAddressBook()
         {
             Request request = new Request(AddressBookEndPoint + "/3");
-            Response response = Platform.Delete(request);
+            ApiResponse response = sdk.Platform.Delete(request);
             JToken token = response.GetJson();
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
@@ -56,9 +56,9 @@ namespace RingCentral.Test
                              "\"zip\": \"94123\"}" +
                              "}";
 
-            Request request = new Request(AddressBookEndPoint,jsonData);
+            Request request = new Request(AddressBookEndPoint, jsonData);
 
-            Response response = Platform.Post(request);
+            ApiResponse response = sdk.Platform.Post(request);
             JToken token = response.GetJson();
 
             var firstName = (string)token.SelectToken("firstName");
@@ -80,7 +80,7 @@ namespace RingCentral.Test
                               "}";
             Request request = new Request(AddressBookEndPoint + "/5", jsonData);
 
-            Response response = Platform.Put(request);
+            ApiResponse response = sdk.Platform.Put(request);
 
             JToken token = response.GetJson();
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");

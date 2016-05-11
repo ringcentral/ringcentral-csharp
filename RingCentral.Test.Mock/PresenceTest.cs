@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
 
 namespace RingCentral.Test
 {
     [TestFixture]
-    public class PresenceTests : TestConfiguration
+    public class PresenceTest : BaseTest
     {
         private const string PresenceEndPoint = "/restapi/v1.0/account/~/extension/~/presence";
 
@@ -13,11 +13,11 @@ namespace RingCentral.Test
         public void GetPresence()
         {
             Request request = new Request(PresenceEndPoint);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var presenceStatus = (string) token.SelectToken("presenceStatus");
+            var presenceStatus = (string)token.SelectToken("presenceStatus");
 
             Assert.AreEqual(presenceStatus, "Available");
         }

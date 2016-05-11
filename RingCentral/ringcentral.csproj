@@ -39,12 +39,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\Attachment.cs" />
-    <Compile Include="Helper\PagerHelper.cs" />
-    <Compile Include="Helper\SmsHelper.cs" />
+    <Compile Include="Http\Attachment.cs" />
     <Compile Include="Http\Headers.cs" />
     <Compile Include="Http\Request.cs" />
-    <Compile Include="Http\Response.cs" />
+    <Compile Include="Http\ApiResponse.cs" />
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,9 +88,7 @@
       <HintPath>..\packages\PubnubPCL.3.7.0.1\lib\portable-net40+sl50+win+wp80+MonoAndroid10+xamarinios10+MonoTouch10\PubNub-Messaging.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">

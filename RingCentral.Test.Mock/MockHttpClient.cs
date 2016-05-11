@@ -8,75 +8,23 @@ using System.Threading.Tasks;
 
 namespace RingCentral.Test
 {
-    public class MockHttpClient : DelegatingHandler
+    public partial class MockHttpClient : DelegatingHandler
     {
-        private readonly Dictionary<Uri, HttpResponseMessage>
-        _GetMockResponses = new Dictionary<Uri, HttpResponseMessage>();
-        private readonly Dictionary<Uri, HttpResponseMessage>
-        _PostMockResponses = new Dictionary<Uri, HttpResponseMessage>();
-        private readonly Dictionary<Uri, HttpResponseMessage>
-        _DeleteMockResponses = new Dictionary<Uri, HttpResponseMessage>();
-        private readonly Dictionary<Uri, HttpResponseMessage>
-        _PutMockResponses = new Dictionary<Uri, HttpResponseMessage>();
-        protected const string ApiEndPoint = "https://platform.devtest.ringcentral.com";
+        private const string ServerUrl = SDK.SandboxServerUrl;
 
-
-        public void AddGetMockResponse(Uri uri, HttpResponseMessage responseMessage)
-        {
-            _GetMockResponses.Add(uri, responseMessage);
-        }
-        public void AddDeleteMockResponse(Uri uri, HttpResponseMessage responseMessage)
-        {
-            _DeleteMockResponses.Add(uri, responseMessage);
-        }
-        public void AddPostMockResponse(Uri uri, HttpResponseMessage responseMessage)
-        {
-            _PostMockResponses.Add(uri, responseMessage);
-        }
-        public void AddPutMockResponse(Uri uri, HttpResponseMessage responseMessage)
-        {
-            _PutMockResponses.Add(uri, responseMessage);
-        }
-        public void RemovePostMockResponse(Uri uri)
-        {
-            _PostMockResponses.Remove(uri);
-        }
-        public void RemoveGetMockResponse(Uri uri)
-        {
-            _GetMockResponses.Remove(uri);
-        }
-        public void RemovePutMockResponse(Uri uri)
-        {
-            _PutMockResponses.Remove(uri);
-        }
-        public void RemoveDeleteMockresponse(Uri uri)
-        {
-            _DeleteMockResponses.Remove(uri);
-        }
-
-
+        private readonly Dictionary<HttpMethod, Dictionary<Uri, HttpResponseMessage>> mockResponses
+            = new Dictionary<HttpMethod, Dictionary<Uri, HttpResponseMessage>> {
+                { HttpMethod.Get, new Dictionary<Uri, HttpResponseMessage>() },
+                { HttpMethod.Post, new Dictionary<Uri, HttpResponseMessage>() },
+                { HttpMethod.Delete, new Dictionary<Uri, HttpResponseMessage>() },
+                { HttpMethod.Put, new Dictionary<Uri, HttpResponseMessage>() },
+            };
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (request.Method.Equals(HttpMethod.Get))
+            if (mockResponses.ContainsKey(request.Method) && mockResponses[request.Method].ContainsKey(request.RequestUri))
             {
-                if ((_GetMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_GetMockResponses[request.RequestUri]);
-                else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
-            }
-            if (request.Method.Equals(HttpMethod.Post))
-            {
-                if ((_PostMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_PostMockResponses[request.RequestUri]);
-                else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
-            }
-            if (request.Method.Equals(HttpMethod.Delete))
-            {
-                if ((_DeleteMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_DeleteMockResponses[request.RequestUri]);
-                else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
-            }
-            if (request.Method.Equals(HttpMethod.Put))
-            {
-                if ((_PutMockResponses.ContainsKey(request.RequestUri))) return TaskEx.FromResult(_PutMockResponses[request.RequestUri]);
-                else return TaskEx.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request });
+                return TaskEx.FromResult(mockResponses[request.Method][request.RequestUri]);
             }
             else
             {
@@ -86,9 +34,9 @@ namespace RingCentral.Test
 
         public MockHttpClient()
         {
+            AddAuthenticationMockData();
             AddAccountAndExtensionResponses();
             AddAddressBookResponses();
-            AddAuthenticationResponses();
             AddCallLogResponses();
             AddGeographicalDicitonaryResponses();
             AddMessagingResponses();
@@ -96,67 +44,13 @@ namespace RingCentral.Test
             AddRingOutResponses();
             AddSubscriptionResponses();
             AddResponseTestResponses();
-            
         }
 
-        public void AddAccountAndExtensionResponses()
-        {
-            string AccountInformationEndPoint = "/restapi/v1.0/account/";
-            string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/1/extension";
-            AddGetMockResponse(
-                new Uri(ApiEndPoint + AccountExtensionInformationEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(
-                        "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1\"," + "\"id\": 1," + "\"serviceInfo\": {" +
-                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/service-info\"," + "\"brand\": {" +
-                                   "\"id\": \"1\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"1\"," +
-                                   "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
-                                 "\"servicePlan\": {" + "\"id\": \"1\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
-                                 "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
-                                   "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
-                               "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
-                                 "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "application/json")
-                }
-
-                );
-            AddGetMockResponse(
-              new Uri(ApiEndPoint + AccountInformationEndPoint),
-              new HttpResponseMessage(HttpStatusCode.OK)
-              {
-                  Content = new StringContent(
-                      "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1\"," + "\"id\": 1," + "\"serviceInfo\": {" +
-                               "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/service-info\"," + "\"brand\": {" +
-                                 "\"id\": \"1\"," + "\"name\": \"RingCentral\"," + "\"homeCountry\": {" + "\"id\": \"1\"," +
-                                 "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"} }," +
-                               "\"servicePlan\": {" + "\"id\": \"1\"," + "\"name\": \"Sandbox Office 4 lines Enterprise Edition\"," + "\"edition\": \"Enterprise\"}," +
-                               "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
-                                 "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
-                             "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
-                               "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "application/json")
-              }
-
-              );
-
-            AddGetMockResponse(
-             new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/1"),
-             new HttpResponseMessage(HttpStatusCode.OK)
-             {
-                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\"," +
-                "\"records\": [ { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 1," +
-                "\"extensionNumber\": \"102\"," + "\"contact\": {\"firstName\": \"Alice\",\"lastName\": \"Keys\",\"email\": \"alice.keys@example.com\"}," +
-                "\"name\": \"Alice Keys\",\"type\": \"User\",\"status\": \"NotActivated\",\"permissions\": { \"admin\": {\"enabled\": false }," +
-                "\"internationalCalling\": {\"enabled\": true }},\"profileImage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/profile-image\"}}" +
-                "],\"paging\": {\"page\": 1,\"totalPages\": 1,\"perPage\": 100,\"totalElements\": 1, \"pageStart\": 0,\"pageEnd\": 0},\"navigation\": {\"firstPage\": {" +
-                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\" },\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension?page=1&perPage=100\"}}}"
-                 , Encoding.UTF8, "application/json")
-             });
-        }
         public void AddAddressBookResponses()
         {
             string AddressBookEndPoint = "/restapi/v1.0/account/~/extension/~/address-book/contact";
-            AddGetMockResponse(
-                   new Uri(ApiEndPoint + AddressBookEndPoint + "/1"),
+            mockResponses[HttpMethod.Get].Add(
+                   new Uri(ServerUrl + AddressBookEndPoint + "/1"),
                    new HttpResponseMessage(HttpStatusCode.OK)
                    {
                        Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/123123\"," +
@@ -164,8 +58,8 @@ namespace RingCentral.Test
                        "\"businessAddress\": { " + "\"street\": \"2 Marina Blvd\", " + "\"city\": \"San-Francisco\"," + "\"state\": \"CA\"," + "\"zip\": \"94123\" } }", Encoding.UTF8, "application/json")
 
                    });
-            AddGetMockResponse(
-                 new Uri(ApiEndPoint + AddressBookEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+                 new Uri(ServerUrl + AddressBookEndPoint),
                  new HttpResponseMessage(HttpStatusCode.OK)
                  {
                      Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact?sortBy=FirstName\"," +
@@ -181,19 +75,19 @@ namespace RingCentral.Test
                         "\"groups\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/123123/extension/123123/address-book/group\" } }"
                        , Encoding.UTF8, "application/json")
                  });
-            AddDeleteMockResponse(
-                   new Uri(ApiEndPoint + AddressBookEndPoint + "/3"),
+            mockResponses[HttpMethod.Delete].Add(
+                   new Uri(ServerUrl + AddressBookEndPoint + "/3"),
                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ \"message\": \"Deleted\" }", Encoding.UTF8, "application/json") });
-            AddPostMockResponse(
-                   new Uri(ApiEndPoint + AddressBookEndPoint),
+            mockResponses[HttpMethod.Post].Add(
+                   new Uri(ServerUrl + AddressBookEndPoint),
                    new HttpResponseMessage(HttpStatusCode.OK)
                    {
                        Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/3\"," + "\"availability\": \"Alive\"," +
                        "\"id\": 3 ," + "\"firstName\": \"Jim\"," + "\"lastName\": \"Johns\"," + "\"businessAddress\": { " + "\"street\": \"5 Marina Blvd\", " + "\"city\": \"San-Francisco\"," +
                        "\"state\": \"CA\"," + "\"zip\": \"94123\" } }", Encoding.UTF8, "application/json")
                    });
-            AddPutMockResponse(
-                new Uri(ApiEndPoint + AddressBookEndPoint + "/5"),
+            mockResponses[HttpMethod.Put].Add(
+                new Uri(ServerUrl + AddressBookEndPoint + "/5"),
                    new HttpResponseMessage(HttpStatusCode.OK)
                    {
                        Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/5\"," + "\"availability\": \"Alive\"," +
@@ -202,39 +96,11 @@ namespace RingCentral.Test
                    });
 
         }
-        public void AddAuthenticationResponses()
-        {
-            string RefreshEndPoint = "/restapi/oauth/token";
-            string VersionEndPoint = "/restapi";
-            string RevokeEndPOint = "/restapi/oauth/revoke";
-            AddPostMockResponse(
-                new Uri(ApiEndPoint + RevokeEndPOint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("")
-                }
-                );
-            AddGetMockResponse(
-                new Uri(ApiEndPoint + VersionEndPoint),
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{ \"apiVersions\": { \"uriString\": \"v1.0\" } }", Encoding.UTF8, "application/json")
-                });
-            AddPostMockResponse(
-              new Uri(ApiEndPoint + RefreshEndPoint),
-              new HttpResponseMessage(HttpStatusCode.OK)
-              {
-                  Content = new StringContent(
-                      "{\"access_token\": \"abcdefg\",\"token_type\": \"bearer\",\"expires_in\": 3599, \"refresh_token\": \"gfedcba\",\"refresh_token_expires_in\": 604799," +
-                      "\"scope\": \"EditCustomData EditAccounts ReadCallLog EditPresence SMS Faxes ReadPresence ReadAccounts Contacts EditExtensions InternalMessages EditMessages ReadCallRecording ReadMessages EditPaymentInfo EditCallLog NumberLookup Accounts RingOut ReadContacts\"," +
-                      "\"owner_id\": \"1\" }", Encoding.UTF8, "application/json")
-              });
-        }
         public void AddCallLogResponses()
         {
             string CallLogEndPoint = "/restapi/v1.0/account/~";
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + CallLogEndPoint + "/active-calls"),
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + CallLogEndPoint + "/active-calls"),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/active-calls?page=1&perPage=100\",\"records\": [],\"paging\": {" +
@@ -242,8 +108,8 @@ namespace RingCentral.Test
                                                "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/active-calls?page=1&perPage=100\" }}}"
                                                , Encoding.UTF8, "application/json")
                });
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + CallLogEndPoint + "/extension/~/active-calls"),
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + CallLogEndPoint + "/extension/~/active-calls"),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/active-calls?page=1&perPage=100\",\"records\": [],\"paging\": {" +
@@ -252,8 +118,8 @@ namespace RingCentral.Test
                                                , Encoding.UTF8, "application/json")
                });
 
-            AddGetMockResponse(
-          new Uri(ApiEndPoint + CallLogEndPoint + "/call-log/"),
+            mockResponses[HttpMethod.Get].Add(
+          new Uri(ServerUrl + CallLogEndPoint + "/call-log/"),
           new HttpResponseMessage(HttpStatusCode.OK)
           {
               Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/11/call-log?view=Simple&dateFrom=2015-07-22T00:00:00.000Z&page=1&perPage=100\"," +
@@ -265,8 +131,8 @@ namespace RingCentral.Test
                   "\"sessionId\": \"1\",\"startTime\": \"2015-07-29T02:19:05.000Z\",\"duration\": 31,\"type\": \"Voice\",\"direction\": \"Inbound\"," +
                   "\"action\": \"Phone Call\",\"result\": \"Missed\",\"to\": {\"phoneNumber\": \"+19999999999\" },\"from\": {\"phoneNumber\": \"+19999999999\"}}]}", Encoding.UTF8, "application/json")
           });
-            AddGetMockResponse(
-        new Uri(ApiEndPoint + CallLogEndPoint + "/extension/~/call-log"),
+            mockResponses[HttpMethod.Get].Add(
+        new Uri(ServerUrl + CallLogEndPoint + "/extension/~/call-log"),
         new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/call-log?view=Simple&dateFrom=2015-07-22T00:00:00.000Z&page=1&perPage=100\"," +
@@ -279,8 +145,8 @@ namespace RingCentral.Test
            "\"direction\": \"Outbound\",\"action\": \"RingOut Web\",\"result\": \"Call connected\",\"to\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\"," +
             "\"location\": \"Los Angeles, CA\"},\"from\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\" } }]}", Encoding.UTF8, "application/json")
         });
-            AddGetMockResponse(
-        new Uri(ApiEndPoint + CallLogEndPoint + "/extension/~/call-log/Abcdefg"),
+            mockResponses[HttpMethod.Get].Add(
+        new Uri(ServerUrl + CallLogEndPoint + "/extension/~/call-log/Abcdefg"),
         new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/call-log/Abcdefg?view=Simple\"," +
@@ -288,8 +154,8 @@ namespace RingCentral.Test
            "\"direction\": \"Outbound\", \"action\": \"RingOut Web\",\"result\": \"Call connected\",\"to\": {\"phoneNumber\": \"+199999999999\"," +
             "\"name\": \"John Doe\",\"location\": \"Los Angeles, CA\"},\"from\": {\"phoneNumber\": \"+19999999999\",\"name\": \"John Doe\"} }", Encoding.UTF8, "application/json")
         });
-            AddGetMockResponse(
-            new Uri(ApiEndPoint + CallLogEndPoint + "/call-log/Abcdefgh"),
+            mockResponses[HttpMethod.Get].Add(
+            new Uri(ServerUrl + CallLogEndPoint + "/call-log/Abcdefgh"),
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/call-log/Abcdefg?view=Simple\"," +
@@ -306,8 +172,8 @@ namespace RingCentral.Test
             string LocationEndPoint = DictionaryEndPoint + "/location";
             string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
             string LanguageEndPoint = DictionaryEndPoint + "/language";
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + CountryEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + CountryEndPoint),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent(
@@ -318,8 +184,8 @@ namespace RingCentral.Test
                         "\"id\": \"3\",\"name\": \"Albania\",\"isoCode\": \"AL\",\"callingCode\": \"355\"," +
                         "\"emergencyCalling\": false,\"numberSelling\": false}]}", Encoding.UTF8, "application/json")
                });
-            AddGetMockResponse(
-           new Uri(ApiEndPoint + CountryEndPoint + "/3"),
+            mockResponses[HttpMethod.Get].Add(
+           new Uri(ServerUrl + CountryEndPoint + "/3"),
            new HttpResponseMessage(HttpStatusCode.OK)
            {
                Content = new StringContent(
@@ -327,8 +193,8 @@ namespace RingCentral.Test
                     "\"id\": \"3\",\"name\": \"Albania\",\"isoCode\": \"AL\",\"callingCode\": \"355\"," +
                     "\"emergencyCalling\": false,\"numberSelling\": false}", Encoding.UTF8, "application/json")
            });
-            AddGetMockResponse(
-           new Uri(ApiEndPoint + LanguageEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+           new Uri(ServerUrl + LanguageEndPoint),
            new HttpResponseMessage(HttpStatusCode.OK)
            {
                Content = new StringContent(
@@ -342,8 +208,8 @@ namespace RingCentral.Test
                   "\"lastPage\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/language?page=1&perPage=100\"}}}",
                   Encoding.UTF8, "application/json")
            });
-            AddGetMockResponse(
-          new Uri(ApiEndPoint + LanguageEndPoint + "/1033"),
+            mockResponses[HttpMethod.Get].Add(
+          new Uri(ServerUrl + LanguageEndPoint + "/1033"),
           new HttpResponseMessage(HttpStatusCode.OK)
           {
               Content = new StringContent(
@@ -352,8 +218,8 @@ namespace RingCentral.Test
                  "\"localeCode\": \"en-US\",\"ui\": true,\"greeting\": true,\"formattingLocale\": true}",
                  Encoding.UTF8, "application/json")
           });
-            AddGetMockResponse(
-             new Uri(ApiEndPoint + LocationEndPoint + "?stateId=13"),
+            mockResponses[HttpMethod.Get].Add(
+             new Uri(ServerUrl + LocationEndPoint + "?stateId=13"),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent(
@@ -366,8 +232,8 @@ namespace RingCentral.Test
                       "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/state/13\"," +
                        "\"id\": \"13\" } } ] }", Encoding.UTF8, "application/json")
                });
-            AddGetMockResponse(
-            new Uri(ApiEndPoint + StateEndPoint + "/13"),
+            mockResponses[HttpMethod.Get].Add(
+            new Uri(ServerUrl + StateEndPoint + "/13"),
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(
@@ -375,8 +241,8 @@ namespace RingCentral.Test
                    "\"id\": \"13\",\"name\": \"Alaska\",\"isoCode\": \"AK\",\"country\": {" +
                     "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\",\"id\": \"1\" } }", Encoding.UTF8, "application/json")
             });
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + StateEndPoint + "?countryId=1&withPhoneNumbers=True&perPage=2"),
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + StateEndPoint + "?countryId=1&withPhoneNumbers=True&perPage=2"),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent(
@@ -388,16 +254,16 @@ namespace RingCentral.Test
                          "\"name\": \"Alaska\",\"isoCode\": \"AK\",\"country\": { \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1\"," +
                           "\"id\": \"1\"}}]}", Encoding.UTF8, "application/json")
                });
-            AddGetMockResponse(
-            new Uri(ApiEndPoint + TimeZoneEndPoint + "/1"),
+            mockResponses[HttpMethod.Get].Add(
+            new Uri(ServerUrl + TimeZoneEndPoint + "/1"),
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(
                   "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone/1\"," +
                   "\"id\": \"1\",\"name\": \"GMT\",\"description\": \"Casablanca, Monrovia, Reykjavik\" } ", Encoding.UTF8, "application/json")
             });
-            AddGetMockResponse(
-              new Uri(ApiEndPoint + TimeZoneEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+              new Uri(ServerUrl + TimeZoneEndPoint),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
                   Content = new StringContent(
@@ -414,17 +280,17 @@ namespace RingCentral.Test
             string ExtensionMessageEndPoint = "/restapi/v1.0/account/~/extension/~/message-store";
             string FaxEndPoint = "/restapi/v1.0/account/~/extension/~/fax";
             string PagerEndPoint = "/restapi/v1.0/account/~/extension/~/company-pager";
-            AddDeleteMockResponse(
-             new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123123123"),
+            mockResponses[HttpMethod.Delete].Add(
+             new Uri(ServerUrl + ExtensionMessageEndPoint + "/123123123"),
              new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
-            AddDeleteMockResponse(
-              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/123"),
+            mockResponses[HttpMethod.Delete].Add(
+              new Uri(ServerUrl + ExtensionMessageEndPoint + "/123"),
               new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
-            AddGetMockResponse(
-              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/1/content/1"),
+            mockResponses[HttpMethod.Get].Add(
+              new Uri(ServerUrl + ExtensionMessageEndPoint + "/1/content/1"),
               new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("This is a test from the the NUnit Test Suite of the RingCentral C# SDK") });
-            AddGetMockResponse(
-              new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/1,2,"),
+            mockResponses[HttpMethod.Get].Add(
+              new Uri(ServerUrl + ExtensionMessageEndPoint + "/1,2,"),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
                   Content = new StringContent("boundary=Boundary_0 --Boundary_0 Content-Type: application/json {" +
@@ -456,8 +322,8 @@ namespace RingCentral.Test
                    " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} --Boundary_0"
                    , Encoding.UTF8, "multipart/mixed")
               });
-            AddGetMockResponse(
-                  new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/2"),
+            mockResponses[HttpMethod.Get].Add(
+                  new Uri(ServerUrl + ExtensionMessageEndPoint + "/2"),
                   new HttpResponseMessage(HttpStatusCode.OK)
                   {
                       Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/2\"," +
@@ -473,8 +339,8 @@ namespace RingCentral.Test
                        " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json"),
 
                   });
-            AddPostMockResponse(
-             new Uri(ApiEndPoint + SmsEndPoint),
+            mockResponses[HttpMethod.Post].Add(
+             new Uri(ServerUrl + SmsEndPoint),
              new HttpResponseMessage(HttpStatusCode.OK)
              {
                  Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3\"," +
@@ -489,8 +355,8 @@ namespace RingCentral.Test
                   "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/3\",\"id\": \"3\"" +
                   " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json")
              });
-            AddPutMockResponse(
-             new Uri(ApiEndPoint + ExtensionMessageEndPoint + "/3"),
+            mockResponses[HttpMethod.Put].Add(
+             new Uri(ServerUrl + ExtensionMessageEndPoint + "/3"),
              new HttpResponseMessage(HttpStatusCode.OK)
              {
                  Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/message-store/3\"," +
@@ -505,8 +371,8 @@ namespace RingCentral.Test
                   "\"conversation\": {\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/conversation/3\",\"id\": \"3\"" +
                   " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"}", Encoding.UTF8, "application/json")
              });
-            AddGetMockResponse(
-              new Uri(ApiEndPoint + ExtensionMessageEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+              new Uri(ServerUrl + ExtensionMessageEndPoint),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
 
@@ -536,8 +402,8 @@ namespace RingCentral.Test
                     " },\"lastModifiedTime\": \"2015-07-29T15:56:21.583Z\"} ]}", Encoding.UTF8, "application/json"),
 
               });
-            AddPostMockResponse(
-                new Uri(ApiEndPoint + FaxEndPoint),
+            mockResponses[HttpMethod.Post].Add(
+                new Uri(ServerUrl + FaxEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
@@ -547,8 +413,8 @@ namespace RingCentral.Test
                      "\"contentType\": \"image/tiff\"}],\"direction\": \"Outbound\",\"availability\": \"Alive\",\"messageStatus\": \"Queued\"," +
                      "\"faxResolution\": \"High\",\"faxPageCount\": 0,\"lastModifiedTime\": \"2013-07-26T08:38:45.000Z\"}", Encoding.UTF8, "application/json")
                 });
-            AddPostMockResponse(
-                new Uri(ApiEndPoint + PagerEndPoint),
+            mockResponses[HttpMethod.Post].Add(
+                new Uri(ServerUrl + PagerEndPoint),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
@@ -564,8 +430,8 @@ namespace RingCentral.Test
         public void AddPresenceResponses()
         {
             string PresenceEndPoint = "/restapi/v1.0/account/~/extension/~/presence";
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + PresenceEndPoint),
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + PresenceEndPoint),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/presence\"," +
@@ -580,41 +446,41 @@ namespace RingCentral.Test
         public void AddRingOutResponses()
         {
             string RingOutEndPoint = "/restapi/v1.0/account/~/extension/~/ringout";
-            AddPostMockResponse(
-               new Uri(ApiEndPoint + RingOutEndPoint),
+            mockResponses[HttpMethod.Post].Add(
+               new Uri(ServerUrl + RingOutEndPoint),
                new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\"," +
                     "\"id\": 255,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
                });
-            AddGetMockResponse(
-            new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
+            mockResponses[HttpMethod.Get].Add(
+            new Uri(ServerUrl + RingOutEndPoint + "/1"),
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/ringout/1?#\"," +
                  "\"id\": 1,\"status\": {\"callStatus\": \"InProgress\",\"callerStatus\": \"InProgress\",\"calleeStatus\": \"InProgress\"}}", Encoding.UTF8, "application/json")
             });
 
-            AddDeleteMockResponse(
-              new Uri(ApiEndPoint + RingOutEndPoint + "/1"),
+            mockResponses[HttpMethod.Delete].Add(
+              new Uri(ServerUrl + RingOutEndPoint + "/1"),
               new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
         }
         public void AddSubscriptionResponses()
         {
             string SubscriptionEndPoint = "/restapi/v1.0/subscription";
-            AddPostMockResponse(
-                new Uri(ApiEndPoint + "/restapi/v1.0/subscription"),
+            mockResponses[HttpMethod.Post].Add(
+                new Uri(ServerUrl + "/restapi/v1.0/subscription"),
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
-                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" + 
+                        "{\r\n  \"id\" : \"1\",\r\n  \"creationTime\" : \"2015-09-17T23:59:39.150Z\",\r\n  \"status\" : \"Active\",\r\n  \"uri\" : \"https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/7ffd447a-0d0c-47f0-a313-0d53851293da\",\r\n" +
                         "\"eventFilters\" : [ \"/restapi/v1.0/account/1/extension/1/message-store\", \"/restapi/v1.0/account/1/extension/1/presence\" ],\r\n  \"expirationTime\" : \"2015-09-18T00:14:39.150Z\",\r\n  \"expiresIn\" : 899,\r\n  \"deliveryMode\" :" +
-                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +    
+                        "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +
                         "\"encryptionAlgorithm\" : \"AES\",\r\n    \"encryptionKey\" : \"6hTFP4B94ZNI+IvgxPLY7g==\"\r\n  }\r\n}", Encoding.UTF8, "application/json")
                 }
                 );
-            AddGetMockResponse(
-             new Uri(ApiEndPoint + SubscriptionEndPoint + "/1"),
+            mockResponses[HttpMethod.Get].Add(
+             new Uri(ServerUrl + SubscriptionEndPoint + "/1"),
              new HttpResponseMessage(HttpStatusCode.OK)
              {
                  Content = new StringContent(
@@ -623,11 +489,11 @@ namespace RingCentral.Test
                         "{\r\n    \"transportType\" : \"PubNub\",\r\n    \"encryption\" : true,\r\n    \"address\" : \"demo-36\",\r\n    \"subscriberKey\" : \"demo-36\",\r\n    \"secretKey\" : \"demo-36\",\r\n" +
                         "\"encryptionAlgorithm\" : \"AES\",\r\n    \"encryptionKey\" : \"6hTFP4B94ZNI+IvgxPLY7g==\"\r\n  }\r\n}", Encoding.UTF8, "application/json")
              });
-            AddDeleteMockResponse(
-              new Uri(ApiEndPoint + SubscriptionEndPoint + "/1"),
+            mockResponses[HttpMethod.Delete].Add(
+              new Uri(ServerUrl + SubscriptionEndPoint + "/1"),
               new HttpResponseMessage(HttpStatusCode.NoContent) { Content = new StringContent("") });
-            AddPutMockResponse(
-              new Uri(ApiEndPoint + SubscriptionEndPoint + "/1"),
+            mockResponses[HttpMethod.Put].Add(
+              new Uri(ServerUrl + SubscriptionEndPoint + "/1"),
               new HttpResponseMessage(HttpStatusCode.OK)
               {
                   Content = new StringContent("{\"id\": \"1\",\"creationTime\": \"2015-07-30T00:58:37.818Z\",\"status\": \"Active\"," +
@@ -644,16 +510,16 @@ namespace RingCentral.Test
             string AccountInformationEndPoint = "/restapi/v1.0/account/";
             string AccountExtensionInformationEndPoint = "/restapi/v1.0/account/~/extension";
 
-            AddGetMockResponse(new Uri(ApiEndPoint + AccountInformationEndPoint + "5" ),
+            mockResponses[HttpMethod.Get].Add(new Uri(ServerUrl + AccountInformationEndPoint + "5"),
                 new HttpResponseMessage(HttpStatusCode.BadRequest)
-            {
-              Content = new StringContent("{\"errorCode\": \"CMN-201\",\"message\": \"Service Temporary Unavailable\","+
-                                         "\"errors\": [{\"errorCode\": \"CMN-201\"," + 
-                                         "\"message\": \"Service Temporary Unavailable\" }]}",Encoding.UTF8,"application/json")  
-            });
-            AddGetMockResponse(
-               new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/6"),
-               new HttpResponseMessage(HttpStatusCode.OK) 
+                {
+                    Content = new StringContent("{\"errorCode\": \"CMN-201\",\"message\": \"Service Temporary Unavailable\"," +
+                                         "\"errors\": [{\"errorCode\": \"CMN-201\"," +
+                                         "\"message\": \"Service Temporary Unavailable\" }]}", Encoding.UTF8, "application/json")
+                });
+            mockResponses[HttpMethod.Get].Add(
+               new Uri(ServerUrl + AccountExtensionInformationEndPoint + "/6"),
+               new HttpResponseMessage(HttpStatusCode.OK)
                {
                    Content = new StringContent(
                        "{\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/6\"," + "\"id\": 6," + "\"serviceInfo\": {" +
@@ -664,14 +530,14 @@ namespace RingCentral.Test
                                 "\"billingPlan\": {" + "\"id\": \"8853\"," + "\"name\": \"Monthly-109.98-Sandbox 4 Line\"," + "\"durationUnit\": \"Month\"," +
                                   "\"duration\": 1, " + "\"type\": \"Regular\"} }," +
                               "\"operator\": { " + "\"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1\"," + "\"id\": 6," +
-                                "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}",Encoding.UTF8,"text/plain")});
-            AddGetMockResponse(new Uri(ApiEndPoint + AccountExtensionInformationEndPoint + "/7"),
+                                "\"extensionNumber\": \"101\" }," + "\"mainNumber\": \"19999999999\"," + "\"status\": \"Confirmed\"," + "\"setupWizardState\": \"Completed\"}", Encoding.UTF8, "text/plain")
+               });
+            mockResponses[HttpMethod.Get].Add(new Uri(ServerUrl + AccountExtensionInformationEndPoint + "/7"),
                 new HttpResponseMessage(HttpStatusCode.BadRequest)
                 {
                     Content = new StringContent("{ \"error\": \"invalid_request\", \"error_description\": \"Unsupported grant type\" }", Encoding.UTF8, "application/json")
                 });
-         
+
         }
     }
 }
-

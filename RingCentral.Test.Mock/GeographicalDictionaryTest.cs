@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RingCentral.SDK.Http;
+using RingCentral.Http;
+using System.Collections.Generic;
 
 namespace RingCentral.Test
 {
     [TestFixture]
-    public class GeographicalDictionaryTests : TestConfiguration
+    public class GeographicalDictionaryTest : BaseTest
     {
         private const string DictionaryEndPoint = "/restapi/v1.0/dictionary";
         private const string CountryEndPoint = DictionaryEndPoint + "/country";
@@ -14,17 +14,17 @@ namespace RingCentral.Test
         private const string LocationEndPoint = DictionaryEndPoint + "/location";
         private const string TimeZoneEndPoint = DictionaryEndPoint + "/timezone";
         private const string LanguageEndPoint = DictionaryEndPoint + "/language";
-   
+
 
         [Test]
         public void GetCountries()
         {
             Request request = new Request(CountryEndPoint);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var countryName = (string) token.SelectToken("records")[0].SelectToken("name");
+            var countryName = (string)token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(countryName, "Afghanistan");
         }
@@ -33,11 +33,11 @@ namespace RingCentral.Test
         public void GetCountryById()
         {
             Request request = new Request(CountryEndPoint + "/3");
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var countryName = (string) token.SelectToken("name");
+            var countryName = (string)token.SelectToken("name");
 
             Assert.AreEqual(countryName, "Albania");
         }
@@ -46,11 +46,11 @@ namespace RingCentral.Test
         public void GetLanguage()
         {
             Request request = new Request(LanguageEndPoint);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var languageName = (string) token.SelectToken("records")[0].SelectToken("name");
+            var languageName = (string)token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(languageName, "English (United States)");
         }
@@ -61,11 +61,11 @@ namespace RingCentral.Test
             const string languageId = "1033";
 
             Request request = new Request(LanguageEndPoint + "/" + languageId);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var timeZoneName = (string) token.SelectToken("name");
+            var timeZoneName = (string)token.SelectToken("name");
 
             Assert.AreEqual(timeZoneName, "English (United States)");
         }
@@ -81,13 +81,13 @@ namespace RingCentral.Test
                                           "stateId", "13")
                                   };
 
-            Request request = new Request(LocationEndPoint,queryParameters);
+            Request request = new Request(LocationEndPoint, queryParameters);
 
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var city = (string) token.SelectToken("records")[0].SelectToken("city");
+            var city = (string)token.SelectToken("records")[0].SelectToken("city");
 
             Assert.AreEqual(city, "Anchorage");
         }
@@ -97,11 +97,11 @@ namespace RingCentral.Test
         {
             const string stateId = "13";
             Request request = new Request(StateEndPoint + "/" + stateId);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var stateName = (string) token.SelectToken("name");
+            var stateName = (string)token.SelectToken("name");
 
             Assert.AreEqual(stateName, "Alaska");
         }
@@ -109,7 +109,7 @@ namespace RingCentral.Test
         [Test]
         public void GetStates()
         {
-           
+
             var queryParameters = new List<KeyValuePair<string, string>>
                                   {
                                       new KeyValuePair<string, string>("countryId", "1"),
@@ -119,11 +119,11 @@ namespace RingCentral.Test
 
             Request request = new Request(StateEndPoint, queryParameters);
 
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
+            var stateName = (string)token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(stateName, "Alabama");
         }
@@ -132,12 +132,12 @@ namespace RingCentral.Test
         public void GetTimeZoneById()
         {
             Request request = new Request(TimeZoneEndPoint + "/1");
-            
-            Response response = RingCentralClient.GetPlatform().Get(request);
+
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var timeZoneName = (string) token.SelectToken("name");
+            var timeZoneName = (string)token.SelectToken("name");
 
             Assert.AreEqual(timeZoneName, "GMT");
         }
@@ -146,11 +146,11 @@ namespace RingCentral.Test
         public void GetTimeZones()
         {
             Request request = new Request(TimeZoneEndPoint);
-            Response response = RingCentralClient.GetPlatform().Get(request);
+            ApiResponse response = sdk.Platform.Get(request);
 
             JToken token = response.GetJson();
 
-            var stateName = (string) token.SelectToken("records")[0].SelectToken("name");
+            var stateName = (string)token.SelectToken("records")[0].SelectToken("name");
 
             Assert.AreEqual(stateName, "GMT");
         }
