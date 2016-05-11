@@ -1,7 +1,6 @@
 # RingCentral SDK for C&#35;
 
 [![NuGet][nuget-version-svg]][nuget-version-link]
-[![NuGet][nuget-count-svg]][nuget-count-link]
 [![Build Status][build-status-svg]][build-status-link]
 [![Coverage Status][coverage-status-svg]][coverage-status-link]
 [![Docs][docs-readthedocs-svg]][docs-readthedocs-link]
