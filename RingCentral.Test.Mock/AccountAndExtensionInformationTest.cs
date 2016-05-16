@@ -79,7 +79,7 @@ namespace RingCentral.Test
             Request request = new Request(AccountExtensionInformationEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            Assert.AreEqual(response.GetStatus(), 200);
+            Assert.AreEqual(response.Status, 200);
         }
 
         [Test]

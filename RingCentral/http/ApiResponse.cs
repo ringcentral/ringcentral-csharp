@@ -9,16 +9,14 @@ namespace RingCentral.Http
     public class ApiResponse : Headers
     {
         public string Body { get; private set; }
-        private readonly int _status;
         private readonly HttpResponseMessage _response;
 
         public ApiResponse(HttpResponseMessage response)
         {
-            var statusCode = Convert.ToInt32(response.StatusCode);
+            Status = Convert.ToInt32(response.StatusCode);
             Body = response.Content.ReadAsStringAsync().Result;
             var headers = response.Content.Headers;
 
-            _status = statusCode;
             _response = response;
             SetHeaders(headers);
 
@@ -52,7 +50,7 @@ namespace RingCentral.Http
         {
             get
             {
-                return _status >= 200 && _status < 300;
+                return Status >= 200 && Status < 300;
             }
         }
 
@@ -113,10 +111,7 @@ namespace RingCentral.Http
         ///     Gets the repsonse status
         /// </summary>
         /// <returns>response status code</returns>
-        public int GetStatus()
-        {
-            return _status;
-        }
+        public int Status { get; private set;  }
 
         /// <summary>
         ///     Gets error if status code is outside the range of values checked in <c>CheckStatus()</c>

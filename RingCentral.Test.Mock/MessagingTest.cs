@@ -24,7 +24,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123123123");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
 
         }
 
@@ -33,7 +33,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
 
         }
 

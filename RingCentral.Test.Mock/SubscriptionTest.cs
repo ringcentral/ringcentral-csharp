@@ -16,7 +16,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
         }
 
 

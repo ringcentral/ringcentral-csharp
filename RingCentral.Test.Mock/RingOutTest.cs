@@ -14,7 +14,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(RingOutEndPoint + "/1");
             ApiResponse cancelResult = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, cancelResult.GetStatus());
+            Assert.AreEqual(204, cancelResult.Status);
         }
 
         [Test]
