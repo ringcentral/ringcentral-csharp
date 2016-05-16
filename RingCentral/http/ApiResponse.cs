@@ -9,7 +9,6 @@ namespace RingCentral.Http
     public class ApiResponse : Headers
     {
         public string Body { get; private set; }
-        private readonly HttpResponseMessage _response;
 
         public ApiResponse(HttpResponseMessage response)
         {
@@ -17,7 +16,7 @@ namespace RingCentral.Http
             Body = response.Content.ReadAsStringAsync().Result;
             var headers = response.Content.Headers;
 
-            _response = response;
+            Response = response;
             SetHeaders(headers);
 
             if (!OK)
@@ -26,19 +25,13 @@ namespace RingCentral.Http
             }
         }
 
-        public HttpResponseMessage Response
-        {
-            get
-            {
-                return _response;
-            }
-        }
+        public HttpResponseMessage Response { get; private set; }
 
         public HttpRequestMessage Request
         {
             get
             {
-                return _response.RequestMessage;
+                return Response.RequestMessage;
             }
         }
 
