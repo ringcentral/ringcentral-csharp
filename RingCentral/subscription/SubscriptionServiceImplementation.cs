@@ -89,7 +89,7 @@ namespace RingCentral.Subscription
                 {
                     throw new Exception("Events are undefined");
                 }
-                var jsonData = GetFullEventsFilter();
+                var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
                 UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.Body));
@@ -150,7 +150,7 @@ namespace RingCentral.Subscription
             }
             try
             {
-                var jsonData = GetFullEventsFilter();
+                var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint, jsonData);
                 ApiResponse response = _platform.Post(request);
                 _subscription = JsonConvert.DeserializeObject<Subscription>(response.Body);
@@ -188,18 +188,21 @@ namespace RingCentral.Subscription
             subscribed = false;
         }
 
-        private string GetFullEventsFilter()
+        private string EventsJson
         {
-            var fullEventsFilter = "{ \"eventFilters\": ";
-            string eventFiltersToString = "[ ";
-            foreach (string filter in Events)
+            get
             {
-                eventFiltersToString += ("\"" + filter + "\",");
+                var fullEventsFilter = "{ \"eventFilters\": ";
+                string eventFiltersToString = "[ ";
+                foreach (string filter in Events)
+                {
+                    eventFiltersToString += ("\"" + filter + "\",");
+                }
+                eventFiltersToString = eventFiltersToString.TrimEnd(',');
+                eventFiltersToString += "]";
+                fullEventsFilter += (eventFiltersToString + ", \"deliveryMode\" : { \"transportType\" : \"PubNub\" } }");
+                return fullEventsFilter;
             }
-            eventFiltersToString = eventFiltersToString.TrimEnd(',');
-            eventFiltersToString += "]";
-            fullEventsFilter += (eventFiltersToString + ", \"deliveryMode\" : { \"transportType\" : \"PubNub\" } }");
-            return fullEventsFilter;
         }
 
         private void PubNubServiceImplementation(string publishKey, string subscribeKey)
