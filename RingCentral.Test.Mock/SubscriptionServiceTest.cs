@@ -56,7 +56,7 @@ namespace RingCentral.Test
                 var subscribed = sub.Subscribe(null, null, null);
                 Thread.Sleep(1000);
                 Assert.IsNotNull(subscribed);
-                Assert.AreEqual(true, subscribed.OK());
+                Assert.AreEqual(true, subscribed.OK);
                 Assert.IsTrue(sub.IsSubscribed());
                 sub.Remove();
                 Thread.Sleep(1000);
