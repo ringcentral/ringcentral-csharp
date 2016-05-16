@@ -14,7 +14,6 @@ namespace RingCentral.Subscription
     public class SubscriptionServiceImplementation
     {
         private Pubnub _pubnub;
-<<<<<<< HEAD
         private bool _encrypted;
         public Platform _platform;
         private Subscription _subscription;
@@ -25,19 +24,6 @@ namespace RingCentral.Subscription
         private const int RenewHandicap = 100000;
         private Action<object> notificationAction, connectionAction, errorAction;
         public Action<object> disconnectAction { private get; set; }
-=======
-		private bool _encrypted;
-		private PubnubCrypto _decrypto;
-		public Platform _platform;
-		private Subscription _subscription;
-		private Timer timeout;
-		private bool subscribed;
-		private List<string> eventFilters =  new List<string>();
-		private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
-		private const int RenewHandicap = 100000;
-		private Action<object> notificationAction, connectionAction, errorAction;
-		public Action<object> disconnectAction { private get; set; }
->>>>>>> master
         private bool _enableSSL;
         private Dictionary<string, object> _events = new Dictionary<string, object>
         {
