@@ -41,9 +41,9 @@ namespace RingCentral
         /// <param name="userName">Username of RingCentral user</param>
         /// <param name="extension">Optional: Extension number to login</param>
         /// <param name="password">Password of the RingCentral User</param>
-        /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
+        /// <param name="remember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
         /// <returns>apiResponse of Authenticate result.</returns>
-        public ApiResponse Login(string userName, string extension, string password, bool isRemember)
+        public ApiResponse Login(string userName, string extension, string password, bool remember)
         {
             var body = new Dictionary<string, string>
                        {
@@ -52,13 +52,13 @@ namespace RingCentral
                            {"extension", extension},
                            {"grant_type", "password"},
                            {"access_token_ttl", AccessTokenTtl},
-                           {"refresh_token_ttl", isRemember ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                           {"refresh_token_ttl", remember ? RefreshTokenTtlRemember : RefreshTokenTtl}
                        };
 
             var request = new Request(TokenEndpoint, body);
             var result = AuthCall(request);
 
-            Auth.SetRemember(isRemember);
+            Auth.Remember = remember;
             Auth.SetData(result.Json);
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
@@ -79,7 +79,7 @@ namespace RingCentral
                            {"grant_type", "refresh_token"},
                            {"refresh_token", Auth.RefreshToken},
                            {"access_token_ttl", AccessTokenTtl},
-                           {"refresh_token_ttl", Auth.IsRemember() ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                           {"refresh_token_ttl", Auth.Remember ? RefreshTokenTtlRemember : RefreshTokenTtl}
                        };
 
             var request = new Request(TokenEndpoint, body);

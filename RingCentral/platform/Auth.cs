@@ -12,7 +12,7 @@ namespace RingCentral
         private long AccessTokenExpireTime { get; set; }
         private long RefreshTokenExpiresIn { get; set; }
         private long RefreshTokenExpireTime { get; set; }
-        private bool Remember { get; set; }
+        public bool Remember { get; set; }
         private string TokenType { get; set; }
         private string OwnerId { get; set; }
         private string Scope { get; set; }
@@ -179,7 +179,7 @@ namespace RingCentral
         {
             var authData = new Dictionary<string, string>
                            {
-                               {"remember", IsRemember().ToString()},
+                               {"remember", Remember.ToString()},
                                {"token_type", TokenType},
                                {"access_token", AccessToken},
                                {"expires_in", AccessTokenExpiresIn.ToString()},
@@ -222,7 +222,6 @@ namespace RingCentral
         private bool IsTokenValid(long accessTokenExpireTime)
         {
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
             return accessTokenExpireTime > currentTimeInMilliseconds;
         }
 
@@ -242,24 +241,6 @@ namespace RingCentral
         public bool IsRefreshTokenValid()
         {
             return IsTokenValid(RefreshTokenExpireTime);
-        }
-
-        /// <summary>
-        ///     If the user specified they want to be remembered
-        /// </summary>
-        /// <returns>bool value of Remember</returns>
-        public bool IsRemember()
-        {
-            return Remember;
-        }
-
-        /// <summary>
-        ///     Sets if the user wishes to be remembered or not
-        /// </summary>
-        /// <param name="isRemember">bool value of remember</param>
-        public void SetRemember(bool isRemember)
-        {
-            Remember = isRemember;
         }
     }
 }
