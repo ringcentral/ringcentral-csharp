@@ -10,22 +10,13 @@ namespace RingCentral.Http
         public HttpContentHeaders Headers { get; protected set; }
 
         /// <summary>
-        ///     Gets the ContentType in the headers
-        /// </summary>
-        /// <returns>ContentType in the HttpContentHeaders</returns>
-        public string GetContentType()
-        {
-            return Headers.ContentType.ToString();
-        }
-
-        /// <summary>
         ///     Determines if the content is present in the headers
         /// </summary>
         /// <param name="contentType"></param>
         /// <returns>bool value if content type is in headers</returns>
         private bool IsContentType(string contentType)
         {
-            return GetContentType().Contains(contentType);
+            return Headers.ContentType.ToString().Contains(contentType);
         }
 
         /// <summary>

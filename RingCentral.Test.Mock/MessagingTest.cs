@@ -58,7 +58,7 @@ namespace RingCentral.Test
 
             Request request = new Request(ExtensionMessageEndPoint + "/" + batchMessages);
             ApiResponse response = sdk.Platform.Get(request);
-            Assert.IsTrue(response.IsMultiPartResponse());
+            Assert.IsTrue(response.IsMultiPart());
             List<string> multiPartResult = response.GetMultiPartResponses();
 
             //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.

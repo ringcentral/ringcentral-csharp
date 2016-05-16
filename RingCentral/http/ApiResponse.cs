@@ -12,12 +12,10 @@ namespace RingCentral.Http
 
         public ApiResponse(HttpResponseMessage response)
         {
+            Response = response;
             Status = Convert.ToInt32(response.StatusCode);
             Body = response.Content.ReadAsStringAsync().Result;
             Headers = response.Content.Headers;
-
-            Response = response;
-
             if (!OK)
             {
                 throw new Exception(Error);
@@ -63,39 +61,23 @@ namespace RingCentral.Http
         }
 
         /// <summary>
-        ///     Determines if the response is multipart
-        /// </summary>
-        /// <returns>boolean value based on response being multipart</returns>
-        public bool IsMultiPartResponse()
-        {
-            return IsMultiPart();
-        }
-
-        /// <summary>
         ///     Parses a multipart response into List of responses that can be accessed by index.
         /// </summary>
         /// <returns>A List of responses from a multipart response</returns>
         public List<string> GetMultiPartResponses()
         {
             var output = Regex.Split(Body, "--Boundary([^;]+)");
-
             var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
-
             var responses = new List<string>();
-
-            //We Can convert this to linq but for the sake of readability we'll leave it like this.
             foreach (var s in splitString)
             {
                 if (s.Contains("{"))
                 {
                     var json = s.Substring(s.IndexOf('{'));
-
-                    JToken token = JObject.Parse(json);
-
+                    var token = JObject.Parse(json);
                     responses.Add(token.ToString());
                 }
             }
-
             return responses;
         }
 
