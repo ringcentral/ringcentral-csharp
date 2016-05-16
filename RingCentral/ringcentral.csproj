@@ -39,18 +39,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Http\ApiResponse.cs" />
     <Compile Include="Http\Attachment.cs" />
     <Compile Include="Http\Headers.cs" />
     <Compile Include="Http\Request.cs" />
-    <Compile Include="Http\ApiResponse.cs" />
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SDK.cs" />
     <Compile Include="Subscription\ISubscriptionService.cs" />
     <Compile Include="Subscription\Subscription.cs" />
-    <Compile Include="Subscription\SubscriptionServiceLocator.cs" />
     <Compile Include="Subscription\SubscriptionServiceImplementation.cs" />
+    <Compile Include="Subscription\SubscriptionServiceLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">

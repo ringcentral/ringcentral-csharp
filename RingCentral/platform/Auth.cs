@@ -6,7 +6,7 @@ namespace RingCentral
 {
     public class Auth
     {
-        private string AccessToken { get; set; }
+        public string AccessToken { get; private set; }
         private string RefreshToken { get; set; }
         private long AccessTokenExpiresIn { get; set; }
         private long AccessTokenExpireTime { get; set; }
@@ -251,15 +251,6 @@ namespace RingCentral
         public string GetRefreshToken()
         {
             return RefreshToken;
-        }
-
-        /// <summary>
-        ///     Gets the access token
-        /// </summary>
-        /// <returns>Value of the access token</returns>
-        public string GetAccessToken()
-        {
-            return AccessToken;
         }
 
         /// <summary>

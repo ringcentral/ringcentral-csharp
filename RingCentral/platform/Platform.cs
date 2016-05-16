@@ -61,7 +61,7 @@ namespace RingCentral
             Auth.SetRemember(isRemember);
             Auth.SetData(result.Json);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
 
             return result;
         }
@@ -87,7 +87,7 @@ namespace RingCentral
 
             Auth.SetData(result.Json);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
 
             return result;
         }
@@ -100,7 +100,7 @@ namespace RingCentral
         {
             var body = new Dictionary<string, string>
                        {
-                           {"token", Auth.GetAccessToken()}
+                           {"token", Auth.AccessToken}
                        };
 
             Auth.Reset();
