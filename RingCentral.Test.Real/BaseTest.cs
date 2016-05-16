@@ -40,7 +40,7 @@ namespace RingCentral.Test
                 Assert.Ignore();
             }
             sdk = new SDK(appKey, appSecret, SDK.Server.Sandbox, "C Sharp Test Suite", "1.0.0");
-            sdk.Platform.Authorize(username, extension, password, true);
+            sdk.Platform.Login(username, extension, password, true);
         }
 
         [TearDown]

@@ -36,14 +36,14 @@ namespace RingCentral
         private string serverUrl;
 
         /// <summary>
-        ///     Method to generate Access Token and Refresh Token to establish an authenticated session
+        ///     Method to generate Access Token to establish an authenticated session
         /// </summary>
-        /// <param name="userName">Login of RingCentral user</param>
-        /// <param name="password">Password of the RingCentral User</param>
+        /// <param name="userName">Username of RingCentral user</param>
         /// <param name="extension">Optional: Extension number to login</param>
+        /// <param name="password">Password of the RingCentral User</param>
         /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
-        /// <returns>string response of Authenticate result.</returns>
-        public ApiResponse Authorize(string userName, string extension, string password, bool isRemember)
+        /// <returns>apiResponse of Authenticate result.</returns>
+        public ApiResponse Login(string userName, string extension, string password, bool isRemember)
         {
             var body = new Dictionary<string, string>
                        {

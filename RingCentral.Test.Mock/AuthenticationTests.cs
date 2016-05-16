@@ -62,7 +62,7 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             Assert.NotNull(AuthResult);
 
             JToken token = JObject.Parse(AuthResult.GetBody());
@@ -112,7 +112,7 @@ namespace RingCentral.Test
         [Test]
         public void GetAuthData()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             var authData = sdk.Platform.Auth.GetData();
 
             JToken token = AuthResult.GetJson();
@@ -124,7 +124,7 @@ namespace RingCentral.Test
         [Test]
         public void SetAuthData()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             var oldAuthData = sdk.Platform.Auth.GetData();
 
             var newAuthData = new Dictionary<string, string>();
