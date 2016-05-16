@@ -8,17 +8,16 @@ namespace RingCentral.Http
 {
     public class ApiResponse : Headers
     {
-        private readonly string _body;
+        public string Body { get; private set; }
         private readonly int _status;
         private readonly HttpResponseMessage _response;
 
         public ApiResponse(HttpResponseMessage response)
         {
             var statusCode = Convert.ToInt32(response.StatusCode);
-            var body = response.Content.ReadAsStringAsync().Result;
+            Body = response.Content.ReadAsStringAsync().Result;
             var headers = response.Content.Headers;
 
-            _body = body;
             _status = statusCode;
             _response = response;
             SetHeaders(headers);
@@ -55,15 +54,6 @@ namespace RingCentral.Http
         }
 
         /// <summary>
-        ///     returns raw http response body
-        /// </summary>
-        /// <returns>string http response body</returns>
-        public string GetBody()
-        {
-            return _body;
-        }
-
-        /// <summary>
         ///     If header content is JSON it will return full formed and parsed json
         /// </summary>
         /// <returns>A JObject parsed body</returns>
@@ -74,7 +64,7 @@ namespace RingCentral.Http
                 throw new Exception("Response is not JSON");
             }
 
-            return JObject.Parse(_body);
+            return JObject.Parse(Body);
         }
 
         /// <summary>
@@ -92,7 +82,7 @@ namespace RingCentral.Http
         /// <returns>A List of responses from a multipart response</returns>
         public List<string> GetMultiPartResponses()
         {
-            var output = Regex.Split(_body, "--Boundary([^;]+)");
+            var output = Regex.Split(Body, "--Boundary([^;]+)");
 
             var splitString = output[1].Split(new[] { "--" }, StringSplitOptions.None);
 

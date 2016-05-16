@@ -40,7 +40,7 @@ namespace RingCentral.Test
 
             ApiResponse result = sdk.Platform.Post(request);
 
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var callStatus = (string)token.SelectToken("status").SelectToken("callStatus");
 

@@ -15,7 +15,7 @@ namespace RingCentral.Test
 
             Request request = new Request(CallLogEndPoint + "/active-calls");
             ApiResponse result = sdk.Platform.Get(request);
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var uri = (string)token.SelectToken("uri");
 
@@ -28,7 +28,7 @@ namespace RingCentral.Test
 
             Request request = new Request(CallLogEndPoint + "/extension/~/active-calls");
             ApiResponse result = sdk.Platform.Get(request);
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var uri = (string)token.SelectToken("uri");
 
@@ -40,7 +40,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(CallLogEndPoint + "/call-log/");
             ApiResponse result = sdk.Platform.Get(request);
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var uri = (string)token.SelectToken("uri");
 
@@ -53,7 +53,7 @@ namespace RingCentral.Test
 
             Request request = new Request(CallLogEndPoint + "/extension/~/call-log");
             ApiResponse result = sdk.Platform.Get(request);
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var uri = (string)token.SelectToken("uri");
 

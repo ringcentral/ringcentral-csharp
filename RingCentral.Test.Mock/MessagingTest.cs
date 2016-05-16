@@ -46,7 +46,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/1/content/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            Assert.AreEqual(response.GetBody(), expectedMessage);
+            Assert.AreEqual(response.Body, expectedMessage);
         }
 
 
@@ -155,7 +155,7 @@ namespace RingCentral.Test
             Request request = new Request(SmsEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
 
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
             var messageStatus = (string)token.SelectToken("messageStatus");
             Assert.Contains(messageStatus, _messageSentValues);
         }
@@ -167,7 +167,7 @@ namespace RingCentral.Test
             var jsonData = "{\"readStatus\": \"Read\"}";
             Request request = new Request(ExtensionMessageEndPoint + "/3", jsonData);
             ApiResponse result = sdk.Platform.Put(request);
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
             var availability = (string)token.SelectToken("availability");
             var readStatus = (string)token.SelectToken("readStatus");
             Assert.AreEqual("Read", readStatus);

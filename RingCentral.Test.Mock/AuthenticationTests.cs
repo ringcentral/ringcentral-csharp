@@ -65,7 +65,7 @@ namespace RingCentral.Test
             var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             Assert.NotNull(AuthResult);
 
-            JToken token = JObject.Parse(AuthResult.GetBody());
+            JToken token = JObject.Parse(AuthResult.Body);
             var accessToken = (string)token.SelectToken("access_token");
             var refreshToken = (string)token.SelectToken("refresh_token");
 
@@ -81,7 +81,7 @@ namespace RingCentral.Test
 
             Assert.NotNull(refreshResult);
 
-            JToken token = JObject.Parse(refreshResult.GetBody());
+            JToken token = JObject.Parse(refreshResult.Body);
             var accessTokenAfterRefresh = (string)token.SelectToken("access_token");
             var refreshTokenAfterFresh = (string)token.SelectToken("refresh_token");
 

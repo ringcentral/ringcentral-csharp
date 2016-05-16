@@ -102,7 +102,7 @@ namespace RingCentral.Subscription
                 var jsonData = GetFullEventsFilter();
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
-                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.GetBody()));
+                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.Body));
                 return response;
             }
             catch (Exception e)
@@ -163,7 +163,7 @@ namespace RingCentral.Subscription
                 var jsonData = GetFullEventsFilter();
                 Request request = new Request(SubscriptionEndPoint, jsonData);
                 ApiResponse response = _platform.Post(request);
-                _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
+                _subscription = JsonConvert.DeserializeObject<Subscription>(response.Body);
                 if (_subscription.DeliveryMode.Encryption)
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,
