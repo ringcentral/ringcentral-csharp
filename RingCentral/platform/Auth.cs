@@ -6,16 +6,16 @@ namespace RingCentral
 {
     public class Auth
     {
+        private long accessTokenExpiresIn;
+        private long accessTokenExpireTime;
+        private long refreshTokenExpiresIn;
+        private long refreshTokenExpireTime;
+        private string tokenType;
+        private string ownerId;
+        private string scope;
         public string AccessToken { get; private set; }
         public string RefreshToken { get; private set; }
-        private long AccessTokenExpiresIn { get; set; }
-        private long AccessTokenExpireTime { get; set; }
-        private long RefreshTokenExpiresIn { get; set; }
-        private long RefreshTokenExpireTime { get; set; }
         public bool Remember { get; set; }
-        private string TokenType { get; set; }
-        private string OwnerId { get; set; }
-        private string Scope { get; set; }
 
         /// <summary>
         ///     After authorization data is set via this method so it may be retrieved and persisted later if a user wishes to
@@ -40,17 +40,17 @@ namespace RingCentral
 
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("token_type")))
             {
-                TokenType = (string)jToken.SelectToken("token_type");
+                tokenType = (string)jToken.SelectToken("token_type");
             }
 
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("owner_id")))
             {
-                OwnerId = (string)jToken.SelectToken("owner_id");
+                ownerId = (string)jToken.SelectToken("owner_id");
             }
 
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("scope")))
             {
-                Scope = (string)jToken.SelectToken("scope");
+                scope = (string)jToken.SelectToken("scope");
             }
             #endregion
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -63,17 +63,17 @@ namespace RingCentral
 
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("expires_in")))
             {
-                AccessTokenExpiresIn = (long)jToken.SelectToken("expires_in");
+                accessTokenExpiresIn = (long)jToken.SelectToken("expires_in");
             }
 
             if (string.IsNullOrEmpty((string)jToken.SelectToken("expire_time")) &&
                 !string.IsNullOrEmpty((string)jToken.SelectToken("expires_in")))
             {
-                AccessTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("expires_in")) * 1000) + currentTimeInMilliseconds);
+                accessTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("expires_in")) * 1000) + currentTimeInMilliseconds);
             }
             else if (!string.IsNullOrEmpty((string)jToken.SelectToken("expire_time")))
             {
-                AccessTokenExpireTime = (long)jToken.SelectToken("expire_time");
+                accessTokenExpireTime = (long)jToken.SelectToken("expire_time");
             }
             #endregion
 
@@ -85,17 +85,17 @@ namespace RingCentral
 
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expires_in")))
             {
-                RefreshTokenExpiresIn = (long)jToken.SelectToken("refresh_token_expires_in");
+                refreshTokenExpiresIn = (long)jToken.SelectToken("refresh_token_expires_in");
             }
 
             if (string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")) &&
                 !string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expires_in")))
             {
-                RefreshTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("refresh_token_expires_in")) * 1000) + currentTimeInMilliseconds);
+                refreshTokenExpireTime = ((Convert.ToInt64((string)jToken.SelectToken("refresh_token_expires_in")) * 1000) + currentTimeInMilliseconds);
             }
             else if (!string.IsNullOrEmpty((string)jToken.SelectToken("refresh_token_expire_time")))
             {
-                RefreshTokenExpireTime = (long)jToken.SelectToken("refresh_token_expire_time");
+                refreshTokenExpireTime = (long)jToken.SelectToken("refresh_token_expire_time");
             }
 
             #endregion
@@ -111,17 +111,17 @@ namespace RingCentral
 
             if (data.ContainsKey("token_type") && !String.IsNullOrEmpty(data["token_type"]))
             {
-                TokenType = data["token_type"];
+                tokenType = data["token_type"];
             }
 
             if (data.ContainsKey("owner_id") && !String.IsNullOrEmpty(data["owner_id"]))
             {
-                OwnerId = data["owner_id"];
+                ownerId = data["owner_id"];
             }
 
             if (data.ContainsKey("scope") && !String.IsNullOrEmpty(data["scope"]))
             {
-                Scope = data["scope"];
+                scope = data["scope"];
             }
             #endregion
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -134,17 +134,17 @@ namespace RingCentral
 
             if (data.ContainsKey("expires_in") && !string.IsNullOrEmpty(data["expires_in"]))
             {
-                AccessTokenExpiresIn = Convert.ToInt64(data["expires_in"]);
+                accessTokenExpiresIn = Convert.ToInt64(data["expires_in"]);
             }
 
             if ((data.ContainsKey("expire_time") && string.IsNullOrEmpty(data["expire_time"])) &&
                 (data.ContainsKey("expires_in") && !string.IsNullOrEmpty(data["expires_in"])))
             {
-                AccessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
+                accessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
             else if (data.ContainsKey("expires_time") && !string.IsNullOrEmpty(data["expire_time"]))
             {
-                AccessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
+                accessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
             }
             #endregion
 
@@ -156,17 +156,17 @@ namespace RingCentral
 
             if (data.ContainsKey("refresh_token_expires_in") && !string.IsNullOrEmpty(data["refresh_token_expires_in"]))
             {
-                RefreshTokenExpiresIn = Convert.ToInt64(data["refresh_token_expires_in"]);
+                refreshTokenExpiresIn = Convert.ToInt64(data["refresh_token_expires_in"]);
             }
 
             if ((data.ContainsKey("refresh_token_expire_time") && string.IsNullOrEmpty(data["refresh_token_expire_time"])) &&
                 (data.ContainsKey("refresh_token_expires_in") && !string.IsNullOrEmpty(data["refresh_token_expires_in"])))
             {
-                RefreshTokenExpireTime = ((Convert.ToInt64(data["refresh_token_expires_in"]) * 1000) + currentTimeInMilliseconds);
+                refreshTokenExpireTime = ((Convert.ToInt64(data["refresh_token_expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
             else if (data.ContainsKey("refresh_token_expire_time") && !string.IsNullOrEmpty(data["refresh_token_expire_time"]))
             {
-                RefreshTokenExpireTime = Convert.ToInt64(data["refresh_token_expire_time"]);
+                refreshTokenExpireTime = Convert.ToInt64(data["refresh_token_expire_time"]);
             }
             #endregion
         }
@@ -180,15 +180,15 @@ namespace RingCentral
             var authData = new Dictionary<string, string>
                            {
                                {"remember", Remember.ToString()},
-                               {"token_type", TokenType},
+                               {"token_type", tokenType},
                                {"access_token", AccessToken},
-                               {"expires_in", AccessTokenExpiresIn.ToString()},
-                               {"expire_time", AccessTokenExpireTime.ToString()},
+                               {"expires_in", accessTokenExpiresIn.ToString()},
+                               {"expire_time", accessTokenExpireTime.ToString()},
                                {"refresh_token", RefreshToken},
-                               {"refresh_token_expires_in", RefreshTokenExpiresIn.ToString()},
-                               {"refresh_token_expire_time", RefreshTokenExpireTime.ToString()},
-                               {"scope", Scope},
-                               {"owner_id", OwnerId}
+                               {"refresh_token_expires_in", refreshTokenExpiresIn.ToString()},
+                               {"refresh_token_expire_time", refreshTokenExpireTime.ToString()},
+                               {"scope", scope},
+                               {"owner_id", ownerId}
                            };
 
             return authData;
@@ -200,29 +200,29 @@ namespace RingCentral
         public void Reset()
         {
             Remember = false;
-            TokenType = "";
+            tokenType = "";
 
             AccessToken = null;
-            AccessTokenExpiresIn = 0;
-            AccessTokenExpireTime = 0;
+            accessTokenExpiresIn = 0;
+            accessTokenExpireTime = 0;
 
             RefreshToken = null;
-            RefreshTokenExpiresIn = 0;
-            RefreshTokenExpireTime = 0;
+            refreshTokenExpiresIn = 0;
+            refreshTokenExpireTime = 0;
 
-            Scope = "";
-            OwnerId = "";
+            scope = "";
+            ownerId = "";
         }
 
         /// <summary>
         ///     Private method to determine if the Access Token or Refresh Token is valid
         /// </summary>
-        /// <param name="accessTokenExpireTime">Access token expire time</param>
+        /// <param name="tokenExpireTime">Token expire time</param>
         /// <returns>bool value of token validity</returns>
-        private bool IsTokenValid(long accessTokenExpireTime)
+        private bool IsTokenValid(long tokenExpireTime)
         {
             var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            return accessTokenExpireTime > currentTimeInMilliseconds;
+            return tokenExpireTime > currentTimeInMilliseconds;
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace RingCentral
         /// <returns>The bool value of Refresh token validity</returns>
         public bool IsAccessTokenValid()
         {
-            return IsTokenValid(AccessTokenExpireTime);
+            return IsTokenValid(accessTokenExpireTime);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace RingCentral
         /// <returns>The bool value of Refresh token validity</returns>
         public bool IsRefreshTokenValid()
         {
-            return IsTokenValid(RefreshTokenExpireTime);
+            return IsTokenValid(refreshTokenExpireTime);
         }
     }
 }
