@@ -96,7 +96,7 @@ namespace RingCentral.Test
             Request request = new Request(VersionEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
 
             Assert.AreEqual(version, "v1.0");
@@ -115,7 +115,7 @@ namespace RingCentral.Test
             var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             var authData = sdk.Platform.Auth.GetData();
 
-            JToken token = AuthResult.GetJson();
+            JToken token = AuthResult.Json;
 
             Assert.AreEqual((string)token.SelectToken("access_token"), authData["access_token"]);
             Assert.AreEqual((string)token.SelectToken("refresh_token"), authData["refresh_token"]);

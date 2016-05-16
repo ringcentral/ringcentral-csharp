@@ -84,7 +84,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var phoneNumber = (string)token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
             Assert.AreEqual("+19999999999", phoneNumber);
@@ -96,7 +96,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/2");
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var id = (string)token.SelectToken("id");
 
@@ -120,7 +120,7 @@ namespace RingCentral.Test
             Request request = new Request(FaxEndPoint, json, attachments);
             ApiResponse response = sdk.Platform.Post(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var availability = (string)token.SelectToken("availability");
 
             Assert.AreEqual("Alive", availability);
@@ -138,7 +138,7 @@ namespace RingCentral.Test
                             "\"from\": {\"extensionNumber\": \"" + from + "\"},\"text\": \"" + text + "\"}";
             Request request = new Request(PagerEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
-            JToken token = result.GetJson();
+            JToken token = result.Json;
             var id = (int)token.SelectToken("id");
             Assert.AreEqual(8, id);
         }

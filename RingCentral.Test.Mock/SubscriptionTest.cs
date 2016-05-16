@@ -64,7 +64,7 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint + "/1", jsonData);
             ApiResponse renewResult = sdk.Platform.Put(request);
 
-            JToken token = renewResult.GetJson();
+            JToken token = renewResult.Json;
 
             var getStatus = (string)token.SelectToken("status");
 

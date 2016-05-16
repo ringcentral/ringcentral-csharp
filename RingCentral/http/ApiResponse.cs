@@ -57,14 +57,16 @@ namespace RingCentral.Http
         ///     If header content is JSON it will return full formed and parsed json
         /// </summary>
         /// <returns>A JObject parsed body</returns>
-        public JObject GetJson()
+        public JObject Json
         {
-            if (!IsJson())
+            get
             {
-                throw new Exception("Response is not JSON");
+                if (!IsJson())
+                {
+                    throw new Exception("Response is not JSON");
+                }
+                return JObject.Parse(Body);
             }
-
-            return JObject.Parse(Body);
         }
 
         /// <summary>
@@ -126,7 +128,7 @@ namespace RingCentral.Http
 
             var message = "Unknown Error";
 
-            var data = GetJson();
+            var data = Json;
 
             if (!string.IsNullOrEmpty((string)(data["message"])))
             {

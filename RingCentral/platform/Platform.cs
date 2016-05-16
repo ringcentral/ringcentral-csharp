@@ -59,7 +59,7 @@ namespace RingCentral
             var result = AuthCall(request);
 
             Auth.SetRemember(isRemember);
-            Auth.SetData(result.GetJson());
+            Auth.SetData(result.Json);
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -85,7 +85,7 @@ namespace RingCentral
             var request = new Request(TokenEndpoint, body);
             var result = AuthCall(request);
 
-            Auth.SetData(result.GetJson());
+            Auth.SetData(result.Json);
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
 
@@ -267,7 +267,7 @@ namespace RingCentral
                 new Dictionary<string, string> { { "grant_type", "authorization_code" },
                     { "redirect_uri", redirectUri }, { "code", authCode } });
             var response = AuthCall(request);
-            Auth.SetData(response.GetJson());
+            Auth.SetData(response.Json);
             return response;
         }
     }

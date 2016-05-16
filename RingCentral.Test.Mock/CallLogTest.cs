@@ -65,7 +65,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(CallLogEndPoint + "/extension/~/call-log/Abcdefg");
             ApiResponse response = sdk.Platform.Get(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
 
             var id = (string)token.SelectToken("id");
@@ -78,7 +78,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(CallLogEndPoint + "/call-log/Abcdefgh");
             ApiResponse response = sdk.Platform.Get(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var id = (string)token.SelectToken("id");
 

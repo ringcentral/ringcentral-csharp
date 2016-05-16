@@ -88,7 +88,7 @@ namespace RingCentral.Test
             Request request = new Request(AccountInformationEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var mainNumber = (string)token.SelectToken("mainNumber");
 
             Assert.AreEqual(mainNumber, "19999999999");

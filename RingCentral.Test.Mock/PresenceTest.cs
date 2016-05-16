@@ -15,7 +15,7 @@ namespace RingCentral.Test
             Request request = new Request(PresenceEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var presenceStatus = (string)token.SelectToken("presenceStatus");
 

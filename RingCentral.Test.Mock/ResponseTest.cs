@@ -14,7 +14,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(AccountExtensionInformationEndPoint + "/6");
             ApiResponse result = sdk.Platform.Get(request);
-            var jsonResult = result.GetJson();
+            var jsonResult = result.Json;
 
         }
 

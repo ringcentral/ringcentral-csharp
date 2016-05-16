@@ -26,9 +26,9 @@ namespace RingCentral.Test.Real
             var request2 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact?startsWith=Long");
             var response2 = sdk.Platform.Get(request2);
             Assert.AreEqual(true, response2.CheckStatus());
-            var count = response2.GetJson().SelectToken("records").Count();
+            var count = response2.Json.SelectToken("records").Count();
             Assert.AreEqual(true, count > 0);
-            var me = response2.GetJson().SelectToken("records").Where(jt => (string)jt.SelectToken("homePhone") == "+15889546648").FirstOrDefault();
+            var me = response2.Json.SelectToken("records").Where(jt => (string)jt.SelectToken("homePhone") == "+15889546648").FirstOrDefault();
             Assert.NotNull(me);
 
             // update
@@ -43,7 +43,7 @@ namespace RingCentral.Test.Real
             var request255 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + (string)me.SelectToken("id"));
             var response255 = sdk.Platform.Get(request255);
             Assert.AreEqual(true, response255.CheckStatus());
-            Assert.AreEqual("+18922849962", (string)response255.GetJson().SelectToken("homePhone"));
+            Assert.AreEqual("+18922849962", (string)response255.Json.SelectToken("homePhone"));
 
             // delete
             var request3 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + (string)me.SelectToken("id"));
@@ -54,7 +54,7 @@ namespace RingCentral.Test.Real
             var request4 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact?startsWith=Long");
             var response4 = sdk.Platform.Get(request4);
             Assert.AreEqual(true, response4.CheckStatus());
-            Assert.AreEqual(count - 1, response4.GetJson().SelectToken("records").Count());
+            Assert.AreEqual(count - 1, response4.Json.SelectToken("records").Count());
         }
     }
 }

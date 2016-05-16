@@ -23,7 +23,7 @@ namespace RingCentral.Test
             Request request = new Request(RingOutEndPoint + "/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var message = (string)token.SelectToken("status").SelectToken("callStatus");
 
