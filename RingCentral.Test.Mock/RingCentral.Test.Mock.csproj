@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RingCentral.Test</RootNamespace>
-    <AssemblyName>RingCentral.Test</AssemblyName>
+    <AssemblyName>RingCentral.Test.Mock</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
