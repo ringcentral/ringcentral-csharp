@@ -22,7 +22,7 @@ namespace RingCentral.Http
 
             if (!OK)
             {
-                throw new Exception(GetError());
+                throw new Exception(Error);
             }
         }
 
@@ -111,36 +111,37 @@ namespace RingCentral.Http
         ///     Gets the repsonse status
         /// </summary>
         /// <returns>response status code</returns>
-        public int Status { get; private set;  }
+        public int Status { get; private set; }
 
         /// <summary>
         ///     Gets error if status code is outside the range of values checked in <c>CheckStatus()</c>
         /// </summary>
         /// <returns></returns>
-        public string GetError()
+        public string Error
         {
-            if (OK)
+            get
             {
-                return null;
-            }
+                if (OK)
+                {
+                    return null;
+                }
 
-            var message = "Unknown Error";
-
-            var data = Json;
-
-            if (!string.IsNullOrEmpty((string)(data["message"])))
-            {
-                message = (string)(data["message"]);
+                var message = "Unknown Error";
+                var data = Json;
+                if (!string.IsNullOrEmpty((string)(data["message"])))
+                {
+                    message = (string)(data["message"]);
+                }
+                if (!string.IsNullOrEmpty((string)(data["error_description"])))
+                {
+                    message = (string)(data["error_description"]);
+                }
+                if (!string.IsNullOrEmpty((string)(data["description"])))
+                {
+                    message = (string)(data["description"]);
+                }
+                return message;
             }
-            if (!string.IsNullOrEmpty((string)(data["error_description"])))
-            {
-                message = (string)(data["error_description"]);
-            }
-            if (!string.IsNullOrEmpty((string)(data["description"])))
-            {
-                message = (string)(data["description"]);
-            }
-            return message;
         }
     }
 }

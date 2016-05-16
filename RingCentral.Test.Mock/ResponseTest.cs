@@ -23,7 +23,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(AccountInformationEndPoint);
             ApiResponse result = sdk.Platform.Get(request);
-            Assert.IsNull(result.GetError());
+            Assert.IsNull(result.Error);
         }
     }
 }
