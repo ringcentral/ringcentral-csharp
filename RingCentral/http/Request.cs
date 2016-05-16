@@ -79,88 +79,97 @@ namespace RingCentral.Http
         ///     Gets the URL in addition to the QueryString if it is populated
         /// </summary>
         /// <returns>A URL with Query String appended if query values are present</returns>
-        public string GetUrl()
+        public string Url
         {
-            return _url + GetQuerystring();
+            get
+            {
+                return _url + Querystring;
+            }
         }
 
-        public Uri GetUri()
+        public Uri Uri
         {
-            return new Uri(_url + GetQuerystring(), UriKind.Relative);
+            get
+            {
+                return new Uri(_url + Querystring, UriKind.Relative);
+            }
         }
 
         /// <summary>
         ///     Returns HTTP content based on Content Type
         /// </summary>
         /// <returns>HttpContent based on Content Type</returns>
-        public HttpContent GetHttpContent()
+        public HttpContent HttpContent
         {
-            if (string.IsNullOrEmpty(_requestType)) return null;
-
-            if (_requestType.Equals(JsonContentType))
+            get
             {
-                return new StringContent(_jsonBody, Encoding.UTF8, "application/json");
-            }
-
-            if (_requestType.Equals(UrlEncodedContentType))
-            {
-                var formBodyList = _formBody.ToList();
-
-                return new FormUrlEncodedContent(formBodyList);
-            }
-            if (_requestType.Equals(MultipartContentType))
-            {
-                var multiPartContent = new MultipartFormDataContent("Boundary_1_14413901_1361871080888");
-
-                //removes content type of multipart form data
-                multiPartContent.Headers.Remove("Content-Type");
-
-                //need to set content type to multipart/mixed
-                multiPartContent.Headers.TryAddWithoutValidation("Content-Type",
-                    "multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
-                multiPartContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
-
-
-                foreach (var attachment in _attachments)
+                if (string.IsNullOrEmpty(_requestType))
                 {
-                    var fileContent = new ByteArrayContent(attachment.ByteArray);
-                    fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                    {
-                        FileName = attachment.FileName
-                    };
-                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.ContentType);
-                    multiPartContent.Add(fileContent);
+                    return null;
                 }
 
-                return multiPartContent;
+                if (_requestType.Equals(JsonContentType))
+                {
+                    return new StringContent(_jsonBody, Encoding.UTF8, "application/json");
+                }
+
+                if (_requestType.Equals(UrlEncodedContentType))
+                {
+                    var formBodyList = _formBody.ToList();
+                    return new FormUrlEncodedContent(formBodyList);
+                }
+
+                if (_requestType.Equals(MultipartContentType))
+                {
+                    var multiPartContent = new MultipartFormDataContent("Boundary_1_14413901_1361871080888");
+                    //removes content type of multipart form data
+                    multiPartContent.Headers.Remove("Content-Type");
+                    //need to set content type to multipart/mixed
+                    multiPartContent.Headers.TryAddWithoutValidation("Content-Type",
+                        "multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
+                    multiPartContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
+                    foreach (var attachment in _attachments)
+                    {
+                        var fileContent = new ByteArrayContent(attachment.ByteArray);
+                        fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                        {
+                            FileName = attachment.FileName
+                        };
+                        fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.ContentType);
+                        multiPartContent.Add(fileContent);
+                    }
+                    return multiPartContent;
+                }
+
+                return null;
             }
-
-
-            return null;
         }
 
         /// <summary>
         ///     Gets the query string if query parameters are specified
         /// </summary>
         /// <returns>A query string that will be appended to the URL</returns>
-        public string GetQuerystring()
+        public string Querystring
         {
-            if (_queryValues == null || !_queryValues.Any()) return "";
-
-            var querystring = "?";
-
-            var last = _queryValues.Last();
-
-            foreach (var parameter in _queryValues)
+            get
             {
-                querystring = querystring + (parameter.Key + "=" + parameter.Value);
-                if (!parameter.Equals(last))
+                if (_queryValues == null || !_queryValues.Any())
                 {
-                    querystring += "&";
+                    return "";
                 }
-            }
 
-            return querystring;
+                var querystring = "?";
+                var last = _queryValues.Last();
+                foreach (var parameter in _queryValues)
+                {
+                    querystring = querystring + (parameter.Key + "=" + parameter.Value);
+                    if (!parameter.Equals(last))
+                    {
+                        querystring += "&";
+                    }
+                }
+                return querystring;
+            }
         }
     }
 
@@ -180,4 +189,5 @@ namespace RingCentral.Http
             }
         }
     }
+
 }

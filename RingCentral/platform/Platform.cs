@@ -116,7 +116,7 @@ namespace RingCentral
         private ApiResponse AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
-            var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
+            var response = _client.PostAsync(request.Url, request.HttpContent).Result;
             return new ApiResponse(response);
         }
 
@@ -148,9 +148,9 @@ namespace RingCentral
             }
 
             var requestMessage = new HttpRequestMessage();
-            requestMessage.Content = request.GetHttpContent();
+            requestMessage.Content = request.HttpContent;
             requestMessage.Method = httpMethod;
-            requestMessage.RequestUri = request.GetUri();
+            requestMessage.RequestUri = request.Uri;
             if (request.HttpMethodTunneling)
             {
                 requestMessage.ApplyHttpMethodTunneling();
