@@ -77,7 +77,7 @@ namespace RingCentral
             var body = new Dictionary<string, string>
                        {
                            {"grant_type", "refresh_token"},
-                           {"refresh_token", Auth.GetRefreshToken()},
+                           {"refresh_token", Auth.RefreshToken},
                            {"access_token_ttl", AccessTokenTtl},
                            {"refresh_token_ttl", Auth.IsRemember() ? RefreshTokenTtlRemember : RefreshTokenTtl}
                        };
