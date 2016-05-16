@@ -19,7 +19,7 @@ namespace RingCentral.Subscription
         private Subscription _subscription;
         private Timer timeout;
         private bool subscribed;
-        private List<string> eventFilters = new List<string>();
+        public List<string> Events { get; set; } = new List<string>();
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
         private const int RenewHandicap = 100000;
         private Action<object> notificationAction, connectionAction, errorAction;
@@ -53,14 +53,9 @@ namespace RingCentral.Subscription
             }
         }
 
-        public List<string> GetEvents()
-        {
-            return eventFilters;
-        }
-
         public void ClearEvents()
         {
-            eventFilters.Clear();
+            Events.Clear();
         }
 
         private void OnTimedExpired(Object source)
@@ -76,14 +71,9 @@ namespace RingCentral.Subscription
             }
         }
 
-        public void SetEvents(List<string> newEventFilters)
-        {
-            eventFilters = newEventFilters;
-        }
-
         public void AddEvent(string eventToAdd)
         {
-            eventFilters.Add(eventToAdd);
+            Events.Add(eventToAdd);
         }
 
         public ApiResponse Renew()
@@ -95,7 +85,7 @@ namespace RingCentral.Subscription
                 {
                     throw new Exception("Subscription ID is required");
                 }
-                if (eventFilters.Count == 0)
+                if (Events.Count == 0)
                 {
                     throw new Exception("Events are undefined");
                 }
@@ -142,7 +132,7 @@ namespace RingCentral.Subscription
 
         public ApiResponse Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
-            if (eventFilters.Count == 0)
+            if (Events.Count == 0)
             {
                 throw new Exception("Event filters are undefined");
             }
@@ -202,7 +192,7 @@ namespace RingCentral.Subscription
         {
             var fullEventsFilter = "{ \"eventFilters\": ";
             string eventFiltersToString = "[ ";
-            foreach (string filter in eventFilters)
+            foreach (string filter in Events)
             {
                 eventFiltersToString += ("\"" + filter + "\",");
             }
