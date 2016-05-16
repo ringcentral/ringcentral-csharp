@@ -7,11 +7,8 @@ using System.Text;
 
 namespace RingCentral.Http
 {
-    public class Request : Headers
+    public class Request : HttpHeaders
     {
-        protected static List<string> RequestTypes =
-            new List<string>(new[] { UrlEncodedContentType, JsonContentType, MultipartContentType });
-
         private readonly List<Attachment> _attachments;
         private readonly Dictionary<string, string> _formBody;
         private readonly string _jsonBody;

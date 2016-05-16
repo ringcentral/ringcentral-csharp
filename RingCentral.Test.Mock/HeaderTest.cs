@@ -13,8 +13,8 @@ namespace RingCentral.Test
         {
             Request request = new Request(AccountInformationEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
-            Assert.IsNotNull(response.GetHeaders());
-            Assert.AreEqual("application/json; charset=utf-8", response.GetHeaders().ContentType.ToString());
+            Assert.IsNotNull(response.Headers);
+            Assert.AreEqual("application/json; charset=utf-8", response.Headers.ContentType.ToString());
         }
 
         [Test]

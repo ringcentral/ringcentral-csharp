@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace RingCentral.Http
 {
-    public class ApiResponse : Headers
+    public class ApiResponse : HttpHeaders
     {
         public string Body { get; private set; }
 
@@ -14,10 +14,9 @@ namespace RingCentral.Http
         {
             Status = Convert.ToInt32(response.StatusCode);
             Body = response.Content.ReadAsStringAsync().Result;
-            var headers = response.Content.Headers;
+            Headers = response.Content.Headers;
 
             Response = response;
-            SetHeaders(headers);
 
             if (!OK)
             {

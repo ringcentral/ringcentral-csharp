@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="Http\ApiResponse.cs" />
     <Compile Include="Http\Attachment.cs" />
-    <Compile Include="Http\Headers.cs" />
+    <Compile Include="Http\HttpHeaders.cs" />
     <Compile Include="Http\Request.cs" />
     <Compile Include="Platform\Auth.cs" />
     <Compile Include="Platform\Platform.cs" />
