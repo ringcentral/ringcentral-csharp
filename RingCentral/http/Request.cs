@@ -15,7 +15,7 @@ namespace RingCentral.Http
         private readonly List<KeyValuePair<string, string>> _queryValues;
         private readonly string _requestType;
         private readonly string _url;
-        private string _xHttpOverrideHeader;
+        public bool HttpMethodTunneling { get; set; } = false;
 
         /// <summary>
         ///     Creates a request object with a URL endpoint specified
@@ -162,34 +162,21 @@ namespace RingCentral.Http
 
             return querystring;
         }
+    }
 
-        public void GetXhttpOverRideHeader(HttpRequestMessage requestMessage)
+    public static class RequestUtil
+    {
+        public static void ApplyHttpMethodTunneling(this HttpRequestMessage requestMessage)
         {
-
-            if (_xHttpOverrideHeader == "PUT")
+            if (requestMessage.Method == HttpMethod.Put)
             {
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Headers.Add("X-HTTP-Method-Override", "PUT");
             }
-            if (_xHttpOverrideHeader == "DELETE")
+            else if (requestMessage.Method == HttpMethod.Delete)
             {
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Headers.Add("X-HTTP-Method-Override", "DELETE");
-            }
-
-        }
-
-        /// <summary>
-        ///     Sets the X-HTTP-Method-Override-Header
-        /// </summary>
-        /// <param name="method">The method that will be used to override</param>
-        public void SetXhttpOverRideHeader(string method)
-        {
-            var allowedMethods = new List<string>(new[] { "GET", "POST", "PUT", "DELETE" });
-
-            if (method != null && allowedMethods.Contains(method.ToUpper()))
-            {
-                _xHttpOverrideHeader = method;
             }
         }
     }

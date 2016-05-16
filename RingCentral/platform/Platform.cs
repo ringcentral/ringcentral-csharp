@@ -98,15 +98,9 @@ namespace RingCentral
         /// <returns>string response of Revoke result</returns>
         public ApiResponse Logout()
         {
-            var body = new Dictionary<string, string>
-                       {
-                           {"token", Auth.AccessToken}
-                       };
-
+            var body = new Dictionary<string, string> { { "token", Auth.AccessToken } };
             Auth.Reset();
-
             var request = new Request(RevokeEndpoint, body);
-
             return AuthCall(request);
         }
 
@@ -122,9 +116,7 @@ namespace RingCentral
         private ApiResponse AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
-
             var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
-
             return new ApiResponse(response);
         }
 
@@ -159,8 +151,10 @@ namespace RingCentral
             requestMessage.Content = request.GetHttpContent();
             requestMessage.Method = httpMethod;
             requestMessage.RequestUri = request.GetUri();
-
-            request.GetXhttpOverRideHeader(requestMessage);
+            if (request.HttpMethodTunneling)
+            {
+                requestMessage.ApplyHttpMethodTunneling();
+            }
 
             return new ApiResponse(_client.SendAsync(requestMessage).Result);
         }
