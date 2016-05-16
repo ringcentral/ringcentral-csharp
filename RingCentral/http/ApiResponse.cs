@@ -22,7 +22,7 @@ namespace RingCentral.Http
             _response = response;
             SetHeaders(headers);
 
-            if (!CheckStatus())
+            if (!OK())
             {
                 throw new Exception(GetError());
             }
@@ -48,7 +48,7 @@ namespace RingCentral.Http
         ///     Checks to be sure the status code is greater than or equal to 200 and less than 300
         /// </summary>
         /// <returns>bool value if status code is successful</returns>
-        public bool CheckStatus()
+        public bool OK()
         {
             return _status >= 200 && _status < 300;
         }
@@ -121,7 +121,7 @@ namespace RingCentral.Http
         /// <returns></returns>
         public string GetError()
         {
-            if (CheckStatus())
+            if (OK())
             {
                 return null;
             }
