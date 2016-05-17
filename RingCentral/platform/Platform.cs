@@ -156,7 +156,7 @@ namespace RingCentral
                 requestMessage.ApplyHttpMethodTunneling();
             }
 
-            return new ApiResponse(_client.SendAsync(requestMessage).Result);
+            return new ApiResponse(_client.SendAsync(requestMessage).Result, requestMessage);
         }
 
 

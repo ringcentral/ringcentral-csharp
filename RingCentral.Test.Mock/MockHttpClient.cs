@@ -56,7 +56,6 @@ namespace RingCentral.Test
                        Content = new StringContent("{ \"uri\": \"https://platform.devtest.ringcentral.com/restapi/v1.0/account/1/extension/1/address-book/contact/123123\"," +
                        "\"availability\": \"Alive\"," + "\"id\": 123123 ," + "\"firstName\": \"Delete\"," + "\"lastName\": \"Me\"," +
                        "\"businessAddress\": { " + "\"street\": \"2 Marina Blvd\", " + "\"city\": \"San-Francisco\"," + "\"state\": \"CA\"," + "\"zip\": \"94123\" } }", Encoding.UTF8, "application/json")
-
                    });
             mockResponses[HttpMethod.Get].Add(
                  new Uri(ServerUrl + AddressBookEndPoint),
@@ -76,6 +75,9 @@ namespace RingCentral.Test
                        , Encoding.UTF8, "application/json")
                  });
             mockResponses[HttpMethod.Delete].Add(
+                   new Uri(ServerUrl + AddressBookEndPoint + "/3"),
+                   new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ \"message\": \"Deleted\" }", Encoding.UTF8, "application/json") });
+            mockResponses[HttpMethod.Post].Add(
                    new Uri(ServerUrl + AddressBookEndPoint + "/3"),
                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ \"message\": \"Deleted\" }", Encoding.UTF8, "application/json") });
             mockResponses[HttpMethod.Post].Add(

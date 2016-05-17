@@ -9,9 +9,11 @@ namespace RingCentral.Http
     public class ApiResponse : HttpHeaders
     {
         public string Body { get; private set; }
+        private HttpRequestMessage _request = null;
 
-        public ApiResponse(HttpResponseMessage response)
+        public ApiResponse(HttpResponseMessage response, HttpRequestMessage request = null)
         {
+            _request = request;
             Response = response;
             Status = Convert.ToInt32(response.StatusCode);
             Body = response.Content.ReadAsStringAsync().Result;
@@ -28,7 +30,7 @@ namespace RingCentral.Http
         {
             get
             {
-                return Response.RequestMessage;
+                return _request ?? Response.RequestMessage;
             }
         }
 
