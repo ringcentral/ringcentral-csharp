@@ -96,11 +96,14 @@
     <Compile Include="APIVersionsTest.cs" />
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="BaseTest.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="config-sample.json" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RingCentral\RingCentral.csproj">
