@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Diagnostics;
 using System.IO;
 
@@ -32,21 +33,6 @@ namespace RingCentral.Test
             }
         }
 
-        public SDK.Server Server
-        {
-            get
-            {
-                if (ServerName == "Production")
-                {
-                    return SDK.Server.Production;
-                }
-                else
-                {
-                    return SDK.Server.Sandbox;
-                }
-            }
-        }
-
         [JsonProperty("RC_APP_KEY")]
         public string AppKey;
 
@@ -54,7 +40,8 @@ namespace RingCentral.Test
         public string AppSecret;
 
         [JsonProperty("RC_APP_SERVER")]
-        public string ServerName;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SDK.Server Server;
 
         [JsonProperty("RC_USERNAME")]
         public string UserName;
