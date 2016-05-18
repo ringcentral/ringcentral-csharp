@@ -20,7 +20,7 @@ namespace RingCentral.Http
             Headers = response.Content.Headers;
             if (!OK)
             {
-                throw new Exception(Error);
+                throw new ApiException(Error);
             }
         }
 
@@ -56,7 +56,7 @@ namespace RingCentral.Http
             {
                 if (!IsJson())
                 {
-                    throw new Exception("Response is not JSON");
+                    return null;
                 }
                 return JObject.Parse(Body);
             }
@@ -101,20 +101,22 @@ namespace RingCentral.Http
                 {
                     return null;
                 }
-
-                var message = "Unknown Error";
+                var message = string.Format("HTTP Status Code: {0}", Response.StatusCode);
                 var data = Json;
-                if (!string.IsNullOrEmpty((string)(data["message"])))
+                if (data != null)
                 {
-                    message = (string)(data["message"]);
-                }
-                if (!string.IsNullOrEmpty((string)(data["error_description"])))
-                {
-                    message = (string)(data["error_description"]);
-                }
-                if (!string.IsNullOrEmpty((string)(data["description"])))
-                {
-                    message = (string)(data["description"]);
+                    if (!string.IsNullOrEmpty((string)(data["message"])))
+                    {
+                        message = (string)(data["message"]);
+                    }
+                    if (!string.IsNullOrEmpty((string)(data["error_description"])))
+                    {
+                        message = (string)(data["error_description"]);
+                    }
+                    if (!string.IsNullOrEmpty((string)(data["description"])))
+                    {
+                        message = (string)(data["description"]);
+                    }
                 }
                 return message;
             }

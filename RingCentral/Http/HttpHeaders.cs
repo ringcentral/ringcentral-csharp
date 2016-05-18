@@ -16,6 +16,10 @@ namespace RingCentral.Http
         /// <returns>bool value if content type is in headers</returns>
         private bool IsContentType(string contentType)
         {
+            if (Headers.ContentType == null)
+            {
+                return false;
+            }
             return Headers.ContentType.ToString().Contains(contentType);
         }
 

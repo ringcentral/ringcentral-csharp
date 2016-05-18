@@ -62,7 +62,7 @@ namespace RingCentral.Test.Real
         [Test]
         public void HttpMethodTunneling()
         {
-            Thread.Sleep(60000);
+            Thread.Sleep(40000);
 
             // create
             var request1 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact",

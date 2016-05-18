@@ -97,6 +97,7 @@
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ExceptionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriptionTest.cs" />
   </ItemGroup>

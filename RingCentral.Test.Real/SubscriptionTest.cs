@@ -25,10 +25,10 @@ namespace RingCentral.Test.Real
             };
             var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(dict));
             sdk.Platform.Post(request);
-            Thread.Sleep(10000);
+            Thread.Sleep(15000);
             sdk.Platform.Post(request);
 
-            Thread.Sleep(20000);
+            Thread.Sleep(25000);
             Assert.AreEqual(2, count);
             sub.Remove();
         }
