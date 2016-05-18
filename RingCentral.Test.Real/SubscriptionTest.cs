@@ -13,9 +13,9 @@ namespace RingCentral.Test.Real
         {
             var sub = new Subscription.SubscriptionServiceImplementation() { _platform = sdk.Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var called = false;
+            var count = 0;
             sub.Subscribe((message) => {
-                called = true;
+                count += 1;
             }, null, null);
 
             var dict = new Dictionary<string, dynamic> {
@@ -25,9 +25,11 @@ namespace RingCentral.Test.Real
             };
             var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(dict));
             sdk.Platform.Post(request);
+            Thread.Sleep(10000);
+            sdk.Platform.Post(request);
 
-            Thread.Sleep(30000);
-            Assert.AreEqual(true, called);
+            Thread.Sleep(20000);
+            Assert.AreEqual(2, count);
             sub.Remove();
         }
     }
