@@ -51,5 +51,8 @@ namespace RingCentral.Test
 
         [JsonProperty("RC_PASSWORD")]
         public string Password;
+
+        [JsonProperty("RC_RECEIVER")]
+        public string Receiver;
     }
 }
