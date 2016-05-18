@@ -32,17 +32,17 @@ namespace RingCentral.Test
             }
         }
 
-        public string ServerUrl
+        public SDK.Server Server
         {
             get
             {
-                if (Server == "Production")
+                if (ServerName == "Production")
                 {
-                    return "https://platform.ringcentral.com";
+                    return SDK.Server.Production;
                 }
                 else
                 {
-                    return "https://platform.devtest.ringcentral.com";
+                    return SDK.Server.Sandbox;
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace RingCentral.Test
         public string AppSecret;
 
         [JsonProperty("RC_APP_SERVER")]
-        public string Server;
+        public string ServerName;
 
         [JsonProperty("RC_USERNAME")]
         public string UserName;
