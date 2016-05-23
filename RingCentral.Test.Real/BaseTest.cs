@@ -16,7 +16,7 @@ namespace RingCentral.Test
                 Assert.Ignore();
             }
             sdk = new SDK(Config.Instance.AppKey, Config.Instance.AppSecret, Config.Instance.Server, "C Sharp Test Suite", "1.0.0");
-            sdk.Platform.Login(Config.Instance.UserName, Config.Instance.Extension, Config.Instance.Password, true);
+            sdk.Platform.Login(Config.Instance.Username, Config.Instance.Extension, Config.Instance.Password, true);
         }
 
         [TearDown]

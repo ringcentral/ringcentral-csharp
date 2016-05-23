@@ -44,7 +44,7 @@ namespace RingCentral.Test
         public SDK.Server Server;
 
         [JsonProperty("RC_USERNAME")]
-        public string UserName;
+        public string Username;
 
         [JsonProperty("RC_EXTENSION")]
         public string Extension;

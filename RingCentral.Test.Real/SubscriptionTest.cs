@@ -20,7 +20,7 @@ namespace RingCentral.Test.Real
 
             var dict = new Dictionary<string, dynamic> {
                 { "text", "hello world" },
-                { "from", new Dictionary<string, string> { { "phoneNumber", Config.Instance.UserName} } },
+                { "from", new Dictionary<string, string> { { "phoneNumber", Config.Instance.Username} } },
                 { "to", new Dictionary<string, string>[] { new Dictionary<string, string> { { "phoneNumber", Config.Instance.Receiver } } } },
             };
             var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(dict));
