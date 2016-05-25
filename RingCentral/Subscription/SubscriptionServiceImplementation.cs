@@ -1,13 +1,14 @@
 ﻿using Newtonsoft.Json;
-using PCLCrypto;
+using Org.BouncyCastle.Crypto.IO;
+using Org.BouncyCastle.Security;
 using PubNubMessaging.Core;
 using RingCentral.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
-
 
 namespace RingCentral.Subscription
 {
@@ -302,12 +303,31 @@ namespace RingCentral.Subscription
         private object DecryptMessage(object message)
         {
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
-            byte[] keyArray = Convert.FromBase64String(_subscription.DeliveryMode.EncryptionKey);
-            byte[] messageData = Convert.FromBase64String(deserializedMessage[0]);
-            var encyptionProvider = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcbPkcs7);
-            var key = encyptionProvider.CreateSymmetricKey(keyArray);
-            byte[] decodedMessage = WinRTCrypto.CryptographicEngine.Decrypt(key, messageData);
-            var result = Encoding.UTF8.GetString(decodedMessage, 0, decodedMessage.Length);
+            var result = Decrypt(deserializedMessage[0], _subscription.DeliveryMode.EncryptionKey);
+            return result;
+        }
+
+        private string Decrypt(string dataString, string keyString)
+        {
+            var key = Convert.FromBase64String(keyString);
+            var keyParameter = ParameterUtilities.CreateKeyParameter("AES", key);
+            var cipher = CipherUtilities.GetCipher("AES/ECB/PKCS7Padding");
+            cipher.Init(false, keyParameter);
+
+            var data = Convert.FromBase64String(dataString);
+            var memoryStream = new MemoryStream(data, false);
+            var cipherStream = new CipherStream(memoryStream, cipher, null);
+
+            var bufferSize = 1024;
+            var buffer = new byte[bufferSize];
+            var length = 0;
+            var resultStream = new MemoryStream();
+            while ((length = cipherStream.Read(buffer, 0, bufferSize)) > 0)
+            {
+                resultStream.Write(buffer, 0, length);
+            }
+            var resultBytes = resultStream.ToArray();
+            var result = Encoding.UTF8.GetString(resultBytes, 0, resultBytes.Length);
             return result;
         }
 

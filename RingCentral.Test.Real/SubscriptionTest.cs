@@ -31,7 +31,7 @@ namespace RingCentral.Test.Real
             sdk.Platform.Post(request);
 
             Thread.Sleep(15000);
-            Assert.AreEqual(2, count);
+            Assert.GreaterOrEqual(count, 2);
             sub.Remove();
         }
 
