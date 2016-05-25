@@ -17,7 +17,7 @@ var ringCentral = new SDK(
 
 ## Set User Agent Header
 
-In additoin to setting the `Application Name` and `Application Version` via the constructor, these can be set using the `SetUserAgentHeader` method.
+In addition to setting the `Application Name` and `Application Version` via the constructor, these can be set using the `SetUserAgentHeader` method.
 
 ```cs
 ringCentral.SetUserAgentHeader("Application Name", "Application Version");
