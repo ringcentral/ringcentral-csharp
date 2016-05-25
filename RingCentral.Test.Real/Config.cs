@@ -34,25 +34,25 @@ namespace RingCentral.Test
         }
 
         [JsonProperty("RC_APP_KEY")]
-        public string AppKey;
+        public string AppKey = "";
 
         [JsonProperty("RC_APP_SECRET")]
-        public string AppSecret;
+        public string AppSecret = "";
 
         [JsonProperty("RC_APP_SERVER")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public SDK.Server Server;
+        public SDK.Server Server = SDK.Server.Sandbox;
 
         [JsonProperty("RC_USERNAME")]
-        public string Username;
+        public string Username = "";
 
         [JsonProperty("RC_EXTENSION")]
-        public string Extension;
+        public string Extension = "";
 
         [JsonProperty("RC_PASSWORD")]
-        public string Password;
+        public string Password = "";
 
         [JsonProperty("RC_RECEIVER")]
-        public string Receiver;
+        public string Receiver = "";
     }
 }

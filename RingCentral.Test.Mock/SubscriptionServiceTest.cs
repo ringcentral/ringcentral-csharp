@@ -33,7 +33,7 @@ namespace RingCentral.Test
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = sdk.Platform };
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-                var test = sub.Subscribe(null, null, null);
+                sub.Subscribe(null, null, null);
                 Thread.Sleep(500);
                 sub.ClearEvents();
                 sub.Events = new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" };
@@ -49,7 +49,7 @@ namespace RingCentral.Test
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = sdk.Platform };
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-                var test = sub.Subscribe(null, null, null);
+                sub.Subscribe(null, null, null);
                 Thread.Sleep(500);
                 sub.Remove();
                 Assert.IsFalse(sub.IsSubscribed());

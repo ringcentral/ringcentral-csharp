@@ -105,7 +105,7 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            ApiResponse revokeResult = sdk.Platform.Logout();
+            sdk.Platform.Logout();
             Assert.IsFalse(sdk.Platform.LoggedIn());
         }
 
@@ -124,7 +124,7 @@ namespace RingCentral.Test
         [Test]
         public void SetAuthData()
         {
-            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
+            sdk.Platform.Login("username", "101", "password", true);
             var oldAuthData = sdk.Platform.Auth.GetData();
 
             var newAuthData = new Dictionary<string, string>();

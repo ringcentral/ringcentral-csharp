@@ -168,7 +168,6 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/3", jsonData);
             ApiResponse result = sdk.Platform.Put(request);
             JToken token = JObject.Parse(result.Body);
-            var availability = (string)token.SelectToken("availability");
             var readStatus = (string)token.SelectToken("readStatus");
             Assert.AreEqual("Read", readStatus);
 
