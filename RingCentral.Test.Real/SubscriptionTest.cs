@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace RingCentral.Test.Real
@@ -20,12 +19,13 @@ namespace RingCentral.Test.Real
                 Console.WriteLine(message.ToString());
             }, null, null);
 
-            var dict = new Dictionary<string, dynamic> {
-                { "text", "hello world" },
-                { "from", new Dictionary<string, string> { { "phoneNumber", Config.Instance.Username} } },
-                { "to", new Dictionary<string, string>[] { new Dictionary<string, string> { { "phoneNumber", Config.Instance.Receiver } } } },
+            var requestBody = new
+            {
+                text = "hello world",
+                from = new { phoneNumber = Config.Instance.Username },
+                to = new object[] { new { phoneNumber = Config.Instance.Receiver } }
             };
-            var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(dict));
+            var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(requestBody));
             sdk.Platform.Post(request);
             Thread.Sleep(15000);
             sdk.Platform.Post(request);
@@ -47,12 +47,13 @@ namespace RingCentral.Test.Real
                 Console.WriteLine(message.ToString());
             }, null, null);
 
-            var dict = new Dictionary<string, dynamic> {
-                { "text", "hello world" },
-                { "from", new Dictionary<string, string> { { "phoneNumber", Config.Instance.Username} } },
-                { "to", new Dictionary<string, string>[] { new Dictionary<string, string> { { "phoneNumber", Config.Instance.Receiver } } } },
+            var requestBody = new
+            {
+                text = "hello world",
+                from = new { phoneNumber = Config.Instance.Username },
+                to = new object[] { new { phoneNumber = Config.Instance.Receiver } }
             };
-            var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(dict));
+            var request = new Http.Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(requestBody));
             sdk.Platform.Post(request);
             Thread.Sleep(15000);
             Assert.AreEqual(1, count);

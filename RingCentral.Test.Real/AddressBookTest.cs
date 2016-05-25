@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using RingCentral.Http;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -12,15 +11,16 @@ namespace RingCentral.Test.Real
     class AddressBookTest : BaseTest
     {
         [Test]
-        public void Default()
+        public void AddressBook()
         {
             // create
-            var request1 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact",
-                JsonConvert.SerializeObject(new Dictionary<string, string> {
-                    { "firstName", "Tyler" },
-                    { "lastName", "Long" },
-                    { "homePhone", "+15889546648" },
-            }));
+            var requestBody = new
+            {
+                firstName = "Tyler",
+                lastName = "Long",
+                homePhone = "+15889546648"
+            };
+            var request1 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact", JsonConvert.SerializeObject(requestBody));
             var response1 = sdk.Platform.Post(request1);
             Assert.AreEqual(true, response1.OK);
 
@@ -35,9 +35,7 @@ namespace RingCentral.Test.Real
 
             // update
             var request25 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + (string)me.SelectToken("id"),
-                JsonConvert.SerializeObject(new Dictionary<string, string> {
-                    { "homePhone", "+18922849962" },
-            }));
+                JsonConvert.SerializeObject(new { homePhone = "+18922849962" }));
             var response25 = sdk.Platform.Put(request25);
             Assert.AreEqual(true, response25.OK);
 
@@ -65,12 +63,13 @@ namespace RingCentral.Test.Real
             Thread.Sleep(40000);
 
             // create
-            var request1 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact",
-                JsonConvert.SerializeObject(new Dictionary<string, string> {
-                    { "firstName", "Tyler" },
-                    { "lastName", "Long" },
-                    { "homePhone", "+15889546648" },
-            }));
+            var requestBody = new
+            {
+                firstName = "Tyler",
+                lastName = "Long",
+                homePhone = "+15889546648"
+            };
+            var request1 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact", JsonConvert.SerializeObject(requestBody));
             var response1 = sdk.Platform.Post(request1);
             Assert.AreEqual(true, response1.OK);
 
@@ -85,9 +84,7 @@ namespace RingCentral.Test.Real
 
             // update
             var request25 = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + (string)me.SelectToken("id"),
-                JsonConvert.SerializeObject(new Dictionary<string, string> {
-                    { "homePhone", "+18922849962" },
-            }));
+                JsonConvert.SerializeObject(new { homePhone = "+18922849962" }));
             request25.HttpMethodTunneling = true;
             var response25 = sdk.Platform.Put(request25);
             Assert.AreEqual(HttpMethod.Post, response25.Request.Method);
