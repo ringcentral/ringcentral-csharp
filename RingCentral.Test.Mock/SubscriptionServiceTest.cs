@@ -8,41 +8,9 @@ namespace RingCentral.Test
     class SubscriptionServiceTests
     {
         [TestFixture]
-        public class PubNubSubscriptionTest : RingCentral.Test.BaseTest
+        public class PubNubSubscriptionTest : BaseTest
         {
             private const string Channel = "RCNETSDK-TEST";
-            private SubscriptionServiceMock _subscriptionServiceMock;
-
-            [Test]
-            public void UnsubscribePubNubTest()
-            {
-                _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
-                _subscriptionServiceMock.Subscribe(Channel + "2", "", null, null, null);
-                Thread.Sleep(500);
-                _subscriptionServiceMock.Unsubscribe(Channel + "2", "", null, null, null, null);
-                Thread.Sleep(500);
-                Assert.IsTrue(
-                    _subscriptionServiceMock.ReturnMessage("disconnectMessage")
-                        .ToString()
-                        .Contains("Channel Unsubscribed from RCNETSDK-TEST2"));
-                Thread.Sleep(500);
-            }
-
-            [Test]
-            public void ErrorMessagePubNubTest()
-            {
-                _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
-                _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
-                Thread.Sleep(500);
-                _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
-                Thread.Sleep(500);
-                Assert.IsTrue(
-                    _subscriptionServiceMock.ReturnMessage("errorMessage")
-                        .ToString()
-                        .Contains("Channel Already Subscribed. Duplicate channel subscription not allowed"));
-                Thread.Sleep(500);
-            }
-
 
             [Test]
             public void SubscribeTest()
