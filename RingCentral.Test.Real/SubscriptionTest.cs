@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,6 +17,7 @@ namespace RingCentral.Test.Real
             var count = 0;
             sub.Subscribe((message) => {
                 count += 1;
+                Console.WriteLine(message.ToString());
             }, null, null);
 
             var dict = new Dictionary<string, dynamic> {
@@ -28,7 +30,7 @@ namespace RingCentral.Test.Real
             Thread.Sleep(15000);
             sdk.Platform.Post(request);
 
-            Thread.Sleep(25000);
+            Thread.Sleep(15000);
             Assert.AreEqual(2, count);
             sub.Remove();
         }
@@ -42,6 +44,7 @@ namespace RingCentral.Test.Real
             var count = 0;
             sub.Subscribe((message) => {
                 count += 1;
+                Console.WriteLine(message.ToString());
             }, null, null);
 
             var dict = new Dictionary<string, dynamic> {

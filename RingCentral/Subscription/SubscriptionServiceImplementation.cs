@@ -307,7 +307,8 @@ namespace RingCentral.Subscription
             var encyptionProvider = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcbPkcs7);
             var key = encyptionProvider.CreateSymmetricKey(keyArray);
             byte[] decodedMessage = WinRTCrypto.CryptographicEngine.Decrypt(key, messageData);
-            return Encoding.UTF8.GetString(decodedMessage, 0, decodedMessage.Length);
+            var result = Encoding.UTF8.GetString(decodedMessage, 0, decodedMessage.Length);
+            return result;
         }
 
         public void EnableSSL(bool enableSSL)
