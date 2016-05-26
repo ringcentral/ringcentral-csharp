@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3FCE9F5D-3F8F-4156-A55B-DC9F6DFE0ECA}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
+		ringcentral.nuspec = ringcentral.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingCentral.Test.Real", "RingCentral.Test.Real\RingCentral.Test.Real.csproj", "{EF47EC38-8706-4EE5-AD36-8672A5ED476A}"
