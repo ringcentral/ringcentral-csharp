@@ -2,8 +2,8 @@
 {
     public class Attachment
     {
-        private string fileName { get; set; }
-        private string contentType { get; set; }
+        private string fileName;
+        private string contentType;
         public byte[] ByteArray { get; private set; }
 
         /// <summary>

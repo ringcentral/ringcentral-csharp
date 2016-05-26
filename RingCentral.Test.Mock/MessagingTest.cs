@@ -24,7 +24,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123123123");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
 
         }
 
@@ -33,7 +33,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(ExtensionMessageEndPoint + "/123");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
 
         }
 
@@ -46,7 +46,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/1/content/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            Assert.AreEqual(response.GetBody(), expectedMessage);
+            Assert.AreEqual(response.Body, expectedMessage);
         }
 
 
@@ -58,7 +58,7 @@ namespace RingCentral.Test
 
             Request request = new Request(ExtensionMessageEndPoint + "/" + batchMessages);
             ApiResponse response = sdk.Platform.Get(request);
-            Assert.IsTrue(response.IsMultiPartResponse());
+            Assert.IsTrue(response.IsMultiPart());
             List<string> multiPartResult = response.GetMultiPartResponses();
 
             //We're interested in the response statuses and making sure the result was ok for each of the message id's sent.
@@ -84,7 +84,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var phoneNumber = (string)token.SelectToken("records")[0].SelectToken("from").SelectToken("phoneNumber");
 
             Assert.AreEqual("+19999999999", phoneNumber);
@@ -96,7 +96,7 @@ namespace RingCentral.Test
             Request request = new Request(ExtensionMessageEndPoint + "/2");
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var id = (string)token.SelectToken("id");
 
@@ -120,7 +120,7 @@ namespace RingCentral.Test
             Request request = new Request(FaxEndPoint, json, attachments);
             ApiResponse response = sdk.Platform.Post(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var availability = (string)token.SelectToken("availability");
 
             Assert.AreEqual("Alive", availability);
@@ -138,7 +138,7 @@ namespace RingCentral.Test
                             "\"from\": {\"extensionNumber\": \"" + from + "\"},\"text\": \"" + text + "\"}";
             Request request = new Request(PagerEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
-            JToken token = result.GetJson();
+            JToken token = result.Json;
             var id = (int)token.SelectToken("id");
             Assert.AreEqual(8, id);
         }
@@ -155,7 +155,7 @@ namespace RingCentral.Test
             Request request = new Request(SmsEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
 
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
             var messageStatus = (string)token.SelectToken("messageStatus");
             Assert.Contains(messageStatus, _messageSentValues);
         }
@@ -167,8 +167,7 @@ namespace RingCentral.Test
             var jsonData = "{\"readStatus\": \"Read\"}";
             Request request = new Request(ExtensionMessageEndPoint + "/3", jsonData);
             ApiResponse result = sdk.Platform.Put(request);
-            JToken token = JObject.Parse(result.GetBody());
-            var availability = (string)token.SelectToken("availability");
+            JToken token = JObject.Parse(result.Body);
             var readStatus = (string)token.SelectToken("readStatus");
             Assert.AreEqual("Read", readStatus);
 

@@ -2,50 +2,25 @@
 
 namespace RingCentral.Http
 {
-    public class Headers
+    public class HttpHeaders
     {
-        public const string ContentType = "content-type";
-        public const string Accept = "accept";
         public const string UrlEncodedContentType = "application/x-www-form-urlencoded";
         public const string JsonContentType = "application/json";
         public const string MultipartContentType = "multipart/mixed";
-        private HttpContentHeaders _headers;
-
-        /// <summary>
-        ///     Sets the HttpContentHeaders
-        /// </summary>
-        /// <param name="headers">HttpContentHeaders</param>
-        public void SetHeaders(HttpContentHeaders headers)
-        {
-            _headers = headers;
-        }
-
-        /// <summary>
-        ///     Gets the HttpContentHeaders
-        /// </summary>
-        /// <returns>HttpContentHeaders</returns>
-        public HttpContentHeaders GetHeaders()
-        {
-            return _headers;
-        }
-
-        /// <summary>
-        ///     Gets the ContentType in the headers
-        /// </summary>
-        /// <returns>ContentType in the HttpContentHeaders</returns>
-        public string GetContentType()
-        {
-            return _headers.ContentType.ToString();
-        }
+        public HttpContentHeaders Headers { get; protected set; }
 
         /// <summary>
         ///     Determines if the content is present in the headers
         /// </summary>
         /// <param name="contentType"></param>
         /// <returns>bool value if content type is in headers</returns>
-        public bool IsContentType(string contentType)
+        private bool IsContentType(string contentType)
         {
-            return GetContentType().Contains(contentType);
+            if (Headers.ContentType == null)
+            {
+                return false;
+            }
+            return Headers.ContentType.ToString().Contains(contentType);
         }
 
         /// <summary>

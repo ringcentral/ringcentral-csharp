@@ -36,32 +36,32 @@ namespace RingCentral
         private string serverUrl;
 
         /// <summary>
-        ///     Method to generate Access Token and Refresh Token to establish an authenticated session
+        ///     Method to generate Access Token to establish an authenticated session
         /// </summary>
-        /// <param name="userName">Login of RingCentral user</param>
-        /// <param name="password">Password of the RingCentral User</param>
+        /// <param name="username">Username of RingCentral user</param>
         /// <param name="extension">Optional: Extension number to login</param>
-        /// <param name="isRemember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
-        /// <returns>string response of Authenticate result.</returns>
-        public ApiResponse Authorize(string userName, string extension, string password, bool isRemember)
+        /// <param name="password">Password of the RingCentral User</param>
+        /// <param name="remember">If set to true, refresh token TTL will be one week, otherwise it's 10 hours</param>
+        /// <returns>apiResponse of Authenticate result.</returns>
+        public ApiResponse Login(string username, string extension, string password, bool remember)
         {
             var body = new Dictionary<string, string>
                        {
-                           {"username", userName},
+                           {"username", username},
                            {"password", password},
                            {"extension", extension},
                            {"grant_type", "password"},
                            {"access_token_ttl", AccessTokenTtl},
-                           {"refresh_token_ttl", isRemember ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                           {"refresh_token_ttl", remember ? RefreshTokenTtlRemember : RefreshTokenTtl}
                        };
 
             var request = new Request(TokenEndpoint, body);
             var result = AuthCall(request);
 
-            Auth.SetRemember(isRemember);
-            Auth.SetData(result.GetJson());
+            Auth.Remember = remember;
+            Auth.SetData(result.Json);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
 
             return result;
         }
@@ -77,17 +77,17 @@ namespace RingCentral
             var body = new Dictionary<string, string>
                        {
                            {"grant_type", "refresh_token"},
-                           {"refresh_token", Auth.GetRefreshToken()},
+                           {"refresh_token", Auth.RefreshToken},
                            {"access_token_ttl", AccessTokenTtl},
-                           {"refresh_token_ttl", Auth.IsRemember() ? RefreshTokenTtlRemember : RefreshTokenTtl}
+                           {"refresh_token_ttl", Auth.Remember ? RefreshTokenTtlRemember : RefreshTokenTtl}
                        };
 
             var request = new Request(TokenEndpoint, body);
             var result = AuthCall(request);
 
-            Auth.SetData(result.GetJson());
+            Auth.SetData(result.Json);
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.GetAccessToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
 
             return result;
         }
@@ -98,15 +98,9 @@ namespace RingCentral
         /// <returns>string response of Revoke result</returns>
         public ApiResponse Logout()
         {
-            var body = new Dictionary<string, string>
-                       {
-                           {"token", Auth.GetAccessToken()}
-                       };
-
+            var body = new Dictionary<string, string> { { "token", Auth.AccessToken } };
             Auth.Reset();
-
             var request = new Request(RevokeEndpoint, body);
-
             return AuthCall(request);
         }
 
@@ -122,9 +116,7 @@ namespace RingCentral
         private ApiResponse AuthCall(Request request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
-
-            var response = _client.PostAsync(request.GetUrl(), request.GetHttpContent()).Result;
-
+            var response = _client.PostAsync(request.Url, request.HttpContent).Result;
             return new ApiResponse(response);
         }
 
@@ -156,13 +148,15 @@ namespace RingCentral
             }
 
             var requestMessage = new HttpRequestMessage();
-            requestMessage.Content = request.GetHttpContent();
+            requestMessage.Content = request.HttpContent;
             requestMessage.Method = httpMethod;
-            requestMessage.RequestUri = request.GetUri();
+            requestMessage.RequestUri = request.Uri;
+            if (request.HttpMethodTunneling)
+            {
+                requestMessage.ApplyHttpMethodTunneling();
+            }
 
-            request.GetXhttpOverRideHeader(requestMessage);
-
-            return new ApiResponse(_client.SendAsync(requestMessage).Result);
+            return new ApiResponse(_client.SendAsync(requestMessage).Result, requestMessage);
         }
 
 
@@ -267,7 +261,7 @@ namespace RingCentral
                 new Dictionary<string, string> { { "grant_type", "authorization_code" },
                     { "redirect_uri", redirectUri }, { "code", authCode } });
             var response = AuthCall(request);
-            Auth.SetData(response.GetJson());
+            Auth.SetData(response.Json);
             return response;
         }
     }

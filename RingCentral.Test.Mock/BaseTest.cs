@@ -23,7 +23,7 @@ namespace RingCentral.Test
             sdk = new SDK(AppKey, AppSecret, SDK.Server.Sandbox, "C Sharp Test Suite", "1.0.0");
             // mock test only, don't contact remote server
             sdk.Platform._client = new HttpClient(new MockHttpClient()) { BaseAddress = new Uri(SDK.SandboxServerUrl) };
-            sdk.Platform.Authorize(Username, Extension, Password, true);
+            sdk.Platform.Login(Username, Extension, Password, true);
         }
     }
 }

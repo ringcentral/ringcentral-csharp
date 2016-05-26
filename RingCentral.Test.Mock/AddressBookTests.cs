@@ -14,7 +14,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(AddressBookEndPoint + "/1");
             ApiResponse response = sdk.Platform.Get(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var firstNameResponse = (string)token.SelectToken("firstName");
 
             Assert.AreEqual(firstNameResponse, "Delete");
@@ -24,7 +24,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(AddressBookEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var firstName = (string)token.SelectToken("records")[0].SelectToken("firstName");
 
             Assert.AreEqual("Delete", firstName);
@@ -39,7 +39,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(AddressBookEndPoint + "/3");
             ApiResponse response = sdk.Platform.Delete(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var message = (string)token.SelectToken("message");
             Assert.AreEqual("Deleted", message);
         }
@@ -59,7 +59,7 @@ namespace RingCentral.Test
             Request request = new Request(AddressBookEndPoint, jsonData);
 
             ApiResponse response = sdk.Platform.Post(request);
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var firstName = (string)token.SelectToken("firstName");
             Assert.AreEqual("Jim", firstName);
@@ -82,7 +82,7 @@ namespace RingCentral.Test
 
             ApiResponse response = sdk.Platform.Put(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var street = (string)token.SelectToken("businessAddress").SelectToken("street");
 
             Assert.AreEqual(street, "3 Marina Blvd");

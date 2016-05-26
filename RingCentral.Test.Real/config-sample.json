@@ -1,0 +1,9 @@
+﻿{
+	"RC_APP_KEY": "myAppKey",
+	"RC_APP_SECRET": "myAppSecret",
+	"RC_APP_SERVER": "Sandbox", // Sandbox or Production
+	"RC_USERNAME": "myUsername",
+	"RC_EXTENSION": "myExtension",
+	"RC_PASSWORD": "myPassword",
+	"RC_RECEIVER": "receiverNumber" // This number is for receiving SMS
+}

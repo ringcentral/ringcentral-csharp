@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Threading;
 
 namespace RingCentral.Test
@@ -12,35 +11,12 @@ namespace RingCentral.Test
         [TestFixtureSetUp]
         public void SetUp()
         {
-            var appKey = "";
-            var appSecret = "";
-            var username = "";
-            var password = "";
-            var extension = "";
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_APP_KEY")))
+            if (Config.Instance == null)
             {
-                appKey = Environment.GetEnvironmentVariable("RC_APP_KEY");
-            }
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_APP_SECRET")))
-            {
-                appSecret = Environment.GetEnvironmentVariable("RC_APP_SECRET");
-            }
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_USERNAME")))
-            {
-                username = Environment.GetEnvironmentVariable("RC_USERNAME");
-            }
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RC_PASSWORD")))
-            {
-                password = Environment.GetEnvironmentVariable("RC_PASSWORD");
-            }
-
-            if (appKey == "")
-            { // don't run real tests if no appKey
                 Assert.Ignore();
             }
-            sdk = new SDK(appKey, appSecret, SDK.Server.Sandbox, "C Sharp Test Suite", "1.0.0");
-            sdk.Platform.Authorize(username, extension, password, true);
+            sdk = new SDK(Config.Instance.AppKey, Config.Instance.AppSecret, Config.Instance.Server, "C Sharp Test Suite", "1.0.0");
+            sdk.Platform.Login(Config.Instance.Username, Config.Instance.Extension, Config.Instance.Password, true);
         }
 
         [TearDown]

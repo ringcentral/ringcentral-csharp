@@ -8,44 +8,9 @@ namespace RingCentral.Test
     class SubscriptionServiceTests
     {
         [TestFixture]
-        public class PubNubSubscriptionTest : RingCentral.Test.BaseTest
+        public class PubNubSubscriptionTest : BaseTest
         {
-
             private const string Channel = "RCNETSDK-TEST";
-            private SubscriptionServiceMock _subscriptionServiceMock;
-
-
-            [Test]
-            public void UnsubscribePubNubTest()
-            {
-                _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
-                _subscriptionServiceMock.Subscribe(Channel + "2", "", null, null, null);
-                Thread.Sleep(500);
-                _subscriptionServiceMock.Unsubscribe(Channel + "2", "", null, null, null, null);
-                Thread.Sleep(500);
-                Assert.IsTrue(
-                    _subscriptionServiceMock.ReturnMessage("disconnectMessage")
-                        .ToString()
-                        .Contains("Channel Unsubscribed from RCNETSDK-TEST2"));
-                Thread.Sleep(500);
-
-            }
-
-            [Test]
-            public void ErrorMessagePubNubTest()
-            {
-                _subscriptionServiceMock = new SubscriptionServiceMock("demo-36", "demo-36", "demo-36", "", false);
-                _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
-                Thread.Sleep(500);
-                _subscriptionServiceMock.Subscribe(Channel + "3", "", null, null, null);
-                Thread.Sleep(500);
-                Assert.IsTrue(
-                    _subscriptionServiceMock.ReturnMessage("errorMessage")
-                        .ToString()
-                        .Contains("Channel Already Subscribed. Duplicate channel subscription not allowed"));
-                Thread.Sleep(500);
-            }
-
 
             [Test]
             public void SubscribeTest()
@@ -56,11 +21,10 @@ namespace RingCentral.Test
                 var subscribed = sub.Subscribe(null, null, null);
                 Thread.Sleep(1000);
                 Assert.IsNotNull(subscribed);
-                Assert.AreEqual(true, subscribed.CheckStatus());
+                Assert.AreEqual(true, subscribed.OK);
                 Assert.IsTrue(sub.IsSubscribed());
                 sub.Remove();
                 Thread.Sleep(1000);
-
             }
 
             [Test]
@@ -69,10 +33,10 @@ namespace RingCentral.Test
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = sdk.Platform };
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-                var test = sub.Subscribe(null, null, null);
+                sub.Subscribe(null, null, null);
                 Thread.Sleep(500);
                 sub.ClearEvents();
-                sub.SetEvents(new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" });
+                sub.Events = new List<string>() { "/restapi/v1.0/account/~/extension/~/presence" };
                 sub.Renew();
                 Assert.IsTrue(sub.IsSubscribed());
                 sub.Remove();
@@ -82,16 +46,14 @@ namespace RingCentral.Test
             [Test]
             public void DeleteSubscribeTest()
             {
-
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = sdk.Platform };
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
                 sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-                var test = sub.Subscribe(null, null, null);
+                sub.Subscribe(null, null, null);
                 Thread.Sleep(500);
                 sub.Remove();
                 Assert.IsFalse(sub.IsSubscribed());
                 Thread.Sleep(500);
-
             }
 
             [Test]
@@ -124,13 +86,10 @@ namespace RingCentral.Test
             [Test]
             public void SetSslFlagForPubnubTest()
             {
-
                 SubscriptionServiceImplementation sub = new SubscriptionServiceImplementation() { _platform = sdk.Platform };
                 sub.EnableSSL(true);
                 Assert.True(sub.IsSSL());
             }
-
-
         }
     }
 }

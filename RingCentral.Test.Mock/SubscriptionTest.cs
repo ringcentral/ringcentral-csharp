@@ -16,7 +16,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(SubscriptionEndPoint + "/1");
             ApiResponse result = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, result.GetStatus());
+            Assert.AreEqual(204, result.Status);
         }
 
 
@@ -31,7 +31,7 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint, jsonData);
             ApiResponse result = sdk.Platform.Post(request);
 
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var status = (string)token.SelectToken("status");
 
@@ -44,7 +44,7 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint + "/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            var subscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.GetBody());
+            var subscriptionItem = JsonConvert.DeserializeObject<Subscription.Subscription>(response.Body);
 
             Assert.AreEqual(subscriptionItem.DeliveryMode.TransportType, "PubNub");
 
@@ -64,7 +64,7 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint + "/1", jsonData);
             ApiResponse renewResult = sdk.Platform.Put(request);
 
-            JToken token = renewResult.GetJson();
+            JToken token = renewResult.Json;
 
             var getStatus = (string)token.SelectToken("status");
 

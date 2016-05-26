@@ -9,40 +9,39 @@
 ## Table of contents
 
 1. [Installation](#installation)
-  1. [Additional Instructions for PubNub](#additional-instructions-for-pubnub)
 1. [Basic Usage](#basic-usage)
-  1. [API Developer Guide](#api-developer-guide)
-  1. [Initialization](#initialization)
-    1. [Set User Agent Header](#set-user-agent-header)
-  2. [OAuth 2.0 Authorization](#oauth-2.0-authorization)
-    1. [Authorize](#authorize)
-    1. [Refresh](#refresh)
-    1. [Logout](#logout)
-  3. [Quick Recipes](#quick-recipes)
-    1. [Send SMS](#send-sms)
-    1. [Send Fax](#send-fax)
-    1. [Get Account Information](#get-account-information)
-    1. [Get Address Book](#get-address-book)
-    1. [Using x-http-method-override Header](#using-x-http-method-override-header)
-  4. [Message Store](#message-store)
-    1. [Get Message Store](#get-message-store)
-    1. [Get Message Store First ID](#get-message-store-first-id)
-    1. [Update Message Status](#update-message-status)
-      1. [Update Message Status using x-http-override-header](#update-message-using-x-http-override-header)
-    1. [Delete Message](#delete-message)
-  1. [Subscription](#subscription)
-    1. [Create Subscription](#create-subscription)
-	  1. [Enable SSL in Subscription](#enable-ssl-for-pubnub-subscription)
-      1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
-      1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
-    1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
-      1. [Casting on Connect](#casting-on-connect)
-      1. [Casting on Disconnect](#casting-on-disconnect)
-      1. [Casting on Error](#casting-on-error)
-    1. [Example PubNub Notification Message](#example-pubnub-notification-message)
-    1. [Delete Subscription](#delete-subscription)
-    1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
-    1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+    1. [API Developer Guide](#api-developer-guide)
+    1. [Initialization](#initialization)
+    1. [OAuth 2.0 Authorization](#oauth-20-authorization)
+        1. [Login](#login)
+        1. [Refresh](#refresh)
+        1. [Logout](#logout)
+    1. [Quick Recipes](#quick-recipes)
+        1. [Send SMS](#send-sms)
+        1. [Send Fax](#send-fax)
+        1. [Get Account Information](#get-account-information)
+        1. [Get Address Book](#get-address-book)
+        1. [Using HTTP method tunneling](#using-http-method-tunneling)
+    1. [Message Store](#message-store)
+        1. [Get Message Store](#get-message-store)
+        1. [Get Message Store First ID](#get-message-store-first-id)
+        1. [Update Message Status](#update-message-status)
+            1. [Update Message Status using HTTP method tunneling](#update-message-status-using-http-method-tunneling)
+        1. [Delete Message](#delete-message)
+    1. [Subscription](#subscription)
+        1. [Create Subscription](#create-subscription)
+            1. [Enable SSL for Pubnub Subscription](#enable-ssl-for-pubnub-subscription)
+            1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
+            1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
+        1. [Casting PubNub Notifications](#casting-pubnub-notifications)
+            1. [Casting on Connect](#casting-on-connect)
+            1. [Casting on Disconnect](#casting-on-disconnect)
+            1. [Casting on Error](#casting-on-error)
+        1. [Example PubNub Notification Message](#example-pubnub-notification-message)
+        1. [Delete Subscription](#delete-subscription)
+        1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
+        1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+1. [Links](#links)
 1. [Support](#support)
 1. [Contributions](#contributions)
 1. [License](#license)
@@ -52,10 +51,10 @@
 Via NuGet
 
 ```
-PM> Install-Package RingCentralSDK 
+PM> Install-Package RingCentralSDK
 ```
 
-This will download the Ring Central Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. Separate versions for Xamarin Android, iOS and .NET 4.0 no longer required. 
+This will download the RingCentral Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. The NuGet package is compabible with .NET 4.0+, Xamarin.iOS, Xamarin.Android and Xamarin.Mac.
 
 
 ## Basic Usage
@@ -69,31 +68,23 @@ This SDK wraps the RingCentral Connect Platform API which is documented in the [
 ```cs
 //import RingCentral SDK
 using RingCentral;
-```
 
-```cs
-//Initialize Ring Central Client
-var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint", "Application Name","Application Version").GetPlatform();
-```
-
-#### Set User Agent Header
-
-```cs
-ringCentral.SetUserAgentHeader("Application Name", "Application Version");
+//Initialize RingCentral Client
+var ringCentral = new SDK("your appKey", "your appSecret", "RingCentral server", "Application Name", "Application Version").Platform;
 ```
 
 ### OAuth 2.0 Authorization
 
-#### Authorize
+#### Login
 
 ```cs
-Response response = ringCentral.Authorize(userName, extension, password, true);
+var response = ringCentral.Login(username, extension, password, true);
 ```
 
 #### Refresh
 
 ```cs
-Response response = ringCentral.Refresh();
+var response = ringCentral.Refresh();
 ```
 
 #### Logout
@@ -106,8 +97,8 @@ ringCentral.Logout();
 
 #### Send SMS
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
-Response response = ringCentral.Post(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
+var response = ringCentral.Post(request);
 ```
 
 #### Send Fax
@@ -122,35 +113,39 @@ var attachment3 = new Attachment("<NAME OF YOUR PDF.pdf", "application/pdf", pdf
 var attachments = new List<Attachment> { attachment,attachment2, attachment3 };
 var json = "{\"to\":[{\"phoneNumber\":\"<YOUR TARGET NUMBER>\"}],\"faxResolution\":\"High\"}";
 
-Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
-Response response = ringCentral.Post(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
+var response = ringCentral.Post(request);
 ```
 
 #### Get Account Information
 ```cs
-Request request = new Request("/restapi/v1.0/account/~");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~");
+var response = ringCentral.Get(request);
 ```
 
 ### Get Address Book
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
+var response = ringCentral.Get(request);
 ```
 
-#### Using x-http-method-override Header
+#### Using HTTP method tunneling
+
+Sometimes, due to different technical limitations, API clients cannot issue all HTTP methods. In the most severe case a client may be restricted to GET and POST methods only. To work around this situation the RingCentral API provides a mechanism for tunneling PUT and DELETE methods through POST.
+
 ```cs
-Request overRideRequest = new Request("/restapi/v1.0/account/~");
-overRideRequest.SetXhttpOverRideHeader("GET");
-Response overRideResponse = ringCentral.Post(overRideRequest);
+var request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + contactId);
+request.HttpMethodTunneling = true;
+var response = sdk.Platform.Delete(request);
+Assert.AreEqual(HttpMethod.Post, response.Request.Method);
 ```
 
 ### Message Store
 
 #### Get Message Store
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
+var response = ringCentral.Get(request);
 ```
 
 #### Get Message Store First ID
@@ -161,21 +156,21 @@ var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
 #### Update Message Status
 ```cs
 var messageStatusJson = "{\"readStatus\": \"Read\"}";
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-Response response = ringCentral.Put(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+var response = ringCentral.Put(request);
 ```
 
-##### Update Message Status using x-http-ovverride-header
+##### Update Message Status using HTTP method tunneling
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-request.SetXhttpOverRideHeader("PUT"); 
-Response response = ringCentral.Post(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+request.HttpMethodTunneling = true;
+var response = ringCentral.Put(request);
 ```
 
 #### Delete Message
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
-Response response = ringCentral.Delete(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
+var response = ringCentral.Delete(request);
 ```
 
 ### Subscription
@@ -184,22 +179,8 @@ RingCentral provides the ability to subscribe for event data using PubNub.
 
 #### Create Subscription
 
-##### Create Subscription using Default Callbacks
-
-```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
-subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null,null,null);
-```
-
-Alternatively you can set Event Filters by:
-```cs
-subscription.SetEvent(listOfEvents);
-```
-Where listOfEvents is a List<string> containing each event to subscribe to.
-
-##### Enabling SSL for PubNub Subscription
-To enable SSL for PubNub you will need to call the method 
+##### Enable SSL for PubNub Subscription
+To enable SSL for PubNub you will need to call the method
 ```cs  
 subscription.EnableSSL(true);
 ```
@@ -207,7 +188,7 @@ subscription.EnableSSL(true);
 before calling
 
 ```cs
-subscription.Subscribe(null,null,null);
+subscription.Subscribe(null, null, null);
 ```
 
 An Example of enabling SSL for Pubnub:
@@ -216,19 +197,34 @@ An Example of enabling SSL for Pubnub:
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.EnableSSL(true);
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null,null,null);
+var response = subscription.Subscribe(null, null, null);
 ```
 
 Checking if SSL is enabled can be done by:
-```cs 
-bool isSSLOn = subscription.isSSL();
- ```
-##### Create Subscription using Explicit Callbacks 
+```cs
+var isSSLOn = subscription.isSSL();
+```
+
+##### Create Subscription using Default Callbacks
 
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
+var response = subscription.Subscribe(null, null, null);
+```
+
+Alternatively you can set Event Filters by:
+```cs
+subscription.SetEvent(listOfEvents);
+```
+Where listOfEvents is a List<string> containing each event to subscribe to.
+
+##### Create Subscription using Explicit Callbacks
+
+```cs
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
+subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+var response = subscription.Subscribe(ActionOnNotification, ActionOnConnect, ActionOnError);
 ```
 Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
 
@@ -253,7 +249,7 @@ Use a JArray to grab a token
 
 ```cs
 public void ActionOnMessage(object message) {
-	var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
+    var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");
 }
 ```
 
@@ -261,7 +257,7 @@ Or string for other JSON parsing
 
 ```cs
 public void ActionOnMessage(object message) {
-	var ReceivedMessage = message.ToString();  
+    var ReceivedMessage = message.ToString();
 }
 ```
 
@@ -271,7 +267,7 @@ Use a JArray to grab a token.
 
 ```cs
 public void ActionOnConnect(object message){
-	var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
+    var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
 }
 ```
 
@@ -279,7 +275,7 @@ Or string for other JSON parsing
 
 ```cs
 public void ActionOnConnect(object message) {
-	var ReceivedMessage = message.ToString();  
+    var ReceivedMessage = message.ToString();
 }
 ```
 
@@ -289,7 +285,7 @@ Note: Disconnect messages are not deserializable JSON.
 
 ```cs
 public void ActionOnDisconnect(object message) {
-	var receivedMessage = message.ToString();
+    var receivedMessage = message.ToString();
 }
 ```
 
@@ -299,7 +295,7 @@ Note: PubNub error messages are not deserializable JSON.
 
 ```cs
 public void ActionOnError(object error) {
-	var receivedMessage = message.ToString();
+    var receivedMessage = message.ToString();
 }
 ```
 
@@ -352,7 +348,7 @@ subscription.Unsubscribe();
 ```cs
 var notificationMessage = subscription.ReturnMessage("notification");
 var connectMessage = subscription.ReturnMessage("connectMessage");
-var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
+var disconnectMessage = subscription.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
@@ -398,15 +394,15 @@ RingCentral SDK is available under an MIT-style license. See [LICENSE](LICENSE) 
 
 RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
 
- [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
- [nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
- [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
- [nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
- [build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
- [build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
- [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
- [coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
- [docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
- [docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
- [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
- [license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
+[nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
+[nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
+[nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
+[nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
+[build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
+[build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
+[coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
+[coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
+[docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
+[docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
+[license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE

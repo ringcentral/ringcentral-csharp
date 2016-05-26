@@ -62,10 +62,10 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             Assert.NotNull(AuthResult);
 
-            JToken token = JObject.Parse(AuthResult.GetBody());
+            JToken token = JObject.Parse(AuthResult.Body);
             var accessToken = (string)token.SelectToken("access_token");
             var refreshToken = (string)token.SelectToken("refresh_token");
 
@@ -81,7 +81,7 @@ namespace RingCentral.Test
 
             Assert.NotNull(refreshResult);
 
-            JToken token = JObject.Parse(refreshResult.GetBody());
+            JToken token = JObject.Parse(refreshResult.Body);
             var accessTokenAfterRefresh = (string)token.SelectToken("access_token");
             var refreshTokenAfterFresh = (string)token.SelectToken("refresh_token");
 
@@ -96,7 +96,7 @@ namespace RingCentral.Test
             Request request = new Request(VersionEndPoint);
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
             var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
 
             Assert.AreEqual(version, "v1.0");
@@ -105,17 +105,17 @@ namespace RingCentral.Test
         [Test]
         public void RevokeAuthorization()
         {
-            ApiResponse revokeResult = sdk.Platform.Logout();
+            sdk.Platform.Logout();
             Assert.IsFalse(sdk.Platform.LoggedIn());
         }
 
         [Test]
         public void GetAuthData()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
             var authData = sdk.Platform.Auth.GetData();
 
-            JToken token = AuthResult.GetJson();
+            JToken token = AuthResult.Json;
 
             Assert.AreEqual((string)token.SelectToken("access_token"), authData["access_token"]);
             Assert.AreEqual((string)token.SelectToken("refresh_token"), authData["refresh_token"]);
@@ -124,7 +124,7 @@ namespace RingCentral.Test
         [Test]
         public void SetAuthData()
         {
-            var AuthResult = sdk.Platform.Authorize("username", "101", "password", true);
+            sdk.Platform.Login("username", "101", "password", true);
             var oldAuthData = sdk.Platform.Auth.GetData();
 
             var newAuthData = new Dictionary<string, string>();

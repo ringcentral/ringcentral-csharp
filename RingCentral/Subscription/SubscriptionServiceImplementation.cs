@@ -1,43 +1,30 @@
 ﻿using Newtonsoft.Json;
-using PCLCrypto;
+using Org.BouncyCastle.Crypto.IO;
+using Org.BouncyCastle.Security;
 using PubNubMessaging.Core;
 using RingCentral.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
-
 
 namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation
     {
         private Pubnub _pubnub;
-<<<<<<< HEAD
         private bool _encrypted;
         public Platform _platform;
         private Subscription _subscription;
         private Timer timeout;
         private bool subscribed;
-        private List<string> eventFilters = new List<string>();
+        public List<string> Events { get; set; } = new List<string>();
         private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
         private const int RenewHandicap = 100000;
         private Action<object> notificationAction, connectionAction, errorAction;
         public Action<object> disconnectAction { private get; set; }
-=======
-		private bool _encrypted;
-		private PubnubCrypto _decrypto;
-		public Platform _platform;
-		private Subscription _subscription;
-		private Timer timeout;
-		private bool subscribed;
-		private List<string> eventFilters =  new List<string>();
-		private const string SubscriptionEndPoint = "/restapi/v1.0/subscription";
-		private const int RenewHandicap = 100000;
-		private Action<object> notificationAction, connectionAction, errorAction;
-		public Action<object> disconnectAction { private get; set; }
->>>>>>> master
         private bool _enableSSL;
         private Dictionary<string, object> _events = new Dictionary<string, object>
         {
@@ -67,14 +54,9 @@ namespace RingCentral.Subscription
             }
         }
 
-        public List<string> GetEvents()
-        {
-            return eventFilters;
-        }
-
         public void ClearEvents()
         {
-            eventFilters.Clear();
+            Events.Clear();
         }
 
         private void OnTimedExpired(Object source)
@@ -90,14 +72,9 @@ namespace RingCentral.Subscription
             }
         }
 
-        public void SetEvents(List<string> newEventFilters)
-        {
-            eventFilters = newEventFilters;
-        }
-
         public void AddEvent(string eventToAdd)
         {
-            eventFilters.Add(eventToAdd);
+            Events.Add(eventToAdd);
         }
 
         public ApiResponse Renew()
@@ -109,14 +86,14 @@ namespace RingCentral.Subscription
                 {
                     throw new Exception("Subscription ID is required");
                 }
-                if (eventFilters.Count == 0)
+                if (Events.Count == 0)
                 {
                     throw new Exception("Events are undefined");
                 }
-                var jsonData = GetFullEventsFilter();
+                var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
-                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.GetBody()));
+                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.Body));
                 return response;
             }
             catch (Exception e)
@@ -156,7 +133,7 @@ namespace RingCentral.Subscription
 
         public ApiResponse Subscribe(Action<object> userCallback, Action<object> connectCallback, Action<object> errorCallback)
         {
-            if (eventFilters.Count == 0)
+            if (Events.Count == 0)
             {
                 throw new Exception("Event filters are undefined");
             }
@@ -174,10 +151,10 @@ namespace RingCentral.Subscription
             }
             try
             {
-                var jsonData = GetFullEventsFilter();
+                var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint, jsonData);
                 ApiResponse response = _platform.Post(request);
-                _subscription = JsonConvert.DeserializeObject<Subscription>(response.GetBody());
+                _subscription = JsonConvert.DeserializeObject<Subscription>(response.Body);
                 if (_subscription.DeliveryMode.Encryption)
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,
@@ -212,18 +189,21 @@ namespace RingCentral.Subscription
             subscribed = false;
         }
 
-        private string GetFullEventsFilter()
+        private string EventsJson
         {
-            var fullEventsFilter = "{ \"eventFilters\": ";
-            string eventFiltersToString = "[ ";
-            foreach (string filter in eventFilters)
+            get
             {
-                eventFiltersToString += ("\"" + filter + "\",");
+                var fullEventsFilter = "{ \"eventFilters\": ";
+                string eventFiltersToString = "[ ";
+                foreach (string filter in Events)
+                {
+                    eventFiltersToString += ("\"" + filter + "\",");
+                }
+                eventFiltersToString = eventFiltersToString.TrimEnd(',');
+                eventFiltersToString += "]";
+                fullEventsFilter += (eventFiltersToString + ", \"deliveryMode\" : { \"transportType\" : \"PubNub\" } }");
+                return fullEventsFilter;
             }
-            eventFiltersToString = eventFiltersToString.TrimEnd(',');
-            eventFiltersToString += "]";
-            fullEventsFilter += (eventFiltersToString + ", \"deliveryMode\" : { \"transportType\" : \"PubNub\" } }");
-            return fullEventsFilter;
         }
 
         private void PubNubServiceImplementation(string publishKey, string subscribeKey)
@@ -323,12 +303,32 @@ namespace RingCentral.Subscription
         private object DecryptMessage(object message)
         {
             var deserializedMessage = JsonConvert.DeserializeObject<List<string>>(message.ToString());
-            byte[] keyArray = Convert.FromBase64String(_subscription.DeliveryMode.EncryptionKey);
-            byte[] messageData = Convert.FromBase64String(deserializedMessage[0]);
-            var encyptionProvider = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcbPkcs7);
-            var key = encyptionProvider.CreateSymmetricKey(keyArray);
-            byte[] decodedMessage = WinRTCrypto.CryptographicEngine.Decrypt(key, messageData);
-            return Encoding.UTF8.GetString(decodedMessage, 0, decodedMessage.Length);
+            var result = Decrypt(deserializedMessage[0], _subscription.DeliveryMode.EncryptionKey);
+            return result;
+        }
+
+        private string Decrypt(string dataString, string keyString)
+        {
+            var key = Convert.FromBase64String(keyString);
+            var keyParameter = ParameterUtilities.CreateKeyParameter("AES", key);
+            var cipher = CipherUtilities.GetCipher("AES/ECB/PKCS7Padding");
+            cipher.Init(false, keyParameter);
+
+            var data = Convert.FromBase64String(dataString);
+            var memoryStream = new MemoryStream(data, false);
+            var cipherStream = new CipherStream(memoryStream, cipher, null);
+
+            var bufferSize = 1024;
+            var buffer = new byte[bufferSize];
+            var length = 0;
+            var resultStream = new MemoryStream();
+            while ((length = cipherStream.Read(buffer, 0, bufferSize)) > 0)
+            {
+                resultStream.Write(buffer, 0, length);
+            }
+            var resultBytes = resultStream.ToArray();
+            var result = Encoding.UTF8.GetString(resultBytes, 0, resultBytes.Length);
+            return result;
         }
 
         public void EnableSSL(bool enableSSL)

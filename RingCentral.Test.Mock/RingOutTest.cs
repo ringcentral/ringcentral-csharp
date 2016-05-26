@@ -14,7 +14,7 @@ namespace RingCentral.Test
         {
             Request request = new Request(RingOutEndPoint + "/1");
             ApiResponse cancelResult = sdk.Platform.Delete(request);
-            Assert.AreEqual(204, cancelResult.GetStatus());
+            Assert.AreEqual(204, cancelResult.Status);
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace RingCentral.Test
             Request request = new Request(RingOutEndPoint + "/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            JToken token = response.GetJson();
+            JToken token = response.Json;
 
             var message = (string)token.SelectToken("status").SelectToken("callStatus");
 
@@ -40,7 +40,7 @@ namespace RingCentral.Test
 
             ApiResponse result = sdk.Platform.Post(request);
 
-            JToken token = JObject.Parse(result.GetBody());
+            JToken token = JObject.Parse(result.Body);
 
             var callStatus = (string)token.SelectToken("status").SelectToken("callStatus");
 
