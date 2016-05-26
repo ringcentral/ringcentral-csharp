@@ -12,9 +12,8 @@
 1. [Basic Usage](#basic-usage)
     1. [API Developer Guide](#api-developer-guide)
     1. [Initialization](#initialization)
-        1. [Set User Agent Header](#set-user-agent-header)
     1. [OAuth 2.0 Authorization](#oauth-20-authorization)
-        1. [Authorize](#authorize)
+        1. [Login](#login)
         1. [Refresh](#refresh)
         1. [Logout](#logout)
     1. [Quick Recipes](#quick-recipes)
@@ -22,12 +21,12 @@
         1. [Send Fax](#send-fax)
         1. [Get Account Information](#get-account-information)
         1. [Get Address Book](#get-address-book)
-        1. [Using x-http-method-override Header](#using-x-http-method-override-header)
+        1. [Using HTTP method tunneling](#using-http-method-tunneling)
     1. [Message Store](#message-store)
         1. [Get Message Store](#get-message-store)
         1. [Get Message Store First ID](#get-message-store-first-id)
         1. [Update Message Status](#update-message-status)
-            1. [Update Message Status using x-http-override-header](#update-message-status-using-x-http-override-header)
+            1. [Update Message Status using HTTP method tunneling](#update-message-status-using-http-method-tunneling)
         1. [Delete Message](#delete-message)
     1. [Subscription](#subscription)
         1. [Create Subscription](#create-subscription)
@@ -189,7 +188,7 @@ subscription.EnableSSL(true);
 before calling
 
 ```cs
-subscription.Subscribe(null,null,null);
+subscription.Subscribe(null, null, null);
 ```
 
 An Example of enabling SSL for Pubnub:
@@ -198,7 +197,7 @@ An Example of enabling SSL for Pubnub:
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.EnableSSL(true);
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null,null,null);
+var response = subscription.Subscribe(null, null, null);
 ```
 
 Checking if SSL is enabled can be done by:
@@ -211,7 +210,7 @@ var isSSLOn = subscription.isSSL();
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null,null,null);
+var response = subscription.Subscribe(null, null, null);
 ```
 
 Alternatively you can set Event Filters by:
@@ -225,7 +224,7 @@ Where listOfEvents is a List<string> containing each event to subscribe to.
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
 subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(ActionOnNotification,ActionOnConnect,ActionOnError);
+var response = subscription.Subscribe(ActionOnNotification, ActionOnConnect, ActionOnError);
 ```
 Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
 
@@ -349,7 +348,7 @@ subscription.Unsubscribe();
 ```cs
 var notificationMessage = subscription.ReturnMessage("notification");
 var connectMessage = subscription.ReturnMessage("connectMessage");
-var disconnectMessage = subscriptionS.ReturnMessage("disconnectMessage");
+var disconnectMessage = subscription.ReturnMessage("disconnectMessage");
 var errorMessage = subscription.ReturnMessage("errorMessage");
 ```
 
@@ -395,15 +394,15 @@ RingCentral SDK is available under an MIT-style license. See [LICENSE](LICENSE) 
 
 RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
 
- [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
- [nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
- [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
- [nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
- [build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
- [build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
- [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
- [coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
- [docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
- [docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
- [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
- [license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
+[nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
+[nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
+[nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
+[nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
+[build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
+[build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
+[coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
+[coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
+[docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
+[docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
+[license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
