@@ -43,15 +43,15 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/portable-net40" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net40" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/net45" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/sl5" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoTouch1" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoAndroid1" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/MonoMac" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/Xamarin.Mac" />
-    <file src="RingCentral\bin\Release\RingCentral.dll" target="lib/Xamarin.iOS" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/portable-net40" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/net40" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/net45" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/sl5" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/MonoTouch1" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/MonoAndroid1" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/MonoMac" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/Xamarin.Mac" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/Xamarin.iOS" />
   </files>
 </package>
