@@ -9,40 +9,40 @@
 ## Table of contents
 
 1. [Installation](#installation)
-  1. [Additional Instructions for PubNub](#additional-instructions-for-pubnub)
 1. [Basic Usage](#basic-usage)
-  1. [API Developer Guide](#api-developer-guide)
-  1. [Initialization](#initialization)
-    1. [Set User Agent Header](#set-user-agent-header)
-  2. [OAuth 2.0 Authorization](#oauth-2.0-authorization)
-    1. [Authorize](#authorize)
-    1. [Refresh](#refresh)
-    1. [Logout](#logout)
-  3. [Quick Recipes](#quick-recipes)
-    1. [Send SMS](#send-sms)
-    1. [Send Fax](#send-fax)
-    1. [Get Account Information](#get-account-information)
-    1. [Get Address Book](#get-address-book)
-    1. [Using x-http-method-override Header](#using-x-http-method-override-header)
-  4. [Message Store](#message-store)
-    1. [Get Message Store](#get-message-store)
-    1. [Get Message Store First ID](#get-message-store-first-id)
-    1. [Update Message Status](#update-message-status)
-      1. [Update Message Status using x-http-override-header](#update-message-using-x-http-override-header)
-    1. [Delete Message](#delete-message)
-  1. [Subscription](#subscription)
-    1. [Create Subscription](#create-subscription)
-	  1. [Enable SSL in Subscription](#enable-ssl-for-pubnub-subscription)
-      1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
-      1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
-    1. [Casting on PubNub Notification](#casting-on-pubnub-notification)
-      1. [Casting on Connect](#casting-on-connect)
-      1. [Casting on Disconnect](#casting-on-disconnect)
-      1. [Casting on Error](#casting-on-error)
-    1. [Example PubNub Notification Message](#example-pubnub-notification-message)
-    1. [Delete Subscription](#delete-subscription)
-    1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
-    1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+    1. [API Developer Guide](#api-developer-guide)
+    1. [Initialization](#initialization)
+        1. [Set User Agent Header](#set-user-agent-header)
+    1. [OAuth 2.0 Authorization](#oauth-20-authorization)
+        1. [Authorize](#authorize)
+        1. [Refresh](#refresh)
+        1. [Logout](#logout)
+    1. [Quick Recipes](#quick-recipes)
+        1. [Send SMS](#send-sms)
+        1. [Send Fax](#send-fax)
+        1. [Get Account Information](#get-account-information)
+        1. [Get Address Book](#get-address-book)
+        1. [Using x-http-method-override Header](#using-x-http-method-override-header)
+    1. [Message Store](#message-store)
+        1. [Get Message Store](#get-message-store)
+        1. [Get Message Store First ID](#get-message-store-first-id)
+        1. [Update Message Status](#update-message-status)
+            1. [Update Message Status using x-http-override-header](#update-message-status-using-x-http-override-header)
+        1. [Delete Message](#delete-message)
+    1. [Subscription](#subscription)
+        1. [Create Subscription](#create-subscription)
+            1. [Enable SSL for Pubnub Subscription](#enable-ssl-for-pubnub-subscription)
+            1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
+            1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
+        1. [Casting PubNub Notifications](#casting-pubnub-notifications)
+            1. [Casting on Connect](#casting-on-connect)
+            1. [Casting on Disconnect](#casting-on-disconnect)
+            1. [Casting on Error](#casting-on-error)
+        1. [Example PubNub Notification Message](#example-pubnub-notification-message)
+        1. [Delete Subscription](#delete-subscription)
+        1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
+        1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
+1. [Links](#links)
 1. [Support](#support)
 1. [Contributions](#contributions)
 1. [License](#license)
@@ -52,10 +52,10 @@
 Via NuGet
 
 ```
-PM> Install-Package RingCentralSDK 
+PM> Install-Package RingCentralSDK
 ```
 
-This will download the Ring Central Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. Separate versions for Xamarin Android, iOS and .NET 4.0 no longer required. 
+This will download the Ring Central Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. Separate versions for Xamarin Android, iOS and .NET 4.0 no longer required.
 
 
 ## Basic Usage
@@ -73,7 +73,7 @@ using RingCentral;
 
 ```cs
 //Initialize Ring Central Client
-var ringCentral = new SDK("your appKey", "your appSecret", "Ring Central apiEndPoint", "Application Name","Application Version").GetPlatform();
+var ringCentral = new SDK("your appKey", "your appSecret", "RingCentral apiEndPoint", "Application Name","Application Version").GetPlatform();
 ```
 
 #### Set User Agent Header
@@ -165,10 +165,10 @@ Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store
 Response response = ringCentral.Put(request);
 ```
 
-##### Update Message Status using x-http-ovverride-header
+##### Update Message Status using x-http-override-header
 ```cs
 Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-request.SetXhttpOverRideHeader("PUT"); 
+request.SetXhttpOverRideHeader("PUT");
 Response response = ringCentral.Post(request);
 ```
 
@@ -184,22 +184,8 @@ RingCentral provides the ability to subscribe for event data using PubNub.
 
 #### Create Subscription
 
-##### Create Subscription using Default Callbacks
-
-```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
-subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null,null,null);
-```
-
-Alternatively you can set Event Filters by:
-```cs
-subscription.SetEvent(listOfEvents);
-```
-Where listOfEvents is a List<string> containing each event to subscribe to.
-
-##### Enabling SSL for PubNub Subscription
-To enable SSL for PubNub you will need to call the method 
+##### Enable SSL for PubNub Subscription
+To enable SSL for PubNub you will need to call the method
 ```cs  
 subscription.EnableSSL(true);
 ```
@@ -220,10 +206,25 @@ var response = subscription.Subscribe(null,null,null);
 ```
 
 Checking if SSL is enabled can be done by:
-```cs 
+```cs
 bool isSSLOn = subscription.isSSL();
- ```
-##### Create Subscription using Explicit Callbacks 
+```
+
+##### Create Subscription using Default Callbacks
+
+```cs
+var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
+subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
+var response = subscription.Subscribe(null,null,null);
+```
+
+Alternatively you can set Event Filters by:
+```cs
+subscription.SetEvent(listOfEvents);
+```
+Where listOfEvents is a List<string> containing each event to subscribe to.
+
+##### Create Subscription using Explicit Callbacks
 
 ```cs
 var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
