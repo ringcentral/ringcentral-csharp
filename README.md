@@ -55,7 +55,7 @@ Via NuGet
 PM> Install-Package RingCentralSDK
 ```
 
-This will download the Ring Central Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. Separate versions for Xamarin Android, iOS and .NET 4.0 no longer required.
+This will download the RingCentral Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. The NuGet package is compabible with .NET 4.0+, Xamarin.iOS, Xamarin.Android and Xamarin.Mac.
 
 
 ## Basic Usage
@@ -69,31 +69,23 @@ This SDK wraps the RingCentral Connect Platform API which is documented in the [
 ```cs
 //import RingCentral SDK
 using RingCentral;
-```
 
-```cs
-//Initialize Ring Central Client
-var ringCentral = new SDK("your appKey", "your appSecret", "RingCentral apiEndPoint", "Application Name","Application Version").GetPlatform();
-```
-
-#### Set User Agent Header
-
-```cs
-ringCentral.SetUserAgentHeader("Application Name", "Application Version");
+//Initialize RingCentral Client
+var ringCentral = new SDK("your appKey", "your appSecret", "RingCentral server", "Application Name", "Application Version").Platform;
 ```
 
 ### OAuth 2.0 Authorization
 
-#### Authorize
+#### Login
 
 ```cs
-Response response = ringCentral.Authorize(userName, extension, password, true);
+var response = ringCentral.Login(username, extension, password, true);
 ```
 
 #### Refresh
 
 ```cs
-Response response = ringCentral.Refresh();
+var response = ringCentral.Refresh();
 ```
 
 #### Logout
@@ -106,8 +98,8 @@ ringCentral.Logout();
 
 #### Send SMS
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
-Response response = ringCentral.Post(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonSmsString);
+var response = ringCentral.Post(request);
 ```
 
 #### Send Fax
@@ -122,35 +114,35 @@ var attachment3 = new Attachment("<NAME OF YOUR PDF.pdf", "application/pdf", pdf
 var attachments = new List<Attachment> { attachment,attachment2, attachment3 };
 var json = "{\"to\":[{\"phoneNumber\":\"<YOUR TARGET NUMBER>\"}],\"faxResolution\":\"High\"}";
 
-Request request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
-Response response = ringCentral.Post(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/fax", json, attachments);
+var response = ringCentral.Post(request);
 ```
 
 #### Get Account Information
 ```cs
-Request request = new Request("/restapi/v1.0/account/~");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~");
+var response = ringCentral.Get(request);
 ```
 
 ### Get Address Book
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact");
+var response = ringCentral.Get(request);
 ```
 
 #### Using x-http-method-override Header
 ```cs
-Request overRideRequest = new Request("/restapi/v1.0/account/~");
+var overRideRequest = new Request("/restapi/v1.0/account/~");
 overRideRequest.SetXhttpOverRideHeader("GET");
-Response overRideResponse = ringCentral.Post(overRideRequest);
+var overRideResponse = ringCentral.Post(overRideRequest);
 ```
 
 ### Message Store
 
 #### Get Message Store
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
-Response response = ringCentral.Get(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store");
+var response = ringCentral.Get(request);
 ```
 
 #### Get Message Store First ID
@@ -161,21 +153,21 @@ var messageId = response.GetJson().SelectToken("records")[0].SelectToken("id");
 #### Update Message Status
 ```cs
 var messageStatusJson = "{\"readStatus\": \"Read\"}";
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-Response response = ringCentral.Put(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+var response = ringCentral.Put(request);
 ```
 
 ##### Update Message Status using x-http-override-header
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
 request.SetXhttpOverRideHeader("PUT");
-Response response = ringCentral.Post(request);
+var response = ringCentral.Post(request);
 ```
 
 #### Delete Message
 ```cs
-Request request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
-Response response = ringCentral.Delete(request);
+var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId);
+var response = ringCentral.Delete(request);
 ```
 
 ### Subscription
@@ -207,7 +199,7 @@ var response = subscription.Subscribe(null,null,null);
 
 Checking if SSL is enabled can be done by:
 ```cs
-bool isSSLOn = subscription.isSSL();
+var isSSLOn = subscription.isSSL();
 ```
 
 ##### Create Subscription using Default Callbacks
