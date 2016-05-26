@@ -130,11 +130,15 @@ var request = new Request("/restapi/v1.0/account/~/extension/~/address-book/cont
 var response = ringCentral.Get(request);
 ```
 
-#### Using x-http-method-override Header
+#### Using HTTP method tunneling
+
+Sometimes, due to different technical limitations, API clients cannot issue all HTTP methods. In the most severe case a client may be restricted to GET and POST methods only. To work around this situation the RingCentral API provides a mechanism for tunneling PUT and DELETE methods through POST.
+
 ```cs
-var overRideRequest = new Request("/restapi/v1.0/account/~");
-overRideRequest.SetXhttpOverRideHeader("GET");
-var overRideResponse = ringCentral.Post(overRideRequest);
+var request = new Request("/restapi/v1.0/account/~/extension/~/address-book/contact/" + contactId);
+request.HttpMethodTunneling = true;
+var response = sdk.Platform.Delete(request);
+Assert.AreEqual(HttpMethod.Post, response.Request.Method);
 ```
 
 ### Message Store
@@ -157,11 +161,11 @@ var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" +
 var response = ringCentral.Put(request);
 ```
 
-##### Update Message Status using x-http-override-header
+##### Update Message Status using HTTP method tunneling
 ```cs
 var request = new Request("/restapi/v1.0/account/~/extension/~/message-store/" + messageId, messageStatusJson);
-request.SetXhttpOverRideHeader("PUT");
-var response = ringCentral.Post(request);
+request.HttpMethodTunneling = true;
+var response = ringCentral.Put(request);
 ```
 
 #### Delete Message
@@ -246,7 +250,7 @@ Use a JArray to grab a token
 
 ```cs
 public void ActionOnMessage(object message) {
-	var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");  
+    var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");
 }
 ```
 
@@ -254,7 +258,7 @@ Or string for other JSON parsing
 
 ```cs
 public void ActionOnMessage(object message) {
-	var ReceivedMessage = message.ToString();  
+    var ReceivedMessage = message.ToString();
 }
 ```
 
@@ -264,7 +268,7 @@ Use a JArray to grab a token.
 
 ```cs
 public void ActionOnConnect(object message){
-	var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
+    var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
 }
 ```
 
@@ -272,7 +276,7 @@ Or string for other JSON parsing
 
 ```cs
 public void ActionOnConnect(object message) {
-	var ReceivedMessage = message.ToString();  
+    var ReceivedMessage = message.ToString();
 }
 ```
 
@@ -282,7 +286,7 @@ Note: Disconnect messages are not deserializable JSON.
 
 ```cs
 public void ActionOnDisconnect(object message) {
-	var receivedMessage = message.ToString();
+    var receivedMessage = message.ToString();
 }
 ```
 
@@ -292,7 +296,7 @@ Note: PubNub error messages are not deserializable JSON.
 
 ```cs
 public void ActionOnError(object error) {
-	var receivedMessage = message.ToString();
+    var receivedMessage = message.ToString();
 }
 ```
 
