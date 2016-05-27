@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RingCentral.Subscription
+namespace RingCentral.Pubnub
 {
-    public class Subscription
+    public class SubscriptionModel
     {
         public string Id { get; set; }
         public DateTime CreationTime { get; set; }
         public List<string> EventFilters { get; set; }
         public DateTime ExperationTime { get; set; }
-        public long ExpiresIn { get; set; }
+        public int ExpiresIn { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public string Status { get; set; }
         public string Uri { get; set; }

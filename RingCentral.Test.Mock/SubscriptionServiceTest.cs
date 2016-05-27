@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RingCentral.Subscription;
+using RingCentral.Pubnub;
 using System.Collections.Generic;
 using System.Threading;
 

@@ -1,4 +1,5 @@
 ﻿using RingCentral.Http;
+using RingCentral.Pubnub;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -263,6 +264,11 @@ namespace RingCentral
             var response = AuthCall(request);
             Auth.SetData(response.Json);
             return response;
+        }
+
+        public Subscription CreateSubscription()
+        {
+            return new Subscription(this, null, null, null);
         }
     }
 }

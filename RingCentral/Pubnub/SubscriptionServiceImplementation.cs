@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Security;
-using PubNubMessaging.Core;
 using RingCentral.Http;
 using System;
 using System.Collections.Generic;
@@ -10,14 +9,14 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace RingCentral.Subscription
+namespace RingCentral.Pubnub
 {
     public class SubscriptionServiceImplementation
     {
-        private Pubnub _pubnub;
+        private PubNubMessaging.Core.Pubnub _pubnub;
         private bool _encrypted;
         public Platform _platform;
-        private Subscription _subscription;
+        private SubscriptionModel _subscription;
         private Timer timeout;
         private bool subscribed;
         public List<string> Events { get; set; } = new List<string>();
@@ -93,7 +92,7 @@ namespace RingCentral.Subscription
                 var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
-                UpdateSubscription(JsonConvert.DeserializeObject<Subscription>(response.Body));
+                UpdateSubscription(JsonConvert.DeserializeObject<SubscriptionModel>(response.Body));
                 return response;
             }
             catch (Exception e)
@@ -123,7 +122,7 @@ namespace RingCentral.Subscription
             }
         }
 
-        public void UpdateSubscription(Subscription subscription)
+        public void UpdateSubscription(SubscriptionModel subscription)
         {
             ClearTimeout();
             _subscription = subscription;
@@ -154,7 +153,7 @@ namespace RingCentral.Subscription
                 var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint, jsonData);
                 ApiResponse response = _platform.Post(request);
-                _subscription = JsonConvert.DeserializeObject<Subscription>(response.Body);
+                _subscription = JsonConvert.DeserializeObject<SubscriptionModel>(response.Body);
                 if (_subscription.DeliveryMode.Encryption)
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,
@@ -184,7 +183,7 @@ namespace RingCentral.Subscription
                 Unsubscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,
                     SubscribeConnectStatusMessage, DisconnectMessage, ErrorMessage);
             }
-            _subscription = new Subscription();
+            _subscription = new SubscriptionModel();
             ClearEvents();
             subscribed = false;
         }
@@ -210,11 +209,11 @@ namespace RingCentral.Subscription
         {
             if (_enableSSL)
             {
-                _pubnub = new Pubnub(publishKey, subscribeKey, "", "", _enableSSL);
+                _pubnub = new PubNubMessaging.Core.Pubnub(publishKey, subscribeKey, "", "", _enableSSL);
             }
             else
             {
-                _pubnub = new Pubnub(publishKey, subscribeKey);
+                _pubnub = new PubNubMessaging.Core.Pubnub(publishKey, subscribeKey);
             }
             GC.KeepAlive(_pubnub);
         }
@@ -222,7 +221,7 @@ namespace RingCentral.Subscription
         public void PubNubServiceImplementation(string publishKey, string subscribeKey, string secretKey, string cipherKey)
         {
             _encrypted = true;
-            _pubnub = new Pubnub(publishKey, subscribeKey, secretKey, "", _enableSSL);
+            _pubnub = new PubNubMessaging.Core.Pubnub(publishKey, subscribeKey, secretKey, "", _enableSSL);
             GC.KeepAlive(_pubnub);
         }
 
