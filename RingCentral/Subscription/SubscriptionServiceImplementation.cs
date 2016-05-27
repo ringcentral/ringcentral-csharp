@@ -9,14 +9,14 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace RingCentral.Pubnub
+namespace RingCentral.Subscription
 {
     public class SubscriptionServiceImplementation
     {
         private PubNubMessaging.Core.Pubnub _pubnub;
         private bool _encrypted;
         public Platform _platform;
-        private SubscriptionModel _subscription;
+        private SubscriptionInfo _subscription;
         private Timer timeout;
         private bool subscribed;
         public List<string> Events { get; set; } = new List<string>();
@@ -92,7 +92,7 @@ namespace RingCentral.Pubnub
                 var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint + "/" + _subscription.Id, jsonData);
                 ApiResponse response = _platform.Put(request);
-                UpdateSubscription(JsonConvert.DeserializeObject<SubscriptionModel>(response.Body));
+                UpdateSubscription(JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body));
                 return response;
             }
             catch (Exception e)
@@ -122,7 +122,7 @@ namespace RingCentral.Pubnub
             }
         }
 
-        public void UpdateSubscription(SubscriptionModel subscription)
+        public void UpdateSubscription(SubscriptionInfo subscription)
         {
             ClearTimeout();
             _subscription = subscription;
@@ -153,7 +153,7 @@ namespace RingCentral.Pubnub
                 var jsonData = EventsJson;
                 Request request = new Request(SubscriptionEndPoint, jsonData);
                 ApiResponse response = _platform.Post(request);
-                _subscription = JsonConvert.DeserializeObject<SubscriptionModel>(response.Body);
+                _subscription = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
                 if (_subscription.DeliveryMode.Encryption)
                 {
                     PubNubServiceImplementation("", _subscription.DeliveryMode.SubscriberKey,
@@ -183,7 +183,7 @@ namespace RingCentral.Pubnub
                 Unsubscribe(_subscription.DeliveryMode.Address, "", NotificationReturnMessage,
                     SubscribeConnectStatusMessage, DisconnectMessage, ErrorMessage);
             }
-            _subscription = new SubscriptionModel();
+            _subscription = new SubscriptionInfo();
             ClearEvents();
             subscribed = false;
         }

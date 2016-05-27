@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RingCentral.Pubnub
+namespace RingCentral.Subscription
 {
-    public class SubscriptionModel
+    public class SubscriptionInfo
     {
         public string Id { get; set; }
         public DateTime CreationTime { get; set; }

@@ -1,4 +1,4 @@
-﻿using RingCentral.Pubnub;
+﻿using RingCentral.Subscription;
 
 namespace RingCentral
 {
@@ -41,9 +41,9 @@ namespace RingCentral
 
         public Platform Platform { get; private set; }
 
-        public Subscription CreateSubscription()
+        public SubscriptionService CreateSubscription()
         {
-            return new Subscription(this.Platform);
+            return new SubscriptionService(this.Platform);
         }
     }
 }

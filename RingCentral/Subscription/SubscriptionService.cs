@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RingCentral.Pubnub
+namespace RingCentral.Subscription
 {
     public class SubscriptionEventArgs : EventArgs
     {
@@ -20,65 +20,71 @@ namespace RingCentral.Pubnub
         }
     }
 
-    public class Subscription
+    public class SubscriptionService
     {
         public event EventHandler<SubscriptionEventArgs> Message;
         public event EventHandler<SubscriptionEventArgs> Connect;
         public event EventHandler<SubscriptionEventArgs> Error;
+        public List<string> EventFilters { get; set; } = new List<string>();
 
         private Platform platform;
-        private SubscriptionModel _subscriptionModel;
-        private SubscriptionModel SubscriptionModel
+        private SubscriptionInfo _subscriptionInfo;
+        private SubscriptionInfo subscriptionInfo
         {
             get
             {
-                return _subscriptionModel;
+                return _subscriptionInfo;
             }
             set
             {
-                _subscriptionModel = value;
-                TaskEx.Delay((_subscriptionModel.ExpiresIn - 120) * 1000).ContinueWith((action)=> {
+                _subscriptionInfo = value;
+                TaskEx.Delay((_subscriptionInfo.ExpiresIn - 120) * 1000).ContinueWith((action) =>
+                {
                     Renew(); // 2 minutes before expiration
                 });
             }
         }
-        private List<string> eventFilters = new List<string>();
         private PubNubMessaging.Core.Pubnub pubnub;
 
-        internal Subscription(Platform platform)
+        internal SubscriptionService(Platform platform)
         {
             this.platform = platform;
         }
 
         public void AddEventFilter(string eventFilter)
         {
-            eventFilters.Add(eventFilter);
+            EventFilters.Add(eventFilter);
+        }
+
+        public void AddEventFilters(IEnumerable<string> eventFilters)
+        {
+            EventFilters.AddRange(eventFilters);
         }
 
         public void Subscribe()
         {
             var request = new Request("/restapi/v1.0/subscription", JsonConvert.SerializeObject(new
             {
-                eventFilters = eventFilters,
+                eventFilters = EventFilters,
                 deliveryMode = new { transportType = "PubNub", encryption = true }
             }));
             var response = platform.Post(request);
-            SubscriptionModel = JsonConvert.DeserializeObject<SubscriptionModel>(response.Body);
-            pubnub = new PubNubMessaging.Core.Pubnub(null, SubscriptionModel.DeliveryMode.SubscriberKey);
-            pubnub.Subscribe<string>(SubscriptionModel.DeliveryMode.Address, OnSubscribe, OnConnect, OnError);
+            subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
+            pubnub = new PubNubMessaging.Core.Pubnub(null, subscriptionInfo.DeliveryMode.SubscriberKey);
+            pubnub.Subscribe<string>(subscriptionInfo.DeliveryMode.Address, OnSubscribe, OnConnect, OnError);
         }
 
         public void Remove()
         {
-            var request = new Request("/restapi/v1.0/subscription/" + SubscriptionModel.Id);
+            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
             var response = platform.Delete(request);
         }
 
         private void Renew()
         {
-            var request = new Request("/restapi/v1.0/subscription/" + SubscriptionModel.Id);
+            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
             var response = platform.Put(request);
-            SubscriptionModel = JsonConvert.DeserializeObject<SubscriptionModel>(response.Body);
+            subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
         }
 
         private void OnSubscribe(string result)
@@ -99,7 +105,7 @@ namespace RingCentral.Pubnub
 
         private object Decrypt(string dataString)
         {
-            var key = Convert.FromBase64String(SubscriptionModel.DeliveryMode.EncryptionKey);
+            var key = Convert.FromBase64String(subscriptionInfo.DeliveryMode.EncryptionKey);
             var keyParameter = ParameterUtilities.CreateKeyParameter("AES", key);
             var cipher = CipherUtilities.GetCipher("AES/ECB/PKCS7Padding");
             cipher.Init(false, keyParameter);

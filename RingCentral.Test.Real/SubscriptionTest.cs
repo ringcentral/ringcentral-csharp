@@ -23,7 +23,7 @@ namespace RingCentral.Test.Real
         [Test]
         public void MessageStoreSubscription()
         {
-            var sub = new Pubnub.SubscriptionServiceImplementation() { _platform = sdk.Platform };
+            var sub = new Subscription.SubscriptionServiceImplementation() { _platform = sdk.Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
             var count = 0;
             sub.Subscribe((message) => {
@@ -43,7 +43,7 @@ namespace RingCentral.Test.Real
         [Test]
         public void PresenceSubscription()
         {
-            var sub = new Pubnub.SubscriptionServiceImplementation() { _platform = sdk.Platform };
+            var sub = new Subscription.SubscriptionServiceImplementation() { _platform = sdk.Platform };
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
             sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
             var count = 0;

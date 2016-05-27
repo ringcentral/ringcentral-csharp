@@ -44,7 +44,7 @@ namespace RingCentral.Test
             Request request = new Request(SubscriptionEndPoint + "/1");
             ApiResponse response = sdk.Platform.Get(request);
 
-            var subscriptionItem = JsonConvert.DeserializeObject<Pubnub.SubscriptionModel>(response.Body);
+            var subscriptionItem = JsonConvert.DeserializeObject<Subscription.SubscriptionInfo>(response.Body);
 
             Assert.AreEqual(subscriptionItem.DeliveryMode.TransportType, "PubNub");
 
