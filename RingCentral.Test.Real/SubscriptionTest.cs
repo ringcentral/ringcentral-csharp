@@ -61,14 +61,31 @@ namespace RingCentral.Test.Real
         [Test]
         public void NewPubnubImplementation()
         {
-            var sub = sdk.Platform.CreateSubscription();
-            Assert.NotNull(sub);
-            sub.AddEventFilter("/restapi/v1.0/account/~/extension/~/message-store");
-            //sub.AddEventFilter("/restapi/v1.0/account/~/extension/~/presence");
-            sub.Register();
+            var subscription = sdk.CreateSubscription();
+            subscription.AddEventFilter("/restapi/v1.0/account/~/extension/~/message-store");
+            subscription.AddEventFilter("/restapi/v1.0/account/~/extension/~/presence");
+            var connectCount = 0;
+            subscription.Connect += (sender, args) => {
+                connectCount += 1;
+                Console.WriteLine(args.message);
+            };
+            var messageCount = 0;
+            subscription.Message += (sender, args) => {
+                messageCount += 1;
+                Console.WriteLine(args.message);
+            };
+            var errorCount = 0;
+            subscription.Error += (sender, args) => {
+                errorCount += 1;
+                Console.WriteLine(args.message);
+            };
+            subscription.Subscribe();
             SendSMS();
-            Thread.Sleep(1000000000);
-            sub.UnRegister();
+            Thread.Sleep(15000);
+            subscription.Remove();
+            Assert.AreEqual(1, connectCount);
+            Assert.AreEqual(1, messageCount);
+            Assert.AreEqual(0, errorCount);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace RingCentral
+﻿using RingCentral.Pubnub;
+
+namespace RingCentral
 {
     public class SDK
     {
@@ -38,5 +40,10 @@
         }
 
         public Platform Platform { get; private set; }
+
+        public Subscription CreateSubscription()
+        {
+            return new Subscription(this.Platform);
+        }
     }
 }

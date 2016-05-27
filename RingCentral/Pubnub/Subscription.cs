@@ -11,8 +11,21 @@ using System.Threading.Tasks;
 
 namespace RingCentral.Pubnub
 {
+    public class SubscriptionEventArgs : EventArgs
+    {
+        public object message;
+        public SubscriptionEventArgs(object message)
+        {
+            this.message = message;
+        }
+    }
+
     public class Subscription
     {
+        public event EventHandler<SubscriptionEventArgs> Message;
+        public event EventHandler<SubscriptionEventArgs> Connect;
+        public event EventHandler<SubscriptionEventArgs> Error;
+
         private Platform platform;
         private SubscriptionModel _subscriptionModel;
         private SubscriptionModel SubscriptionModel
@@ -25,22 +38,16 @@ namespace RingCentral.Pubnub
             {
                 _subscriptionModel = value;
                 TaskEx.Delay((_subscriptionModel.ExpiresIn - 120) * 1000).ContinueWith((action)=> {
-                    Renew(); // 2 minutes before the expiration
+                    Renew(); // 2 minutes before expiration
                 });
             }
         }
-        private Action<string> subscribeCallback;
-        private Action<string> connectCallback;
-        private Action<PubnubClientError> errorCallback;
         private List<string> eventFilters = new List<string>();
         private PubNubMessaging.Core.Pubnub pubnub;
 
-        internal Subscription(Platform platform, Action<object> subscribeCallback, Action<object> connectCallback, Action<object> errorCallback)
+        internal Subscription(Platform platform)
         {
             this.platform = platform;
-            this.subscribeCallback = subscribeCallback;
-            this.connectCallback = connectCallback;
-            this.errorCallback = errorCallback;
         }
 
         public void AddEventFilter(string eventFilter)
@@ -48,7 +55,7 @@ namespace RingCentral.Pubnub
             eventFilters.Add(eventFilter);
         }
 
-        public void Register()
+        public void Subscribe()
         {
             var request = new Request("/restapi/v1.0/subscription", JsonConvert.SerializeObject(new
             {
@@ -58,10 +65,10 @@ namespace RingCentral.Pubnub
             var response = platform.Post(request);
             SubscriptionModel = JsonConvert.DeserializeObject<SubscriptionModel>(response.Body);
             pubnub = new PubNubMessaging.Core.Pubnub(null, SubscriptionModel.DeliveryMode.SubscriberKey);
-            pubnub.Subscribe<string>(SubscriptionModel.DeliveryMode.Address, OnSubscribe, OnConnect, onError);
+            pubnub.Subscribe<string>(SubscriptionModel.DeliveryMode.Address, OnSubscribe, OnConnect, OnError);
         }
 
-        public void UnRegister()
+        public void Remove()
         {
             var request = new Request("/restapi/v1.0/subscription/" + SubscriptionModel.Id);
             var response = platform.Delete(request);
@@ -77,23 +84,22 @@ namespace RingCentral.Pubnub
         private void OnSubscribe(string result)
         {
             var message = JsonConvert.DeserializeObject<string[]>(result)[0];
-            message = Decrypt(message, SubscriptionModel.DeliveryMode.EncryptionKey);
-            subscribeCallback?.Invoke(message);
+            Message?.Invoke(this, new SubscriptionEventArgs(Decrypt(message)));
         }
 
         private void OnConnect(string connectMessage)
         {
-            connectCallback?.Invoke(connectMessage);
+            Connect?.Invoke(this, new SubscriptionEventArgs(connectMessage));
         }
 
-        private void onError(PubnubClientError pubnubError)
+        private void OnError(PubnubClientError pubnubError)
         {
-            errorCallback?.Invoke(pubnubError);
+            Error?.Invoke(this, new SubscriptionEventArgs(pubnubError));
         }
 
-        private string Decrypt(string dataString, string keyString)
+        private object Decrypt(string dataString)
         {
-            var key = Convert.FromBase64String(keyString);
+            var key = Convert.FromBase64String(SubscriptionModel.DeliveryMode.EncryptionKey);
             var keyParameter = ParameterUtilities.CreateKeyParameter("AES", key);
             var cipher = CipherUtilities.GetCipher("AES/ECB/PKCS7Padding");
             cipher.Init(false, keyParameter);
@@ -112,29 +118,7 @@ namespace RingCentral.Pubnub
             }
             var resultBytes = resultStream.ToArray();
             var result = Encoding.UTF8.GetString(resultBytes, 0, resultBytes.Length);
-            return result;
+            return JsonConvert.DeserializeObject(result);
         }
     }
 }
-
-/*
-        
-{
-  "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/subscription/d538cd7b-ec42-46fe-b79a-81f59cda3803",
-  "id" : "d538cd7b-ec42-46fe-b79a-81f59cda3803",
-  "creationTime" : "2016-05-27T02:31:50.684Z",
-  "status" : "Active",
-  "eventFilters" : [ "/restapi/v1.0/account/130829004/extension/130829004/message-store", "/restapi/v1.0/account/130829004/extension/130829004/presence" ],
-  "expirationTime" : "2016-05-27T02:46:50.688Z",
-  "expiresIn" : 899,
-  "deliveryMode" : {
-    "transportType" : "PubNub",
-    "encryption" : true,
-    "address" : "4189939474110475_68c23e20",
-    "subscriberKey" : "sub-c-b8b9cd8c-e906-11e2-b383-02ee2ddab7fe",
-    "encryptionAlgorithm" : "AES",
-    "encryptionKey" : "vn8WGfVYhOgNbYhSJN/XJA=="
-  }
-}
-
-*/
