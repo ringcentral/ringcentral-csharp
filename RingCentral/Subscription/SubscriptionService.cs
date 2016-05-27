@@ -83,7 +83,18 @@ namespace RingCentral.Subscription
         private void Renew()
         {
             var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
-            var response = platform.Put(request);
+            ApiResponse response = null;
+            try
+            {
+                response = platform.Put(request);
+            }
+            catch (ApiException ae)
+            {
+                if (ae.Message.Contains("not found"))
+                { // subscription has been removed
+                    return;
+                }
+            }
             subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
         }
 
