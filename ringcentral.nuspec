@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>1.0.0-alpha1</version>
+    <version>1.0.0-alpha2</version>
     <title>RingCentral SDK</title>
     <authors>Paul Zolnierczyk, Tyler Long</authors>
     <owners>RingCentral</owners>
@@ -16,6 +16,7 @@
     <dependencies>
       <group targetFramework="net40">
         <dependency id="Microsoft.Bcl" version="1.1.10" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
         <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
         <dependency id="Microsoft.Net.Http" version="2.2.29" />
         <dependency id="Newtonsoft.Json" version="8.0.3" />
@@ -26,6 +27,7 @@
 
       <group targetFramework="portable-net40">
         <dependency id="Microsoft.Bcl" version="1.1.10" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
         <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
         <dependency id="Microsoft.Net.Http" version="2.2.29" />
         <dependency id="Newtonsoft.Json" version="8.0.3" />
@@ -35,6 +37,10 @@
       </group>
 
       <group targetFramework="portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS+Xamarin.Mac">
+        <dependency id="Microsoft.Bcl" version="1.1.10" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
+        <dependency id="Microsoft.Net.Http" version="2.2.29" />
         <dependency id="Newtonsoft.Json" version="8.0.3" />
         <dependency id="Portable.BouncyCastle" version="1.8.1" />
         <dependency id="Portable.BouncyCastle-Signed" version="1.7.0.2" />

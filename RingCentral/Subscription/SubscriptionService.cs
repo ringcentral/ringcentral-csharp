@@ -44,7 +44,7 @@ namespace RingCentral.Subscription
                 });
             }
         }
-        private PubNubMessaging.Core.Pubnub pubnub;
+        private Pubnub pubnub;
 
         internal SubscriptionService(Platform platform)
         {
@@ -70,7 +70,7 @@ namespace RingCentral.Subscription
             }));
             var response = platform.Post(request);
             subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
-            pubnub = new PubNubMessaging.Core.Pubnub(null, subscriptionInfo.DeliveryMode.SubscriberKey);
+            pubnub = new Pubnub(null, subscriptionInfo.DeliveryMode.SubscriberKey);
             pubnub.Subscribe<string>(subscriptionInfo.DeliveryMode.Address, OnSubscribe, OnConnect, OnError);
         }
 
