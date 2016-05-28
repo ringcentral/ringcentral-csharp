@@ -67,19 +67,19 @@ namespace RingCentral.Test.Real
             var connectCount = 0;
             subscription.ConnectEvent += (sender, args) => {
                 connectCount += 1;
-                Console.WriteLine(args.message);
+                Console.WriteLine(args.Message);
             };
             var messageCount = 0;
             subscription.NotificationEvent += (sender, args) => {
                 messageCount += 1;
-                Console.WriteLine(args.message);
+                Console.WriteLine(args.Message);
             };
             var errorCount = 0;
             subscription.ErrorEvent += (sender, args) => {
                 errorCount += 1;
-                Console.WriteLine(args.message);
+                Console.WriteLine(args.Message);
             };
-            subscription.Subscribe();
+            subscription.Register();
             SendSMS();
             Thread.Sleep(15000);
             subscription.Remove();

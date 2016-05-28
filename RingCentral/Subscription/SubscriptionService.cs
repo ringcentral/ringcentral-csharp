@@ -9,14 +9,16 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
+
+// todo: Renew debounce, public
 namespace RingCentral.Subscription
 {
     public class SubscriptionEventArgs : EventArgs
     {
-        public object message;
+        public object Message { get; private set; }
         public SubscriptionEventArgs(object message)
         {
-            this.message = message;
+            Message = message;
         }
     }
 
@@ -26,8 +28,20 @@ namespace RingCentral.Subscription
         public event EventHandler<SubscriptionEventArgs> ConnectEvent;
         public event EventHandler<SubscriptionEventArgs> ErrorEvent;
         public List<string> EventFilters { get; set; } = new List<string>();
+        private string requestBody
+        {
+            get
+            {
+                return JsonConvert.SerializeObject(new
+                {
+                    eventFilters = EventFilters,
+                    deliveryMode = new { transportType = "PubNub", encryption = true }
+                });
+            }
+        }
 
         private Platform platform;
+        private Pubnub pubnub;
         private SubscriptionInfo _subscriptionInfo;
         private SubscriptionInfo subscriptionInfo
         {
@@ -38,41 +52,49 @@ namespace RingCentral.Subscription
             set
             {
                 _subscriptionInfo = value;
-                TaskEx.Delay((_subscriptionInfo.ExpiresIn - 120) * 1000).ContinueWith((action) =>
+                if (_subscriptionInfo != null)
                 {
-                    Renew(); // 2 minutes before expiration
-                });
+                    TaskEx.Delay((_subscriptionInfo.ExpiresIn - 120) * 1000).ContinueWith((action) =>
+                    {
+                        Renew(); // 2 minutes before expiration
+                    });
+                }
             }
         }
-        private Pubnub pubnub;
 
         internal SubscriptionService(Platform platform)
         {
             this.platform = platform;
         }
 
-        public void Subscribe()
+        public void Register()
         {
-            var request = new Request("/restapi/v1.0/subscription", JsonConvert.SerializeObject(new
+            if (subscriptionInfo == null)
             {
-                eventFilters = EventFilters,
-                deliveryMode = new { transportType = "PubNub", encryption = true }
-            }));
+                Subscribe();
+            }
+            else
+            {
+                Renew();
+            }
+        }
+
+        private void Subscribe()
+        {
+            var request = new Request("/restapi/v1.0/subscription", requestBody);
             var response = platform.Post(request);
             subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
             pubnub = new Pubnub(null, subscriptionInfo.DeliveryMode.SubscriberKey);
             pubnub.Subscribe<string>(subscriptionInfo.DeliveryMode.Address, OnSubscribe, OnConnect, OnError);
         }
 
-        public void Remove()
-        {
-            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
-            var response = platform.Delete(request);
-        }
-
         private void Renew()
         {
-            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
+            if (subscriptionInfo == null)
+            { // Remove() has been called
+                return;
+            }
+            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id, requestBody);
             ApiResponse response = null;
             try
             {
@@ -81,11 +103,25 @@ namespace RingCentral.Subscription
             catch (ApiException ae)
             {
                 if (ae.Message.Contains("not found"))
-                { // subscription has been removed
+                { // subscription not found on server side
+                    Subscribe();
                     return;
                 }
+                throw ae;
             }
             subscriptionInfo = JsonConvert.DeserializeObject<SubscriptionInfo>(response.Body);
+        }
+
+        public void Remove()
+        {
+            if (subscriptionInfo == null)
+            { // has been removed
+                return;
+            }
+            var request = new Request("/restapi/v1.0/subscription/" + subscriptionInfo.Id);
+            var response = platform.Delete(request);
+            subscriptionInfo = null;
+            pubnub = null;
         }
 
         private void OnSubscribe(string result)
