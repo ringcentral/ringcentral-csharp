@@ -21,45 +21,7 @@ namespace RingCentral.Test.Real
         }
 
         [Test]
-        public void MessageStoreSubscription()
-        {
-            var sub = new Subscription.SubscriptionServiceImplementation() { _platform = sdk.Platform };
-            sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var count = 0;
-            sub.Subscribe((message) => {
-                count += 1;
-                Console.WriteLine(message.ToString());
-            }, null, null);
-
-            SendSMS();
-            Thread.Sleep(15000);
-            SendSMS();
-
-            Thread.Sleep(15000);
-            Assert.GreaterOrEqual(count, 2);
-            sub.Remove();
-        }
-
-        [Test]
-        public void PresenceSubscription()
-        {
-            var sub = new Subscription.SubscriptionServiceImplementation() { _platform = sdk.Platform };
-            sub.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-            sub.AddEvent("/restapi/v1.0/account/~/extension/~/message-store");
-            var count = 0;
-            sub.Subscribe((message) => {
-                count += 1;
-                Console.WriteLine(message.ToString());
-            }, null, null);
-
-            SendSMS();
-            Thread.Sleep(15000);
-            Assert.AreEqual(1, count);
-            sub.Remove();
-        }
-
-        [Test]
-        public void NewPubnubImplementation()
+        public void PubnubSubscription()
         {
             var subscription = sdk.CreateSubscription();
             subscription.EventFilters.Add("/restapi/v1.0/account/~/extension/~/message-store");
@@ -82,9 +44,11 @@ namespace RingCentral.Test.Real
             subscription.Register();
             SendSMS();
             Thread.Sleep(15000);
+            SendSMS();
+            Thread.Sleep(15000);
             subscription.Remove();
             Assert.AreEqual(1, connectCount);
-            Assert.AreEqual(1, messageCount);
+            Assert.GreaterOrEqual(messageCount, 2);
             Assert.AreEqual(0, errorCount);
         }
     }

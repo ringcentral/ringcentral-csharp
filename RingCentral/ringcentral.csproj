@@ -54,7 +54,6 @@
     <Compile Include="SDK.cs" />
     <Compile Include="Subscription\SubscriptionService.cs" />
     <Compile Include="Subscription\SubscriptionInfo.cs" />
-    <Compile Include="Subscription\SubscriptionServiceImplementation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
