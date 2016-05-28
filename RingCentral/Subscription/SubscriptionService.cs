@@ -22,9 +22,9 @@ namespace RingCentral.Subscription
 
     public class SubscriptionService
     {
-        public event EventHandler<SubscriptionEventArgs> Message;
-        public event EventHandler<SubscriptionEventArgs> Connect;
-        public event EventHandler<SubscriptionEventArgs> Error;
+        public event EventHandler<SubscriptionEventArgs> NotificationEvent;
+        public event EventHandler<SubscriptionEventArgs> ConnectEvent;
+        public event EventHandler<SubscriptionEventArgs> ErrorEvent;
         public List<string> EventFilters { get; set; } = new List<string>();
 
         private Platform platform;
@@ -49,16 +49,6 @@ namespace RingCentral.Subscription
         internal SubscriptionService(Platform platform)
         {
             this.platform = platform;
-        }
-
-        public void AddEventFilter(string eventFilter)
-        {
-            EventFilters.Add(eventFilter);
-        }
-
-        public void AddEventFilters(IEnumerable<string> eventFilters)
-        {
-            EventFilters.AddRange(eventFilters);
         }
 
         public void Subscribe()
@@ -101,17 +91,17 @@ namespace RingCentral.Subscription
         private void OnSubscribe(string result)
         {
             var message = JsonConvert.DeserializeObject<string[]>(result)[0];
-            Message?.Invoke(this, new SubscriptionEventArgs(Decrypt(message)));
+            NotificationEvent?.Invoke(this, new SubscriptionEventArgs(Decrypt(message)));
         }
 
         private void OnConnect(string connectMessage)
         {
-            Connect?.Invoke(this, new SubscriptionEventArgs(connectMessage));
+            ConnectEvent?.Invoke(this, new SubscriptionEventArgs(connectMessage));
         }
 
         private void OnError(PubnubClientError pubnubError)
         {
-            Error?.Invoke(this, new SubscriptionEventArgs(pubnubError));
+            ErrorEvent?.Invoke(this, new SubscriptionEventArgs(pubnubError));
         }
 
         private object Decrypt(string dataString)
