@@ -9,8 +9,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-
-// todo: Renew debounce, public
 namespace RingCentral.Subscription
 {
     public class SubscriptionEventArgs : EventArgs
@@ -43,6 +41,7 @@ namespace RingCentral.Subscription
         private Platform platform;
         private Pubnub pubnub;
         private SubscriptionInfo _subscriptionInfo;
+        private bool renewScheduled = false;
         private SubscriptionInfo subscriptionInfo
         {
             get
@@ -54,10 +53,15 @@ namespace RingCentral.Subscription
                 _subscriptionInfo = value;
                 if (_subscriptionInfo != null)
                 {
-                    TaskEx.Delay((_subscriptionInfo.ExpiresIn - 120) * 1000).ContinueWith((action) =>
-                    {
-                        Renew(); // 2 minutes before expiration
-                    });
+                    if (!renewScheduled)
+                    { // don't do duplicate schedule
+                        TaskEx.Delay((_subscriptionInfo.ExpiresIn - 120) * 1000).ContinueWith((action) =>
+                        { // 2 minutes before expiration
+                            renewScheduled = false;
+                            Renew(); 
+                        });
+                        renewScheduled = true;
+                    }
                 }
             }
         }
