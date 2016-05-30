@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using RingCentral.Subscription;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace RingCentral.Test
 {
@@ -10,6 +7,19 @@ namespace RingCentral.Test
         [TestFixture]
         public class PubNubSubscriptionTest : BaseTest
         {
+            [Test]
+            public void SubscribeTest()
+            {
+                var sub = sdk.CreateSubscription();
+                sub.EventFilters.Add("/restapi/v1.0/account/~/extension/~/presence");
+                sub.EventFilters.Add("/restapi/v1.0/account/~/extension/~/mesage-store");
+                sub.Register();
+                Assert.AreEqual(true, sub.Alive());
+                sub.Register();
+                Assert.AreEqual(true, sub.Alive());
+                sub.Remove();
+                Assert.AreEqual(false, sub.Alive());
+            }
             //private const string Channel = "RCNETSDK-TEST";
 
             //[Test]

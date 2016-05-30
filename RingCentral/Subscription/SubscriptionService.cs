@@ -73,7 +73,7 @@ namespace RingCentral.Subscription
 
         public void Register()
         {
-            if (subscriptionInfo == null)
+            if (!Alive())
             {
                 Subscribe();
             }
@@ -94,7 +94,7 @@ namespace RingCentral.Subscription
 
         private void Renew()
         {
-            if (subscriptionInfo == null)
+            if (!Alive())
             { // Remove() has been called
                 return;
             }
@@ -118,7 +118,7 @@ namespace RingCentral.Subscription
 
         public void Remove()
         {
-            if (subscriptionInfo == null)
+            if (!Alive())
             { // has been removed
                 return;
             }
@@ -126,6 +126,12 @@ namespace RingCentral.Subscription
             var response = platform.Delete(request);
             subscriptionInfo = null;
             pubnub = null;
+        }
+
+        public bool Alive()
+        {
+            return pubnub != null && subscriptionInfo != null && subscriptionInfo.Id != null && subscriptionInfo.DeliveryMode != null
+                && subscriptionInfo.DeliveryMode.SubscriberKey != null && subscriptionInfo.DeliveryMode.Address != null;
         }
 
         private void OnSubscribe(string result)
