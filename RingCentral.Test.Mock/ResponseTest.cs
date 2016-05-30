@@ -31,7 +31,6 @@ namespace RingCentral.Test
         {
             var request = new Request(AccountExtensionInformationEndPoint + "/7");
             var result = sdk.Platform.Get(request);
-            Assert.AreEqual(false, result.OK);
         }
     }
 }

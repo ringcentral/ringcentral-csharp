@@ -25,15 +25,15 @@ namespace RingCentral
         {
             this.appKey = appKey;
             this.appSecret = appSecret;
-            this.serverUrl = serverUrl;
+            this.ServerUrl = serverUrl;
             Auth = new Auth();
-            _client = new HttpClient { BaseAddress = new Uri(this.serverUrl) };
+            _client = new HttpClient { BaseAddress = new Uri(this.ServerUrl) };
             SetUserAgentHeader(appName, appVersion);
         }
 
         private string appKey;
         private string appSecret;
-        private string serverUrl;
+        public string ServerUrl { get; private set; }
 
         /// <summary>
         ///     Method to generate Access Token to establish an authenticated session
@@ -241,7 +241,7 @@ namespace RingCentral
         /// <returns></returns>
         public string AuthorizeUri(string redirectUri, string state = "")
         {
-            var baseUrl = serverUrl + "/restapi/oauth/authorize";
+            var baseUrl = ServerUrl + "/restapi/oauth/authorize";
             var authUrl = string.Format("{0}?response_type=code&state={1}&redirect_uri={2}&client_id={3}",
                 baseUrl, Uri.EscapeUriString(state),
                 Uri.EscapeUriString(redirectUri),
