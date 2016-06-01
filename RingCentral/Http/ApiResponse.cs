@@ -11,7 +11,7 @@ namespace RingCentral.Http
         public string Body { get; private set; }
         private HttpRequestMessage _request = null;
 
-        public ApiResponse(HttpResponseMessage response, HttpRequestMessage request = null)
+        internal ApiResponse(HttpResponseMessage response, HttpRequestMessage request = null)
         {
             _request = request;
             Response = response;

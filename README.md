@@ -30,17 +30,14 @@
         1. [Delete Message](#delete-message)
     1. [Subscription](#subscription)
         1. [Create Subscription](#create-subscription)
-            1. [Enable SSL for Pubnub Subscription](#enable-ssl-for-pubnub-subscription)
-            1. [Using Default Callbacks](#create-subscription-using-default-callbacks)
-            1. [Using Explicit Callbacks](#create-subscription-using-explicit-callbacks)
-        1. [Casting PubNub Notifications](#casting-pubnub-notifications)
+            1. [About Pubnub SSL](#about-pubnub-ssl)
+            1. [Sample code](#sample-code)
+        1. [Casting SubscriptionEventArgs](#casting-subscriptioneventargs)
+            1. [Casting on Notification](#casting-on-notification)
             1. [Casting on Connect](#casting-on-connect)
-            1. [Casting on Disconnect](#casting-on-disconnect)
             1. [Casting on Error](#casting-on-error)
-        1. [Example PubNub Notification Message](#example-pubnub-notification-message)
+        1. [Example Notification Messages](#example-notification-messages)
         1. [Delete Subscription](#delete-subscription)
-        1. [Unsubscribe from Subscription](#unsubscribe-from-subscription)
-        1. [Access PubNub Message from Subscription](#access-pubnub-message-from-subscription)
 1. [Links](#links)
 1. [Support](#support)
 1. [Contributions](#contributions)
@@ -54,7 +51,7 @@ Via NuGet
 PM> Install-Package RingCentralSDK
 ```
 
-This will download the RingCentral Portable Class Library into your project as well as the [PubNub PCL](https://github.com/pubnub/c-sharp "PubNub") dependencies. The NuGet package is compabible with .NET 4.0+, Xamarin.iOS, Xamarin.Android and Xamarin.Mac.
+This will download the RingCentral Portable Class Library into your project as well as all the dependencies. The NuGet package is compabible with all popular platforms including but not limited to .NET 4.0+, Xamarin.iOS, Xamarin.Android and Xamarin.Mac.
 
 
 ## Basic Usage
@@ -66,11 +63,12 @@ This SDK wraps the RingCentral Connect Platform API which is documented in the [
 ### Initialization
 
 ```cs
-//import RingCentral SDK
+//import RingCentral
 using RingCentral;
 
 //Initialize RingCentral Client
-var ringCentral = new SDK("your appKey", "your appSecret", "RingCentral server", "Application Name", "Application Version").Platform;
+var sdk = new SDK("your appKey", "your appSecret", "RingCentral server", "Application Name", "Application Version");
+var ringCentral = sdk.Platform;
 ```
 
 ### OAuth 2.0 Authorization
@@ -179,85 +177,58 @@ RingCentral provides the ability to subscribe for event data using PubNub.
 
 #### Create Subscription
 
-##### Enable SSL for PubNub Subscription
-To enable SSL for PubNub you will need to call the method
-```cs  
-subscription.EnableSSL(true);
-```
+##### About Pubnub SSL
 
-before calling
+Pubnub supports SSL. But we are not taking advantages of it. Before publishing data to Pubnub, we do encryption on our server side. And this SDK is responsible for decryption of data automatically. Users of this SDK don't need to do anything to enable SSL, still can be assured that data is being protected by encryption.
 
-```cs
-subscription.Subscribe(null, null, null);
-```
+In the future, we might switch to Pubnub SSL. And it won't affect SDK users since we will keep the API identical.
 
-An Example of enabling SSL for Pubnub:
+##### Sample code
 
 ```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
-subscription.EnableSSL(true);
-subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null, null, null);
-```
-
-Checking if SSL is enabled can be done by:
-```cs
-var isSSLOn = subscription.isSSL();
-```
-
-##### Create Subscription using Default Callbacks
-
-```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
-subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(null, null, null);
+var subscription = sdk.CreateSubscription();
+subscription.EventFilters.Add("/restapi/v1.0/account/~/extension/~/message-store");
+subscription.EventFilters.Add("/restapi/v1.0/account/~/extension/~/presence");
+subscription.ConnectEvent += (sender, args) => {
+    Console.WriteLine("Connected:");
+    Console.WriteLine(args.Message);
+};
+subscription.NotificationEvent += (sender, args) => {
+    Console.WriteLine("Notification:");
+    Console.WriteLine(args.Message);
+};
+subscription.ErrorEvent += (sender, args) => {
+    Console.WriteLine("Error:");
+    Console.WriteLine(args.Message);
+};
+subscription.Register();
 ```
 
 Alternatively you can set Event Filters by:
 ```cs
-subscription.SetEvent(listOfEvents);
+subscription.EventFilters = listOfEvents;
 ```
-Where listOfEvents is a List<string> containing each event to subscribe to.
+Where listOfEvents is a `List<string>` containing each event to subscribe to.
 
-##### Create Subscription using Explicit Callbacks
+#### Casting SubscriptionEventArgs
+
+##### Casting on Notification
+
+`args.Message` is an object that can easily be cast to a string or a JArray/JObject (Json.Net). See below for examples of JSON data.**
+
+Use a JObject to grab a token
 
 ```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral};
-subscription.AddEvent("/restapi/v1.0/account/~/extension/~/presence");
-var response = subscription.Subscribe(ActionOnNotification, ActionOnConnect, ActionOnError);
-```
-Note: You can assign the callback action for disconnect on initialization. Disconnect Action fired upon PubNub disconnect
-
-```cs
-var subscription = new SubscriptionServiceImplementation(){ _platform = ringCentral, disconnectAction = ActionOnDisconnect};
-```
-
-Or after initialization
-
-```cs
-subscription.disconnectAction =  ActionOnDisconnect;
-```
-
-All callbacks must take only one parameter of type object.  See below for proper casting on actions.
-
-#### Casting PubNub Notifications
-
-**This will return an object that can easily be cast to a string or a JArray (Json.Net)**
-**Messages will be decrypted, if required, before being passed to Actions. See below for an example of JSON returned.**
-
-Use a JArray to grab a token
-
-```cs
-public void ActionOnMessage(object message) {
-    var ReceivedMessage = ((JArray)message).SelectToken("[0].body.changes[0].type");
+public void ActionOnMessage(object sender, SubscriptionEventArgs args) {
+    var message = ((JObject)args.Message).SelectToken("body.changes[0].type").ToString();
 }
 ```
 
 Or string for other JSON parsing
 
 ```cs
-public void ActionOnMessage(object message) {
-    var ReceivedMessage = message.ToString();
+public void ActionOnMessage(object sender, SubscriptionEventArgs args) {
+    var message = args.Message.ToString();
 }
 ```
 
@@ -266,26 +237,16 @@ public void ActionOnMessage(object message) {
 Use a JArray to grab a token.
 
 ```cs
-public void ActionOnConnect(object message){
-    var receivedMessage = ((JArray)receivedMessage).SelectToken("[1]");
+public void ActionOnConnect(object sender, SubscriptionEventArgs args){
+    var message = ((JArray)args.Message).SelectToken("[1]").ToString();
 }
 ```
 
 Or string for other JSON parsing
 
 ```cs
-public void ActionOnConnect(object message) {
-    var ReceivedMessage = message.ToString();
-}
-```
-
-##### Casting on Disconnect
-
-Note: Disconnect messages are not deserializable JSON.
-
-```cs
-public void ActionOnDisconnect(object message) {
-    var receivedMessage = message.ToString();
+public void ActionOnConnect(object sender, SubscriptionEventArgs args) {
+    var message = args.Message.ToString();
 }
 ```
 
@@ -294,62 +255,54 @@ public void ActionOnDisconnect(object message) {
 Note: PubNub error messages are not deserializable JSON.
 
 ```cs
-public void ActionOnError(object error) {
-    var receivedMessage = message.ToString();
+public void ActionOnError(object sender, SubscriptionEventArgs args) {
+    var error = args.Message.ToString();
 }
 ```
 
-#### Example PubNub Notification Message
+#### Example Notification Messages
 
-This example provides some possible tokens for JSON parsing of PubNub Notification message
+`message-store` example:
 
 ```json
-[
-	{
-	  "event": "/restapi/v1.0/account/~/extension/111/message-store",
-	  "body": {
-	    "lastUpdated": "2015-10-10T21:28:43.094-07:00",
-	    "changes": [
-	      {
-	        "newCount": 0,
-	        "updatedCount": 1,
-	        "type": "Fax"
-	      },
-	      {
-	        "newCount": 2,
-	        "updatedCount": 0,
-	        "type": "SMS"
-	      }
-	    ],
-	    "extensionId": 1111
-	  },
-	  "uuid": "111-222-333-444",
-	  "timestamp": "2015-10-11T04:28:51.821Z"
-	}
-]
+{
+  "uuid": "32a089d4-bd5d-4259-8db4-feed54e8dcd9",
+  "event": "/restapi/v1.0/account/~/extension/850957020/message-store",
+  "timestamp": "2016-05-30T03:18:22.424Z",
+  "subscriptionId": "a4b70629-ac59-4a0c-a479-bf81c591df7c",
+  "body": {
+    "extensionId": 850957020,
+    "lastUpdated": "2016-05-30T11:18:10.624+08:00",
+    "changes": [
+      {
+        "type": "SMS",
+        "newCount": 1,
+        "updatedCount": 0
+      }
+    ]
+  }
+}
+```
+
+`presence` example:
+
+```json
+{
+  "uuid": "a78f2232-c627-48b8-9aa9-74a8adef63fa",
+  "event": "/restapi/v1.0/account/~/extension/850957020/presence",
+  "timestamp": "2016-05-30T03:18:42.184Z",
+  "subscriptionId": "a4b70629-ac59-4a0c-a479-bf81c591df7c",
+  "body": {
+    "extensionId": 850957020,
+    "telephonyStatus": "Ringing"
+  }
+}
 ```
 
 #### Delete Subscription
 
 ```cs
-var response = subscription.Remove();
-```
-
-#### Unsubscribe from Subscription
-
-Note: If you provided a callback action for PubNub disconnect it will fire once during unsubscribe.
-
-```cs
-subscription.Unsubscribe();
-```
-
-#### Access PubNub Message from Subscription
-
-```cs
-var notificationMessage = subscription.ReturnMessage("notification");
-var connectMessage = subscription.ReturnMessage("connectMessage");
-var disconnectMessage = subscription.ReturnMessage("disconnectMessage");
-var errorMessage = subscription.ReturnMessage("errorMessage");
+subscription.Remove();
 ```
 
 ## Links

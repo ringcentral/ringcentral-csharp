@@ -121,13 +121,10 @@ namespace RingCentral.Http
 
                 if (_requestType.Equals(MultipartContentType))
                 {
-                    var multiPartContent = new MultipartFormDataContent("Boundary_1_14413901_1361871080888");
-                    //removes content type of multipart form data
-                    multiPartContent.Headers.Remove("Content-Type");
-                    //need to set content type to multipart/mixed
-                    multiPartContent.Headers.TryAddWithoutValidation("Content-Type",
-                        "multipart/mixed; charset=UTF-8; boundary=Boundary_1_14413901_1361871080888");
-                    multiPartContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
+                    var multipartFormDataContent = new MultipartFormDataContent();
+                    multipartFormDataContent.Headers.ContentType.CharSet = "UTF-8";
+                    multipartFormDataContent.Headers.ContentType.MediaType = "multipart/mixed";
+                    multipartFormDataContent.Add(new StringContent(_jsonBody, Encoding.UTF8, "application/json"));
                     foreach (var attachment in _attachments)
                     {
                         var fileContent = new ByteArrayContent(attachment.ByteArray);
@@ -136,9 +133,9 @@ namespace RingCentral.Http
                             FileName = attachment.FileName
                         };
                         fileContent.Headers.ContentType = new MediaTypeHeaderValue(attachment.ContentType);
-                        multiPartContent.Add(fileContent);
+                        multipartFormDataContent.Add(fileContent);
                     }
-                    return multiPartContent;
+                    return multipartFormDataContent;
                 }
 
                 return null;

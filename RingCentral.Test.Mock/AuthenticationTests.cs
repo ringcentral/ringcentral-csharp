@@ -144,5 +144,12 @@ namespace RingCentral.Test
             Assert.AreEqual(newAuthData["access_token"], authData["access_token"]);
             Assert.AreEqual(newAuthData["refresh_token"], authData["refresh_token"]);
         }
+
+        [Test]
+        public void GenerateAuthorizeUri()
+        {
+            var authorizeUri = sdk.Platform.AuthorizeUri("http://localhost:3000", "myState");
+            Assert.AreEqual(sdk.Platform.ServerUrl + "/restapi/oauth/authorize?response_type=code&state=myState&redirect_uri=http://localhost:3000&client_id=AppKey", authorizeUri);
+        }
     }
 }
