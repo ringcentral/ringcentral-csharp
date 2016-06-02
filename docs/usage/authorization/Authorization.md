@@ -27,7 +27,7 @@ sdk.Platform.Logout();
 
 A 3-legged authorization flow and is a preferred flow for your app if it is a web, mobile or desktop application and is intended to work with multiple RingCentral user accounts.
 
-### Generate authorize uri
+### Step 1: generate authorize uri
 
 ```cs
 var authroizeUri = sdk.Platform.AuthorizeUri(redirectUri, myState);
@@ -41,7 +41,7 @@ Please note that you have to configure `redirectUri` in your [RingCentral apps](
 
 
 
-### Authenticate by authCode
+### Step 2: authenticate by authCode
 
 ```cs
 sdk.Platform.Authenticate(authCode, redirectUri)

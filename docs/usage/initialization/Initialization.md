@@ -3,22 +3,29 @@
 ## Initializing the SDK
 
 ```cs
-//import RingCentral SDK
+//import RingCentral
 using RingCentral;
 
 //Initialize Ring Central Client
-var ringCentral = new SDK(
+var sdk = new SDK(
 	"your appKey",
 	"your appSecret",
-	"Ring Central apiEndPoint",
+	"RingCentral apiServer",
 	"Application Name",
-	"Application Version").GetPlatform();
+	"Application Version");
 ```
 
-## Set User Agent Header
+`Application Name` and `Application Version` are optional. There are used to generated your app's `User Agent`.
 
-In addition to setting the `Application Name` and `Application Version` via the constructor, these can be set using the `SetUserAgentHeader` method.
+You don't need to memorize `RingCentral apiServer`'s address. There is another constructor for `SDK`:
 
 ```cs
-ringCentral.SetUserAgentHeader("Application Name", "Application Version");
+var sdk = new SDK(
+	"your appKey",
+	"your appSecret",
+	SDK.Server.Production,
+	"Application Name",
+	"Application Version");
 ```
+
+`RingCentral apiServer` should be either `SDK.Server.Production` or `SDK.Server.Sandbox`.
