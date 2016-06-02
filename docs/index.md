@@ -13,13 +13,21 @@ This documentation is for 1.0.0 of [ringcentral-csharp](https://github.com/ringc
 using RingCentral;
 
 // Initialize Ring Central Client
-var sdk = new SDK("your appKey", "your appSecret", "Ring Central apiServer", "Application Name","Application Version");
+var sdk = new SDK("your appKey", "your appSecret", "RingCentral apiServer", "Application Name", "Application Version");
 
 // Password Grant Authorization
 var response = sdk.Platform.Login(username, extension, password, true);
 ```
 
 ### Send an SMS
+
+```cs
+var jsonString = "{ \"text\":  \"hello sms!\", \"from\": { \"phoneNumber\": \"phoneNumber1\" }, \"to\": [{ \"phoneNumber\": \"phoneNumber2\" }] }";
+var request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonString);
+var response = sdk.Platform.Post(request);
+```
+
+Or:
 
 ```cs
 using Newtonsoft.Json;
