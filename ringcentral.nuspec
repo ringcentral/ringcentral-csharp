@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>RingCentralSDK</id>
-    <version>1.0.0-alpha2</version>
+    <version>1.0.0</version>
     <title>RingCentral SDK</title>
     <authors>Paul Zolnierczyk, Tyler Long</authors>
     <owners>RingCentral</owners>
