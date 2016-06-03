@@ -179,5 +179,19 @@ namespace RingCentral.Test
             var authorizeUri = sdk.Platform.AuthorizeUri("http://localhost:3000", "myState");
             Assert.AreEqual(sdk.Platform.ServerUrl + "/restapi/oauth/authorize?response_type=code&state=myState&redirect_uri=http://localhost:3000&client_id=AppKey", authorizeUri);
         }
+
+        [Test]
+        public void AuthDataRefreshed()
+        {
+            var count = 0;
+            sdk.Platform.AuthDataRefreshed += (sender, args) => {
+                count += 1;
+                var request = sender as Request;
+                Assert.NotNull(request);
+                Assert.NotNull(args.Response);
+            };
+            sdk.Platform.Refresh();
+            Assert.AreEqual(1, count);
+        }
     }
 }

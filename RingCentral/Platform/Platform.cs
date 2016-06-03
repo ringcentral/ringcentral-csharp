@@ -8,8 +8,19 @@ using System.Text.RegularExpressions;
 
 namespace RingCentral
 {
+    public class AuthEventArgs : EventArgs
+    {
+        public object Response { get; private set; }
+        public AuthEventArgs(ApiResponse response)
+        {
+            Response = response;
+        }
+    }
+
     public class Platform
     {
+        public event EventHandler<AuthEventArgs> AuthDataRefreshed;
+
         private const string AccessTokenTtl = "3600"; // 60 minutes
         private const string RefreshTokenTtl = "36000"; // 10 hours
         private const string RefreshTokenTtlRemember = "604800"; // 1 week
@@ -115,7 +126,9 @@ namespace RingCentral
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
             var response = _client.PostAsync(request.Url, request.HttpContent).Result;
-            return new ApiResponse(response);
+            var result = new ApiResponse(response);
+            AuthDataRefreshed?.Invoke(request, new AuthEventArgs(result));
+            return result;
         }
 
         public ApiResponse Get(Request request)
