@@ -19,8 +19,6 @@ namespace RingCentral
         public HttpClient _client { private get; set; }
         public Auth Auth { get; private set; }
 
-        private object thisLock = new object();
-
         public Platform(string appKey, string appSecret, string serverUrl, string appName = "", string appVersion = "")
         {
             this.appKey = appKey;
@@ -207,6 +205,7 @@ namespace RingCentral
             _client.DefaultRequestHeaders.Add("RC-User-Agent", ua);
         }
 
+        private object refreshLock = new object();
         /// <summary>
         ///     Determines if Access is valid and returns the boolean result.  If access is not valid but refresh token is valid
         ///     then a refresh is issued.
@@ -222,7 +221,7 @@ namespace RingCentral
             if (Auth.IsRefreshTokenValid())
             {
                 //obtain a mutual-exclusion lock for the thisLock object, execute statement and then release the lock.
-                lock (thisLock)
+                lock (refreshLock)
                 {
                     Refresh();
                     return true;
