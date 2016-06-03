@@ -142,7 +142,7 @@ namespace RingCentral
             {
                 accessTokenExpireTime = ((Convert.ToInt64(data["expires_in"]) * 1000) + currentTimeInMilliseconds);
             }
-            else if (data.ContainsKey("expires_time") && !string.IsNullOrEmpty(data["expire_time"]))
+            else if (data.ContainsKey("expire_time") && !string.IsNullOrEmpty(data["expire_time"]))
             {
                 accessTokenExpireTime = Convert.ToInt64(data["expire_time"]);
             }
