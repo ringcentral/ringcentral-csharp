@@ -148,6 +148,32 @@ namespace RingCentral.Test
         }
 
         [Test]
+        public void ShouldReturnAccessTokenValidGivenRestoredAuthData()
+        {
+            // Given
+            var accessTokenExpireIn = DateTime.UtcNow.AddHours(1).Ticks/TimeSpan.TicksPerMillisecond;
+            var refreshTokenExpireIn = DateTime.UtcNow.AddDays(7).Ticks / TimeSpan.TicksPerMillisecond;
+            var data = new Dictionary<string, string>()
+            {
+                {"access_token", "ac1"},
+                {"expires_in", "3598"},
+                {"expire_time", accessTokenExpireIn.ToString()},
+                {"refresh_token", "x"},
+                {"refresh_token_expires_in", "604798"},
+                {"refresh_token_expire_time", refreshTokenExpireIn.ToString()},
+            };
+
+            // When
+            var auth = new Auth();
+            auth.SetData(data);
+
+            // Then expire_time should be set and token still valid
+            var newData = auth.GetData();
+            Assert.That(newData["expire_time"], Is.EqualTo(data["expire_time"]));
+            Assert.That(auth.IsAccessTokenValid(), Is.EqualTo(true));
+        }
+
+        [Test]
         public void GenerateAuthorizeUri()
         {
             var authorizeUri = sdk.Platform.AuthorizeUri("http://localhost:3000", "myState");
