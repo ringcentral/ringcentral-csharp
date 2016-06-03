@@ -53,7 +53,7 @@ namespace RingCentral
                 scope = (string)jToken.SelectToken("scope");
             }
             #endregion
-            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            var currentTimeInMilliseconds = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 
             #region Access Token
             if (!string.IsNullOrEmpty((string)jToken.SelectToken("access_token")))
@@ -124,7 +124,7 @@ namespace RingCentral
                 scope = data["scope"];
             }
             #endregion
-            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            var currentTimeInMilliseconds = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 
             #region Access Token
             if (data.ContainsKey("access_token") && !String.IsNullOrEmpty(data["access_token"]))
@@ -221,7 +221,7 @@ namespace RingCentral
         /// <returns>bool value of token validity</returns>
         private bool IsTokenValid(long tokenExpireTime)
         {
-            var currentTimeInMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            var currentTimeInMilliseconds = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
             return tokenExpireTime > currentTimeInMilliseconds;
         }
 

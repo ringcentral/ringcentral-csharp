@@ -62,10 +62,10 @@ namespace RingCentral.Test
         [Test]
         public void TestAuthentication()
         {
-            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
-            Assert.NotNull(AuthResult);
+            var authResult = sdk.Platform.Login("username", "101", "password", true);
+            Assert.NotNull(authResult);
 
-            JToken token = JObject.Parse(AuthResult.Body);
+            JToken token = JObject.Parse(authResult.Body);
             var accessToken = (string)token.SelectToken("access_token");
             var refreshToken = (string)token.SelectToken("refresh_token");
 
@@ -77,7 +77,7 @@ namespace RingCentral.Test
         public void TestRefresh()
         {
 
-            ApiResponse refreshResult = sdk.Platform.Refresh();
+            var refreshResult = sdk.Platform.Refresh();
 
             Assert.NotNull(refreshResult);
 
@@ -93,8 +93,8 @@ namespace RingCentral.Test
         [Test]
         public void TestVersion()
         {
-            Request request = new Request(VersionEndPoint);
-            ApiResponse response = sdk.Platform.Get(request);
+            var request = new Request(VersionEndPoint);
+            var response = sdk.Platform.Get(request);
 
             JToken token = response.Json;
             var version = (string)token.SelectToken("apiVersions").First().SelectToken("uriString");
@@ -112,10 +112,10 @@ namespace RingCentral.Test
         [Test]
         public void GetAuthData()
         {
-            var AuthResult = sdk.Platform.Login("username", "101", "password", true);
+            var authResult = sdk.Platform.Login("username", "101", "password", true);
             var authData = sdk.Platform.Auth.GetData();
 
-            JToken token = AuthResult.Json;
+            JToken token = authResult.Json;
 
             Assert.AreEqual((string)token.SelectToken("access_token"), authData["access_token"]);
             Assert.AreEqual((string)token.SelectToken("refresh_token"), authData["refresh_token"]);
@@ -127,15 +127,17 @@ namespace RingCentral.Test
             sdk.Platform.Login("username", "101", "password", true);
             var oldAuthData = sdk.Platform.Auth.GetData();
 
-            var newAuthData = new Dictionary<string, string>();
-            newAuthData.Add("remember", "true");
-            newAuthData.Add("token_type", "test");
-            newAuthData.Add("owner_id", "test");
-            newAuthData.Add("scope", "test");
-            newAuthData.Add("access_token", oldAuthData["access_token"]);
-            newAuthData.Add("expires_in", oldAuthData["expires_in"]);
-            newAuthData.Add("refresh_token", oldAuthData["refresh_token"]);
-            newAuthData.Add("refresh_token_expires_in", oldAuthData["refresh_token_expires_in"]);
+            var newAuthData = new Dictionary<string, string>
+            {
+                {"remember", "true"},
+                {"token_type", "test"},
+                {"owner_id", "test"},
+                {"scope", "test"},
+                {"access_token", oldAuthData["access_token"]},
+                {"expires_in", oldAuthData["expires_in"]},
+                {"refresh_token", oldAuthData["refresh_token"]},
+                {"refresh_token_expires_in", oldAuthData["refresh_token_expires_in"]}
+            };
 
             sdk.Platform.Auth.SetData(newAuthData);
 
@@ -143,6 +145,32 @@ namespace RingCentral.Test
             Debug.WriteLine(authData["access_token"]);
             Assert.AreEqual(newAuthData["access_token"], authData["access_token"]);
             Assert.AreEqual(newAuthData["refresh_token"], authData["refresh_token"]);
+        }
+
+        [Test]
+        public void ShouldReturnAccessTokenValidGivenRestoredAuthData()
+        {
+            // Given
+            var accessTokenExpireIn = DateTime.UtcNow.AddHours(1).Ticks/TimeSpan.TicksPerMillisecond;
+            var refreshTokenExpireIn = DateTime.UtcNow.AddDays(7).Ticks / TimeSpan.TicksPerMillisecond;
+            var data = new Dictionary<string, string>()
+            {
+                {"access_token", "ac1"},
+                {"expires_in", "3598"},
+                {"expire_time", accessTokenExpireIn.ToString()},
+                {"refresh_token", "x"},
+                {"refresh_token_expires_in", "604798"},
+                {"refresh_token_expire_time", refreshTokenExpireIn.ToString()},
+            };
+
+            // When
+            var auth = new Auth();
+            auth.SetData(data);
+
+            // Then expire_time should be set and token still valid
+            var newData = auth.GetData();
+            Assert.That(newData["expire_time"], Is.EqualTo(data["expire_time"]));
+            Assert.That(auth.IsAccessTokenValid(), Is.EqualTo(true));
         }
 
         [Test]
