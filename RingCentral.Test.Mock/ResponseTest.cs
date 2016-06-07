@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using RingCentral.Http;
-using System;
 
 namespace RingCentral.Test
 {

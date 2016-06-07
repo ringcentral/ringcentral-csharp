@@ -4,8 +4,10 @@ namespace RingCentral.Http
 {
     public class ApiException : Exception
     {
-        public ApiException(string message) : base(message)
+        public ApiResponse Response { get; private set; }
+        public ApiException(string message, ApiResponse response) : base(message)
         {
+            Response = response;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace RingCentral.Http
             Headers = response.Content.Headers;
             if (!OK)
             {
-                throw new ApiException(Error);
+                throw new ApiException(Error, this);
             }
         }
 
