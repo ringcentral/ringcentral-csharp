@@ -42,7 +42,7 @@ Where listOfEvents is a `List<string>` containing each event to subscribe to.
 
 ### Lifecyle management
 
-Users of this SDK is responsible for managing the lifecyle of `subscription`. In order to keep it alive, you need to make sure that it will not be garbage collected. So most likely you want to make `subscription` a class variable instead of a local variable.
+Users of this SDK are responsible for managing the lifecyle of `subscription`. In order to keep it alive, you need to make sure that it will not be garbage collected. So most likely you want to make `subscription` a class variable instead of a local variable.
 
 
 ### Casting SubscriptionEventArgs

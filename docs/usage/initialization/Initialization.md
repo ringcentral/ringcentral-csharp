@@ -15,7 +15,7 @@ var sdk = new SDK(
 	"Application Version");
 ```
 
-`Application Name` and `Application Version` are optional. They are used to generated your app's `User Agent`.
+`Application Name` and `Application Version` are optional. They are used to generate your app's `User Agent`.
 
 You don't need to memorize `RingCentral apiServer`'s address. There is another constructor for `SDK`:
 
