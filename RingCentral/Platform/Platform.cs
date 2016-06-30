@@ -274,6 +274,7 @@ namespace RingCentral
                     { "redirect_uri", redirectUri }, { "code", authCode } });
             var response = AuthCall(request);
             Auth.SetData(response.Json);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
             return response;
         }
     }
