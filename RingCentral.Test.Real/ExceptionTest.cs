@@ -11,7 +11,16 @@ namespace RingCentral.Test.Real
         {
             // correct url should be: "/restapi/v1.0/account/~/extension/~/sms"
             var request = new Http.Request("/account/~/extension/~/sms", "{\"hello\": \"world\"}");
-            sdk.Platform.Post(request);
+            try
+            {
+                var response = sdk.Platform.Post(request);
+            }
+            catch (ApiException ae)
+            {
+                Assert.AreEqual(404, ae.Response.Status);
+                Assert.AreEqual("/account/~/extension/~/sms", ae.Response.Request.RequestUri.AbsolutePath);
+                throw ae;
+            }
         }
     }
 }

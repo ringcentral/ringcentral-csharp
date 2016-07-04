@@ -8,8 +8,19 @@ using System.Text.RegularExpressions;
 
 namespace RingCentral
 {
+    public class AuthEventArgs : EventArgs
+    {
+        public object Response { get; private set; }
+        public AuthEventArgs(ApiResponse response)
+        {
+            Response = response;
+        }
+    }
+
     public class Platform
     {
+        public event EventHandler<AuthEventArgs> AuthDataRefreshed;
+
         private const string AccessTokenTtl = "3600"; // 60 minutes
         private const string RefreshTokenTtl = "36000"; // 10 hours
         private const string RefreshTokenTtlRemember = "604800"; // 1 week
@@ -18,8 +29,6 @@ namespace RingCentral
 
         public HttpClient _client { private get; set; }
         public Auth Auth { get; private set; }
-
-        private object thisLock = new object();
 
         public Platform(string appKey, string appSecret, string serverUrl, string appName = "", string appVersion = "")
         {
@@ -117,7 +126,9 @@ namespace RingCentral
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", GenerateAuthToken());
             var response = _client.PostAsync(request.Url, request.HttpContent).Result;
-            return new ApiResponse(response);
+            var result = new ApiResponse(response);
+            AuthDataRefreshed?.Invoke(request, new AuthEventArgs(result));
+            return result;
         }
 
         public ApiResponse Get(Request request)
@@ -207,6 +218,7 @@ namespace RingCentral
             _client.DefaultRequestHeaders.Add("RC-User-Agent", ua);
         }
 
+        private object refreshLock = new object();
         /// <summary>
         ///     Determines if Access is valid and returns the boolean result.  If access is not valid but refresh token is valid
         ///     then a refresh is issued.
@@ -222,7 +234,7 @@ namespace RingCentral
             if (Auth.IsRefreshTokenValid())
             {
                 //obtain a mutual-exclusion lock for the thisLock object, execute statement and then release the lock.
-                lock (thisLock)
+                lock (refreshLock)
                 {
                     Refresh();
                     return true;
@@ -262,6 +274,7 @@ namespace RingCentral
                     { "redirect_uri", redirectUri }, { "code", authCode } });
             var response = AuthCall(request);
             Auth.SetData(response.Json);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Auth.AccessToken);
             return response;
         }
     }

@@ -106,7 +106,7 @@ namespace RingCentral.Subscription
             }
             catch (ApiException ae)
             {
-                if (ae.Message.Contains("not found"))
+                if (ae.Response.Status == 404)
                 { // subscription not found on server side
                     Subscribe();
                     return;

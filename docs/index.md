@@ -22,6 +22,8 @@ var response = sdk.Platform.Login(username, extension, password, true);
 ### Send an SMS
 
 ```cs
+using RingCentral.Http;
+
 var jsonString = "{ \"text\":  \"hello sms!\", \"from\": { \"phoneNumber\": \"phoneNumber1\" }, \"to\": [{ \"phoneNumber\": \"phoneNumber2\" }] }";
 var request = new Request("/restapi/v1.0/account/~/extension/~/sms", jsonString);
 var response = sdk.Platform.Post(request);
