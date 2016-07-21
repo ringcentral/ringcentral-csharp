@@ -19,7 +19,7 @@ namespace RingCentral.Test.Real
             };
             var request = new Request("/restapi/v1.0/account/~/extension/~/sms", JsonConvert.SerializeObject(requestBody));
             var response = sdk.Platform.Post(request);
-            Assert.AreEqual(subject, response.Json["subject"].ToString());
+            StringAssert.EndsWith(subject, response.Json["subject"].ToString());
             Assert.AreEqual("Outbound", response.Json["direction"].ToString());
             Assert.AreEqual("Sent", response.Json["messageStatus"].ToString());
         }

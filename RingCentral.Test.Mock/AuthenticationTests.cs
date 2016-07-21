@@ -176,8 +176,9 @@ namespace RingCentral.Test
         [Test]
         public void GenerateAuthorizeUri()
         {
-            var authorizeUri = sdk.Platform.AuthorizeUri("http://localhost:3000", "myState");
-            Assert.AreEqual(sdk.Platform.ServerUrl + "/restapi/oauth/authorize?response_type=code&state=myState&redirect_uri=http://localhost:3000&client_id=AppKey", authorizeUri);
+            var authorizeUri = sdk.Platform.AuthorizeUri("http://localhost:3000/callback.html?step=2", "myState");
+            Assert.AreEqual(sdk.Platform.ServerUrl + "/restapi/oauth/authorize?response_type=code&state=myState&" 
+                + "redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback.html%3Fstep%3D2&client_id=AppKey", authorizeUri);
         }
 
         [Test]

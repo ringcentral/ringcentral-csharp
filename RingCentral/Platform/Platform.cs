@@ -255,9 +255,9 @@ namespace RingCentral
         {
             var baseUrl = ServerUrl + "/restapi/oauth/authorize";
             var authUrl = string.Format("{0}?response_type=code&state={1}&redirect_uri={2}&client_id={3}",
-                baseUrl, Uri.EscapeUriString(state),
-                Uri.EscapeUriString(redirectUri),
-                Uri.EscapeUriString(appKey));
+                baseUrl, Uri.EscapeDataString(state),
+                Uri.EscapeDataString(redirectUri),
+                Uri.EscapeDataString(appKey));
             return authUrl;
         }
 
