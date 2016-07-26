@@ -26,7 +26,11 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/MonoAndroid1+MonoTouch1+MonoMac+Xamarin.Mac+Xamarin.iOS+Xamarin.Android" />
-    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/portable-net40+portable-net45+net40+net45+sl5+netcore45+wpa81+wp8" />
+    <file src="RingCentral/bin/Release/RingCentral.dll" target="lib/net40" />
+    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/monoandroid" />
+    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/monotouch" />
+    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/monomac" />
+    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/xamarinios" />
+    <file src="RingCentral/bin/Mac/RingCentral.dll" target="lib/xamarinmac" />
   </files>
 </package>
