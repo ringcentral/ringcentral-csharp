@@ -66,9 +66,8 @@ RingCentral GitHub Organization
 
 For support using this SDK, please use the following resources:
 
-1. [RingCentral Developer Community](https://devcommunity.ringcentral.com)
 1. [RingCentral C# SDK GitHub repo](https://github.com/ringcentral/ringcentral-csharp)
-1. [Stack Overflow](http://stackoverflow.com/questions/tagged/ringcentral)
+2. [Stack Overflow](http://stackoverflow.com/questions/tagged/ringcentral)
 
 
 ## Contributions
