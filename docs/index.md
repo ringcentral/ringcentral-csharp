@@ -1,3 +1,5 @@
+# This project is deprecated in favor of [ringcentral-csharp-client](https://github.com/ringcentral/ringcentral-csharp-client).
+
 # ringcentral-csharp
 
 ## Status
