@@ -1,3 +1,6 @@
+# This project is deprecated in favor of [ringcentral-csharp-client](https://github.com/ringcentral/ringcentral-csharp-client).
+
+
 # RingCentral SDK for C&#35;
 
 [![NuGet][nuget-version-svg]][nuget-version-link]
