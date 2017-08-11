@@ -8,7 +8,7 @@
 [![Coverage Status][coverage-status-svg]][coverage-status-link]
 [![Docs][docs-readthedocs-svg]][docs-readthedocs-link]
 [![License][license-svg]][license-link]
-[![Chat][chat-svg][chat-link]
+[![Chat][chat-svg]][chat-link]
 
 
 ## Installation
