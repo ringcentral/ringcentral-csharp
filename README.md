@@ -3,12 +3,12 @@
 
 # RingCentral SDK for C&#35;
 
-[![NuGet][nuget-version-svg]][nuget-version-link]
-[![Build Status][build-status-svg]][build-status-link]
-[![Coverage Status][coverage-status-svg]][coverage-status-link]
-[![Docs][docs-readthedocs-svg]][docs-readthedocs-link]
-[![License][license-svg]][license-link]
-[![Chat][chat-svg]][chat-link]
+[![NuGet][nuget-version-svg]][nuget-version-url]
+[![Build Status][build-status-svg]][build-status-url]
+[![Coverage Status][coverage-status-svg]][coverage-status-url]
+[![Docs][docs-readthedocs-svg]][docs-readthedocs-url]
+[![License][license-svg]][license-url]
+[![Chat][chat-svg]][chat-url]
 
 
 ## Installation
@@ -87,17 +87,17 @@ RingCentral SDK is available under an MIT-style license. See [LICENSE](LICENSE) 
 RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
 
 [nuget-version-svg]: https://img.shields.io/nuget/v/RingCentralSDK.svg
-[nuget-version-link]: http://www.nuget.org/packages/RingCentralSDK/
+[nuget-version-url]: http://www.nuget.org/packages/RingCentralSDK/
 [nuget-count-svg]: https://img.shields.io/nuget/dt/RingCentralSDK.svg
-[nuget-count-link]: http://www.nuget.org/packages/RingCentralSDK/
+[nuget-count-url]: http://www.nuget.org/packages/RingCentralSDK/
 [build-status-svg]: https://ci.appveyor.com/api/projects/status/ka1g6n869rxw81g4?svg=true
-[build-status-link]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
+[build-status-url]: https://ci.appveyor.com/project/paulzolnierczyk/ringcentral-csharp
 [coverage-status-svg]: https://coveralls.io/repos/ringcentral/ringcentral-csharp/badge.svg?branch=develop&service=github
-[coverage-status-link]: https://coveralls.io/github/ringcentral/ringcentral-csharp
+[coverage-status-url]: https://coveralls.io/github/ringcentral/ringcentral-csharp
 [docs-readthedocs-svg]: https://img.shields.io/badge/docs-readthedocs-blue.svg
-[docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
+[docs-readthedocs-url]: http://ringcentral-csharp.readthedocs.org/
 [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
-[license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
+[license-url]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
 [chat-svg]: https://img.shields.io/badge/chat-on%20glip-orange.svg
 [chat-url]: https://glipped.herokuapp.com/
 
