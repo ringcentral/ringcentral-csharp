@@ -8,6 +8,7 @@
 [![Coverage Status][coverage-status-svg]][coverage-status-link]
 [![Docs][docs-readthedocs-svg]][docs-readthedocs-link]
 [![License][license-svg]][license-link]
+[![Chat][chat-svg][chat-link]
 
 
 ## Installation
@@ -97,3 +98,6 @@ RingCentral SDK &copy; 2015-2016 by RingCentral, Inc.
 [docs-readthedocs-link]: http://ringcentral-csharp.readthedocs.org/
 [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-link]: https://github.com/ringcentral/ringcentral-csharp/blob/master/LICENSE
+[chat-svg]: https://img.shields.io/badge/chat-on%20glip-orange.svg
+[chat-url]: https://glipped.herokuapp.com/
+
